@@ -1,24 +1,24 @@
-import { SubscribeForm } from "@/components/subscribe-form";
+import { ManageRequestForm } from "@/components/manage-request-form";
 import { Card } from "@/components/ui/card";
 
-export default function HomePage() {
+export default function ManagePage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Content Drip</h1>
+          <h1 className="text-3xl font-bold mb-2">Manage Subscription</h1>
           <p className="text-muted-foreground">
-            Subscribe to receive thoughtful content delivered to your inbox
+            Enter your email and content pack to receive a management link
           </p>
         </div>
 
         <Card className="p-6">
-          <SubscribeForm />
+          <ManageRequestForm />
         </Card>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <a href="/manage" className="underline hover:text-foreground">
-            Manage existing subscription
+          <a href="/" className="underline hover:text-foreground">
+            Back to home
           </a>
         </div>
       </div>
