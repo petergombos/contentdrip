@@ -31,28 +31,21 @@ export function TimezoneSelector({
   value,
   onValueChange,
 }: TimezoneSelectorProps) {
-  const [detectedTimezone, setDetectedTimezone] = useState<string | null>(null);
+  const [detectedTimezone] = useState<string>(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return "UTC";
+    }
+  });
 
   useEffect(() => {
-    // Auto-detect timezone
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      setDetectedTimezone(tz);
-      if (!value) {
-        onValueChange(tz);
-      }
-    } catch {
-      // Fallback to UTC
-      setDetectedTimezone("UTC");
-      if (!value) {
-        onValueChange("UTC");
-      }
+    if (!value) {
+      onValueChange(detectedTimezone);
     }
-  }, [value, onValueChange]);
+  }, [value, onValueChange, detectedTimezone]);
 
   const displayValue = value || detectedTimezone || "UTC";
-  const displayLabel =
-    TIMEZONES.find((tz) => tz.value === displayValue)?.label || displayValue;
 
   return (
     <Select value={displayValue} onValueChange={onValueChange}>

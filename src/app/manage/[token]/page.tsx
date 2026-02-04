@@ -7,6 +7,7 @@ import { ManagePreferencesForm } from "@/components/manage-preferences-form";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { stopFromEmailAction } from "@/domains/subscriptions/actions/subscription-actions";
+import Link from "next/link";
 
 interface ManageTokenPageProps {
   params: Promise<{ token: string }>;
@@ -55,12 +56,6 @@ export default async function ManageTokenPage({
       </div>
     );
   }
-
-  const handleUnsubscribe = async () => {
-    "use server";
-    // For now, redirect to a stop action
-    // In a real implementation, you'd want a proper form action
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -123,9 +118,9 @@ export default async function ManageTokenPage({
         </Card>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <a href="/" className="underline hover:text-foreground">
+          <Link href="/" className="underline hover:text-foreground">
             Back to home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

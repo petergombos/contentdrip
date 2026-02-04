@@ -83,7 +83,7 @@ export function SubscribeForm() {
       <div className="rounded-lg border p-6 text-center">
         <h2 className="text-xl font-semibold mb-2">Check your email!</h2>
         <p className="text-muted-foreground">
-          We've sent you a confirmation email. Click the link to activate your subscription.
+          We&apos;ve sent you a confirmation email. Click the link to activate your subscription.
         </p>
       </div>
     );

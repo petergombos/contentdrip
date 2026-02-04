@@ -3,6 +3,7 @@
  * This ensures packs are available throughout the application
  */
 import "@/content-packs/quietly/pack";
+import "@/content-packs/hello/pack";
 
 // Add more pack imports here as you create them
 // import "@/content-packs/bitcoin-basics/pack";

@@ -1,5 +1,6 @@
 import { ManageRequestForm } from "@/components/manage-request-form";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 export default function ManagePage() {
   return (
@@ -17,9 +18,9 @@ export default function ManagePage() {
         </Card>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <a href="/" className="underline hover:text-foreground">
+          <Link href="/" className="underline hover:text-foreground">
             Back to home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

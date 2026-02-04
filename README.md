@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Content Drip
 
-## Getting Started
+Simple email drip subscriptions powered by Next.js.
 
-First, run the development server:
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Content Packs
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `quietly`: original pack
+- `hello`: lightweight placeholder pack for quick testing
+  - Steps: `welcome`, `day-1`, `day-2`, `day-3`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scheduler Modes
 
-## Learn More
+- Normal mode (default): uses each subscription's cron expression and timezone.
+- Fast test mode: set `DRIP_STEP_MINUTES` to a positive integer to bypass cron parsing and advance one step whenever elapsed minutes since last update is at least that value.
+- If `DRIP_STEP_MINUTES` is set but invalid/non-positive, it falls back to `10`.
 
-To learn more about Next.js, take a look at the following resources:
+Example:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+DRIP_STEP_MINUTES=2 npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Cron Endpoint
 
-## Deploy on Vercel
+`GET /api/cron` requires `Authorization: Bearer <CRON_SECRET>`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Example:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+curl -X GET "http://localhost:3000/api/cron" \
+  -H "Authorization: Bearer $CRON_SECRET"
+```

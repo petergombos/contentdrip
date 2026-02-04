@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getPackStep } from "@/content-packs/registry";
 import { renderMarkdownToReact } from "@/lib/markdown/renderer";
 import "@/content-packs"; // Register all packs
@@ -52,15 +53,15 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
 
         <div className="mt-12 pt-8 border-t">
           <div className="flex gap-4 text-sm">
-            <a href="/" className="text-muted-foreground hover:text-foreground">
+            <Link href="/" className="text-muted-foreground hover:text-foreground">
               Subscribe
-            </a>
-            <a
+            </Link>
+            <Link
               href="/manage"
               className="text-muted-foreground hover:text-foreground"
             >
               Manage Subscription
-            </a>
+            </Link>
           </div>
         </div>
       </div>

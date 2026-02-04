@@ -66,7 +66,7 @@ export function ManageRequestForm() {
       <div className="rounded-lg border p-6 text-center">
         <h2 className="text-xl font-semibold mb-2">Check your email!</h2>
         <p className="text-muted-foreground">
-          We've sent you a link to manage your subscription.
+          We&apos;ve sent you a link to manage your subscription.
         </p>
       </div>
     );

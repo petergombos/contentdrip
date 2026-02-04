@@ -1,5 +1,4 @@
 import CronExpressionParser from "cron-parser";
-import { toZonedTime } from "date-fns-tz";
 import { SubscriptionRepo } from "../repo/subscription-repo";
 import { EmailService } from "@/domains/mail/services/email-service";
 import { getPackByKey, getNextStep } from "@/content-packs/registry";
@@ -26,12 +25,15 @@ export class SchedulerService {
   }> {
     const activeSubscriptions = await this.repo.findActiveSubscriptions();
     const now = new Date();
+    const fastTestStepMinutes = this.getFastTestStepMinutes();
     let sent = 0;
     let errors = 0;
 
     for (const subscription of activeSubscriptions) {
       try {
-        const isDue = await this.isDue(subscription.cronExpression, subscription.timezone, now);
+        const isDue = fastTestStepMinutes
+          ? this.isDueByElapsedMinutes(subscription.updatedAt, now, fastTestStepMinutes)
+          : this.isDueByCron(subscription.cronExpression, subscription.timezone, now);
         
         if (!isDue) {
           continue;
@@ -88,18 +90,16 @@ export class SchedulerService {
   /**
    * Check if a cron expression matches the current time in the given timezone
    */
-  private async isDue(
+  private isDueByCron(
     cronExpression: string,
     timezone: string,
     now: Date
-  ): Promise<boolean> {
+  ): boolean {
     try {
-      // Get current time in subscription's timezone
-      const zonedNow = toZonedTime(now, timezone);
-
-      // Parse cron expression with timezone
-      // @ts-expect-error - cron-parser types don't match runtime
-      const interval = CronExpressionParser.parseExpression(cronExpression, {
+      // Parse cron expression with the subscription timezone.
+      // currentDate keeps evaluation anchored to "now", while tz applies local-wall-clock matching.
+      const interval = CronExpressionParser.parse(cronExpression, {
+        currentDate: now,
         tz: timezone,
       });
 
@@ -109,7 +109,7 @@ export class SchedulerService {
 
       // Check if the previous scheduled time is within the last minute
       // (allowing for cron job running every minute)
-      const diff = zonedNow.getTime() - prevTime;
+      const diff = now.getTime() - prevTime;
       const oneMinute = 60 * 1000;
 
       return diff >= 0 && diff < oneMinute;
@@ -117,6 +117,36 @@ export class SchedulerService {
       console.error(`Error parsing cron expression ${cronExpression}:`, error);
       return false;
     }
+  }
+
+  /**
+   * Fast test mode: move forward once enough minutes have elapsed.
+   */
+  private isDueByElapsedMinutes(
+    lastUpdatedAt: Date,
+    now: Date,
+    stepMinutes: number
+  ): boolean {
+    const elapsedMs = now.getTime() - lastUpdatedAt.getTime();
+    return elapsedMs >= stepMinutes * 60 * 1000;
+  }
+
+  /**
+   * DRIP_STEP_MINUTES enables fast-test mode when set.
+   * Invalid/non-positive values fall back to 10 minutes.
+   */
+  private getFastTestStepMinutes(): number | null {
+    const raw = process.env.DRIP_STEP_MINUTES;
+    if (raw === undefined) {
+      return null;
+    }
+
+    const parsed = Number.parseInt(raw, 10);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+
+    return 10;
   }
 
   /**

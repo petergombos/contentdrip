@@ -1,5 +1,6 @@
 import { SubscribeForm } from "@/components/subscribe-form";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -17,9 +18,9 @@ export default function HomePage() {
         </Card>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <a href="/manage" className="underline hover:text-foreground">
+          <Link href="/manage" className="underline hover:text-foreground">
             Manage existing subscription
-          </a>
+          </Link>
         </div>
       </div>
     </div>

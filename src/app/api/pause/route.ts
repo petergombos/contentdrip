@@ -5,14 +5,14 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const token = searchParams.get("token");
   const id = searchParams.get("id");
-  const action = searchParams.get("action"); // "pause" or "stop"
+  const action = searchParams.get("action"); // optional legacy support
 
-  if (!token || !id || !action) {
+  if (!token || !id) {
     return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
   }
 
   try {
-    if (action === "pause") {
+    if (!action || action === "pause") {
       const result = await pauseFromEmailAction({ subscriptionId: id, token });
       if (result?.serverError) {
         return NextResponse.json({ error: result.serverError }, { status: 400 });
