@@ -1,5 +1,10 @@
 import { redirect } from "next/navigation";
-import { confirmSubscriptionAction } from "@/domains/subscriptions/actions/subscription-actions";
+import { createHash } from "crypto";
+import { SubscriptionRepo } from "@/domains/subscriptions/repo/subscription-repo";
+import { SubscriptionService } from "@/domains/subscriptions/services/subscription-service";
+import { PostmarkAdapter } from "@/domains/mail/adapters/postmark/postmark-adapter";
+import { EmailService } from "@/domains/mail/services/email-service";
+import "@/content-packs";
 
 interface ConfirmPageProps {
   params: Promise<{ token: string }>;
@@ -8,21 +13,21 @@ interface ConfirmPageProps {
 export default async function ConfirmPage({ params }: ConfirmPageProps) {
   const { token } = await params;
 
-  // Only catch real errors. `redirect()` throws a NEXT_REDIRECT exception
-  // which must not be swallowed.
-  let result: Awaited<ReturnType<typeof confirmSubscriptionAction>>;
   try {
-    // Pass the plain token - the action will hash it
-    result = await confirmSubscriptionAction({ token });
-  } catch (error: any) {
-    // Let Next.js handle redirects correctly.
-    if (error?.digest && String(error.digest).includes("NEXT_REDIRECT")) {
-      throw error;
-    }
-    if (error?.message && String(error.message).includes("NEXT_REDIRECT")) {
-      throw error;
-    }
+    const repo = new SubscriptionRepo();
+    const mailAdapter = new PostmarkAdapter({
+      serverToken: process.env.POSTMARK_SERVER_TOKEN!,
+      fromEmail: process.env.MAIL_FROM!,
+      messageStream: process.env.POSTMARK_MESSAGE_STREAM,
+    });
+    const emailService = new EmailService(mailAdapter, process.env.APP_BASE_URL);
+    const service = new SubscriptionService(repo, emailService);
 
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+    await service.confirmSubscription(tokenHash);
+
+    redirect("/?confirmed=true");
+  } catch (error) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
@@ -34,33 +39,4 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
       </div>
     );
   }
-
-  if (result?.serverError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Confirmation Failed</h1>
-          <p className="text-muted-foreground">
-            {typeof result.serverError === "string"
-              ? result.serverError
-              : "An error occurred"}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (result?.data) {
-    redirect("/?confirmed=true");
-  }
-
-  // Fallback (shouldn't happen)
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-2">Confirmation Failed</h1>
-        <p className="text-muted-foreground">An error occurred</p>
-      </div>
-    </div>
-  );
 }
