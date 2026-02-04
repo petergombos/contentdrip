@@ -6,11 +6,29 @@ import type { MailAdapter } from "../ports/mail-adapter";
 import type { TokenType } from "@/domains/subscriptions/model/types";
 import { generateUUID } from "@/lib/uuid";
 
+function resolveBaseUrl(explicit?: string): string {
+  // Prefer explicit config, but support Vercel preview/prod without hardcoding.
+  // Note: Vercel does not interpolate "$VARS" inside env var values.
+  if (explicit && explicit.includes("$VERCEL_URL")) {
+    explicit = undefined;
+  }
+  if (explicit && explicit.includes("${VERCEL_URL}")) {
+    explicit = undefined;
+  }
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const vercelUrl = process.env.VERCEL_URL;
+  if (vercelUrl) return `https://${vercelUrl}`;
+
+  return "http://localhost:3000";
+}
+
 export class EmailService {
-  constructor(
-    private mailAdapter: MailAdapter,
-    private baseUrl: string
-  ) {}
+  private baseUrl: string;
+
+  constructor(private mailAdapter: MailAdapter, baseUrl?: string) {
+    this.baseUrl = resolveBaseUrl(baseUrl);
+  }
 
   /**
    * Generate a secure random token

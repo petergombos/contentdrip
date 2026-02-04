@@ -30,10 +30,7 @@ export async function GET(request: NextRequest) {
       fromEmail: process.env.MAIL_FROM!,
       messageStream: process.env.POSTMARK_MESSAGE_STREAM,
     });
-    const emailService = new EmailService(
-      mailAdapter,
-      process.env.APP_BASE_URL || "http://localhost:3000"
-    );
+    const emailService = new EmailService(mailAdapter, process.env.APP_BASE_URL);
     const scheduler = new SchedulerService(repo, emailService);
 
     // Send due subscriptions
