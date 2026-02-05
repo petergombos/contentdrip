@@ -33,6 +33,8 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
   try {
     // Initialize services
     const repo = new SubscriptionRepo();
@@ -44,23 +46,48 @@ export async function GET(request: NextRequest) {
     const emailService = new EmailService(mailAdapter);
     const scheduler = new SchedulerService(repo, emailService);
 
-    // Send due subscriptions
-    const result = await scheduler.sendDueSubscriptions();
+    // Send due subscriptions (retry transient Turso capacity errors)
+    const maxAttempts = 3;
+    let lastError: unknown = null;
 
-    return NextResponse.json({
-      success: true,
-      sent: result.sent,
-      errors: result.errors,
-      timestamp: new Date().toISOString(),
-    });
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const result = await scheduler.sendDueSubscriptions();
+
+        return NextResponse.json({
+          success: true,
+          sent: result.sent,
+          errors: result.errors,
+          attempt,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (err) {
+        lastError = err;
+        const msg = err instanceof Error ? err.message : String(err);
+        const isCapacity = msg.toLowerCase().includes("capacity") || msg.toLowerCase().includes("temporarily exceeded");
+
+        if (!isCapacity || attempt === maxAttempts) {
+          throw err;
+        }
+
+        // Exponential-ish backoff: 0.5s, 1.5s
+        await sleep(500 + (attempt - 1) * 1000);
+      }
+    }
+
+    throw lastError;
   } catch (error) {
     console.error("Cron job error:", error);
+
+    const msg = error instanceof Error ? error.message : String(error);
+    const isCapacity = msg.toLowerCase().includes("capacity") || msg.toLowerCase().includes("temporarily exceeded");
+
     return NextResponse.json(
       {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : String(error),
+        error: isCapacity ? "Database busy" : "Internal server error",
+        message: msg,
       },
-      { status: 500 }
+      { status: isCapacity ? 503 : 500 }
     );
   }
 }
