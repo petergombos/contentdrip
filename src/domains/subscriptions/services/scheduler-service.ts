@@ -4,7 +4,10 @@ import { EmailService } from "@/domains/mail/services/email-service";
 import { getPackByKey, getNextStep } from "@/content-packs/registry";
 import { readFileSync } from "fs";
 import { join } from "path";
+import React from "react";
 import { parseMarkdown } from "@/lib/markdown/renderer";
+import { ContentMarkdownEmail } from "@/emails/content-markdown-email";
+import { renderEmail } from "@/emails/render";
 import { SubscriptionStatus } from "../model/types";
 import { TokenType } from "../model/types";
 // Ensure packs are registered
@@ -224,11 +227,21 @@ export class SchedulerService {
 
     const parsed = parseMarkdown(markdown);
 
+    const rendered = await renderEmail(
+      React.createElement(ContentMarkdownEmail, {
+        title: parsed.frontmatter.subject || "Your daily message",
+        preview: parsed.frontmatter.preview,
+        html: parsed.html,
+        footer: { unsubscribeUrl: stopUrl, manageUrl },
+      })
+    );
+
     // Send email
     const result = await this.emailService.sendEmail({
       to: subscription.email,
       subject: parsed.frontmatter.subject || "Your daily message",
-      html: parsed.html,
+      html: rendered.html,
+      text: rendered.text,
       tag: `content-${subscription.packKey}-${step.slug}`,
       unsubscribeUrl: stopUrl,
       pauseUrl,

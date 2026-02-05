@@ -2,6 +2,8 @@ import React from "react";
 import { getPackByKey } from "@/content-packs/registry";
 import { EmailService } from "@/domains/mail/services/email-service";
 import { parseMarkdown } from "@/lib/markdown/renderer";
+import { ContentMarkdownEmail } from "@/emails/content-markdown-email";
+import { renderEmail } from "@/emails/render";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { SubscriptionStatus, TokenType } from "../model/types";
@@ -245,10 +247,19 @@ export class SubscriptionService {
 
     const parsed = parseMarkdown(markdown);
 
+    const rendered = await renderEmail(
+      React.createElement(ContentMarkdownEmail, {
+        title: parsed.frontmatter.subject || "Confirm your subscription",
+        preview: parsed.frontmatter.preview,
+        html: parsed.html,
+      })
+    );
+
     await this.emailService.sendEmail({
       to: email,
       subject: parsed.frontmatter.subject || "Confirm your subscription",
-      html: parsed.html,
+      html: rendered.html,
+      text: rendered.text,
       tag: `confirm-${packKey}`,
     });
   }
@@ -311,10 +322,20 @@ export class SubscriptionService {
 
     const parsed = parseMarkdown(markdown);
 
+    const rendered = await renderEmail(
+      React.createElement(ContentMarkdownEmail, {
+        title: parsed.frontmatter.subject || "Welcome",
+        preview: parsed.frontmatter.preview,
+        html: parsed.html,
+        footer: { unsubscribeUrl: stopUrl, manageUrl },
+      })
+    );
+
     const result = await this.emailService.sendEmail({
       to: email,
       subject: parsed.frontmatter.subject || "Welcome",
-      html: parsed.html,
+      html: rendered.html,
+      text: rendered.text,
       tag: `welcome-${packKey}`,
       unsubscribeUrl: stopUrl,
       pauseUrl,
