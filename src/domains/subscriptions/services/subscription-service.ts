@@ -310,21 +310,29 @@ export class SubscriptionService {
     markdown = markdown.replace("{{stopUrl}}", stopUrl);
 
     const parsed = parseMarkdown(markdown);
-    console.log({
+
+    const result = await this.emailService.sendEmail({
       to: email,
       subject: parsed.frontmatter.subject || "Welcome",
       html: parsed.html,
       tag: `welcome-${packKey}`,
       unsubscribeUrl: stopUrl,
       pauseUrl,
-    })
-    await this.emailService.sendEmail({
-      to: email,
-      subject: parsed.frontmatter.subject || "Welcome",
-      html: parsed.html,
-      tag: `welcome-${packKey}`,
-      unsubscribeUrl: stopUrl,
-      pauseUrl,
+    });
+
+    // Persist the welcome send + advance step index.
+    // Welcome is sent immediately on confirmation and should not be re-sent by the scheduler.
+    await this.repo.logSend({
+      subscriptionId,
+      packKey,
+      stepSlug: step.slug,
+      provider: "postmark",
+      providerMessageId: result.providerMessageId,
+      status: "SUCCESS",
+    });
+
+    await this.repo.update(subscriptionId, {
+      currentStepIndex: 1,
     });
   }
 

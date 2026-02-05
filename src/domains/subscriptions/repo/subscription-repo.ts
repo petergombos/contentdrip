@@ -132,6 +132,21 @@ export class SubscriptionRepo {
     return !!result;
   }
 
+  /**
+   * Used for fast-test scheduling: when did we last successfully send anything for this subscription?
+   */
+  async getLastSuccessfulSendAt(subscriptionId: string): Promise<Date | null> {
+    const result = await db.query.sendLog.findFirst({
+      where: and(
+        eq(sendLog.subscriptionId, subscriptionId),
+        eq(sendLog.status, "SUCCESS")
+      ),
+      orderBy: (sendLog, { desc }) => [desc(sendLog.sentAt)],
+    });
+
+    return result?.sentAt ?? null;
+  }
+
   private mapToDomain(row: {
     id: string;
     email: string;
