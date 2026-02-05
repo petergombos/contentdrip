@@ -14,8 +14,11 @@ export function ContentMarkdownEmail(props: {
 
   return (
     <Shell title={props.title} preview={props.preview} footer={props.footer}>
-      {/* Rendered markdown HTML (already sanitized by our renderer pipeline). */}
-      <Section dangerouslySetInnerHTML={{ __html: props.html }} />
+      {/* NOTE: @react-email/components Section doesn't reliably support dangerouslySetInnerHTML.
+          Wrap the raw HTML in a plain div inside a Section instead. */}
+      <Section>
+        <div dangerouslySetInnerHTML={{ __html: props.html }} />
+      </Section>
     </Shell>
   );
 }
