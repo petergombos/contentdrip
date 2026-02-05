@@ -4,11 +4,24 @@ export interface ContentStep {
   pageFile?: string; // e.g., "day-1.md" (optional, defaults to emailFile)
 }
 
+export interface PackEmailShellProps {
+  preview?: string;
+  title: string;
+  children: React.ReactNode;
+  footer?: { unsubscribeUrl?: string; manageUrl?: string };
+}
+
 export interface ContentPack {
   key: string;
   name: string;
   description: string;
   steps: ContentStep[];
+
+  /**
+   * Optional per-pack email shell to apply consistent branding (logo/course name/footer).
+   * If omitted, the default EmailShell is used.
+   */
+  EmailShell?: React.ComponentType<PackEmailShellProps>;
 }
 
 // Registry of all content packs

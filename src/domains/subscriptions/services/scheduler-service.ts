@@ -233,6 +233,7 @@ export class SchedulerService {
         preview: parsed.frontmatter.preview,
         html: parsed.html,
         footer: { unsubscribeUrl: stopUrl, manageUrl },
+        EmailShell: pack.EmailShell,
       })
     );
 

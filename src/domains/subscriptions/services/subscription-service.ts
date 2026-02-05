@@ -252,6 +252,7 @@ export class SubscriptionService {
         title: parsed.frontmatter.subject || "Confirm your subscription",
         preview: parsed.frontmatter.preview,
         html: parsed.html,
+        EmailShell: pack.EmailShell,
       })
     );
 
@@ -328,6 +329,7 @@ export class SubscriptionService {
         preview: parsed.frontmatter.preview,
         html: parsed.html,
         footer: { unsubscribeUrl: stopUrl, manageUrl },
+        EmailShell: pack.EmailShell,
       })
     );
 
