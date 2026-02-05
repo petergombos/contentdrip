@@ -18,7 +18,7 @@ import "../src/content-packs";
 config({ path: ".env.local" });
 config({ path: ".env" });
 
-const CRON_SECRET = process.env.CRON_SECRET || "dev-secret";
+// Note: CRON_SECRET is used by the Vercel cron route; this local script doesn't require it.
 
 async function runCron() {
   console.log("Running cron job...");

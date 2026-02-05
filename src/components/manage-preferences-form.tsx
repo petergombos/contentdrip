@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { IntervalSelector, intervalToCron } from "@/components/interval-selector";
+import { IntervalSelector } from "@/components/interval-selector";
 import { TimezoneSelector } from "@/components/timezone-selector";
 import { SendTimeSelector, hourToCron } from "@/components/send-time-selector";
 import {
@@ -59,8 +59,7 @@ export function ManagePreferencesForm({
     setError(null);
 
     try {
-      const baseCron = intervalToCron(data.interval);
-      const cronExpression = hourToCron(data.sendTime, baseCron);
+      const cronExpression = hourToCron(data.sendTime);
 
       const result = await updateSubscriptionAction({
         subscriptionId: subscription.id,

@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 
 export function PageShell(props: {
   title?: string;
@@ -12,15 +10,29 @@ export function PageShell(props: {
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(1000px_circle_at_20%_10%,hsl(var(--quietly-warm)/0.35),transparent_60%),radial-gradient(900px_circle_at_80%_0%,hsl(var(--quietly-olive)/0.18),transparent_55%)]" />
+      <header className="border-b">
+        <div className="container mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
+          <Link href="/" className="font-semibold">
+            ContentDrip
+          </Link>
 
-      <SiteHeader action={props.headerAction} />
+          <div className="flex items-center gap-3">
+            {props.headerAction}
+            <Link
+              href="/manage"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Manage
+            </Link>
+          </div>
+        </div>
+      </header>
 
-      <main className={cn("mx-auto w-full max-w-3xl px-4 pb-16 pt-10", props.className)}>
+      <main className={cn("container mx-auto w-full max-w-3xl px-4 py-10", props.className)}>
         {(props.title || props.subtitle) && (
           <header className="mb-8">
             {props.title && (
-              <h1 className="font-serif text-3xl tracking-tight md:text-4xl">
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
                 {props.title}
               </h1>
             )}
@@ -33,19 +45,16 @@ export function PageShell(props: {
         )}
 
         {props.children}
+      </main>
 
-        <div className="mt-10 text-sm text-muted-foreground">
-          <Link href="/manage" className="underline underline-offset-4 hover:text-foreground">
-            Manage subscription
-          </Link>
-          <span className="mx-2">·</span>
-          <Link href="/" className="underline underline-offset-4 hover:text-foreground">
+      <footer className="border-t">
+        <div className="container mx-auto flex max-w-3xl items-center justify-between px-4 py-6 text-sm text-muted-foreground">
+          <span>© {new Date().getFullYear()} ContentDrip</span>
+          <Link href="/" className="hover:text-foreground">
             Home
           </Link>
         </div>
-      </main>
-
-      <SiteFooter />
+      </footer>
     </div>
   );
 }
