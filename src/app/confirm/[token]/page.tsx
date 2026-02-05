@@ -1,9 +1,12 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createHash } from "crypto";
 import { SubscriptionRepo } from "@/domains/subscriptions/repo/subscription-repo";
 import { SubscriptionService } from "@/domains/subscriptions/services/subscription-service";
 import { PostmarkAdapter } from "@/domains/mail/adapters/postmark/postmark-adapter";
 import { EmailService } from "@/domains/mail/services/email-service";
+import { PageShell } from "@/components/page-shell";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import "@/content-packs";
 
 interface ConfirmPageProps {
@@ -12,6 +15,9 @@ interface ConfirmPageProps {
 
 export default async function ConfirmPage({ params }: ConfirmPageProps) {
   const { token } = await params;
+
+  let status: "ok" | "error" = "ok";
+  let errorMessage: string | null = null;
 
   try {
     const repo = new SubscriptionRepo();
@@ -25,33 +31,46 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
 
     const tokenHash = createHash("sha256").update(token).digest("hex");
     await service.confirmSubscription(tokenHash);
-
-    redirect("/?confirmed=true");
   } catch (error: unknown) {
-    const err = error as { digest?: unknown; message?: unknown };
+    status = "error";
+    errorMessage = error instanceof Error ? error.message : "An error occurred";
+  }
 
-    // `redirect()` throws a NEXT_REDIRECT error; don't swallow it.
-    if (err?.digest && String(err.digest).includes("NEXT_REDIRECT")) {
-      throw error;
-    }
-    if (err?.message && String(err.message).includes("NEXT_REDIRECT")) {
-      throw error;
-    }
-
-    const { PageShell } = await import("@/components/page-shell");
-    const { Card } = await import("@/components/ui/card");
-
+  if (status === "ok") {
     return (
       <PageShell
-        title="Confirmation failed"
-        subtitle="That link may have already been used, or it expired."
+        title="Confirmed"
+        subtitle="You’re subscribed. Your first email will arrive at your chosen time."
       >
-        <Card className="p-6 md:p-8">
+        <Card className="p-6 md:p-8 space-y-4">
           <p className="text-sm text-muted-foreground">
-            {error instanceof Error ? error.message : "An error occurred"}
+            Want to change the delivery time or unsubscribe?
           </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button asChild>
+              <Link href="/manage">Manage subscription</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/">Back to home</Link>
+            </Button>
+          </div>
         </Card>
       </PageShell>
     );
   }
+
+  return (
+    <PageShell
+      title="Confirmation failed"
+      subtitle="That link may have already been used, or it expired."
+    >
+      <Card className="p-6 md:p-8 space-y-4">
+        <p className="text-sm text-muted-foreground">{errorMessage}</p>
+        <Button asChild variant="outline">
+          <Link href="/manage">Request a new manage link</Link>
+        </Button>
+      </Card>
+    </PageShell>
+  );
 }
+
