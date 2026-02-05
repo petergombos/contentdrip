@@ -32,7 +32,7 @@ export class SchedulerService {
     for (const subscription of activeSubscriptions) {
       try {
         const isDue = fastTestStepMinutes
-          ? this.isDueByElapsedMinutes(subscription.updatedAt, now, fastTestStepMinutes)
+          ? await this.isDueByElapsedMinutes(subscription.id, subscription.updatedAt, now, fastTestStepMinutes)
           : this.isDueByCron(subscription.cronExpression, subscription.timezone, now);
         
         if (!isDue) {
@@ -122,31 +122,49 @@ export class SchedulerService {
   /**
    * Fast test mode: move forward once enough minutes have elapsed.
    */
-  private isDueByElapsedMinutes(
-    lastUpdatedAt: Date,
+  private async isDueByElapsedMinutes(
+    subscriptionId: string,
+    fallbackLastUpdatedAt: Date,
     now: Date,
     stepMinutes: number
-  ): boolean {
-    const elapsedMs = now.getTime() - lastUpdatedAt.getTime();
+  ): Promise<boolean> {
+    const lastSentAt = await this.repo.getLastSuccessfulSendAt(subscriptionId);
+    const anchor = lastSentAt ?? fallbackLastUpdatedAt;
+
+    const elapsedMs = now.getTime() - anchor.getTime();
     return elapsedMs >= stepMinutes * 60 * 1000;
   }
 
   /**
-   * DRIP_STEP_MINUTES enables fast-test mode when set.
-   * Invalid/non-positive values fall back to 10 minutes.
+   * Fast-test scheduling.
+   *
+   * During testing, treat "1 day" as N minutes so you can validate the drip end-to-end
+   * quickly, while still being compatible with Vercel Cron (typically hits /api/cron every minute).
+   *
+   * Enablement rules:
+   * - If DRIP_STEP_MINUTES is set -> fast-test mode using that many minutes (invalid => 10).
+   * - Else, if DRIP_TEST_MODE is truthy OR Vercel env is not production -> fast-test mode at 10 minutes.
+   * - Otherwise -> use real cron expressions.
    */
   private getFastTestStepMinutes(): number | null {
     const raw = process.env.DRIP_STEP_MINUTES;
-    if (raw === undefined) {
-      return null;
+    if (raw !== undefined) {
+      const parsed = Number.parseInt(raw, 10);
+      if (Number.isFinite(parsed) && parsed > 0) return parsed;
+      return 10;
     }
 
-    const parsed = Number.parseInt(raw, 10);
-    if (Number.isFinite(parsed) && parsed > 0) {
-      return parsed;
+    const testMode = process.env.DRIP_TEST_MODE;
+    const vercelEnv = process.env.VERCEL_ENV; // production|preview|development
+
+    const truthy = (v: string | undefined) =>
+      v !== undefined && v !== "0" && v.toLowerCase() !== "false";
+
+    if (truthy(testMode) || (vercelEnv && vercelEnv !== "production")) {
+      return 10;
     }
 
-    return 10;
+    return null;
   }
 
   /**

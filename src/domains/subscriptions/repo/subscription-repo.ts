@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { subscriptions, sendLog } from "@/db/subscription-schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import type { Subscription, SubscriptionStatus } from "../model/types";
 import { SubscriptionStatus as StatusEnum } from "../model/types";
 import { generateUUID } from "@/lib/uuid";
@@ -88,17 +88,10 @@ export class SubscriptionRepo {
     return results.map((r: typeof results[0]) => this.mapToDomain(r));
   }
 
-  async findDueSubscriptions(
-    currentTime: Date,
-    timezone: string
-  ): Promise<Subscription[]> {
-    // This will be filtered by the scheduler service using cron-parser
-    // For now, return all active subscriptions
-    const results = await db.query.subscriptions.findMany({
-      where: eq(subscriptions.status, StatusEnum.ACTIVE),
-    });
-
-    return results.map((r: typeof results[0]) => this.mapToDomain(r));
+  // NOTE: Due-logic lives in SchedulerService (cron parsing / fast-test logic).
+  // Keeping this method as a simple alias for now.
+  async findDueSubscriptions(): Promise<Subscription[]> {
+    return this.findActiveSubscriptions();
   }
 
   async logSend(data: {
@@ -137,6 +130,21 @@ export class SubscriptionRepo {
     });
 
     return !!result;
+  }
+
+  /**
+   * Used for fast-test scheduling: when did we last successfully send anything for this subscription?
+   */
+  async getLastSuccessfulSendAt(subscriptionId: string): Promise<Date | null> {
+    const result = await db.query.sendLog.findFirst({
+      where: and(
+        eq(sendLog.subscriptionId, subscriptionId),
+        eq(sendLog.status, "SUCCESS")
+      ),
+      orderBy: (sendLog, { desc }) => [desc(sendLog.sentAt)],
+    });
+
+    return result?.sentAt ?? null;
   }
 
   private mapToDomain(row: {

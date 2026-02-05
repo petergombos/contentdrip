@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "crypto";
 import { db } from "@/db";
-import { tokens, subscriptions } from "@/db/subscription-schema";
+import { tokens } from "@/db/subscription-schema";
 import { eq, and, gt, isNull } from "drizzle-orm";
 import type { MailAdapter } from "../ports/mail-adapter";
 import type { TokenType } from "@/domains/subscriptions/model/types";

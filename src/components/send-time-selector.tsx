@@ -40,13 +40,8 @@ export function SendTimeSelector({
 }
 
 /**
- * Convert hour (0-23) to cron expression for a specific interval pattern
- * This modifies the hour in a cron expression
+ * Convert hour (0-23) to a daily cron expression.
  */
-export function hourToCron(hour: number, baseCron: string): string {
-  const parts = baseCron.split(" ");
-  if (parts.length >= 2) {
-    parts[1] = hour.toString(); // Replace hour
-  }
-  return parts.join(" ");
+export function hourToCron(hour: number): string {
+  return `0 ${hour} * * *`;
 }

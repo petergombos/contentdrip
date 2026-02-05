@@ -1,10 +1,10 @@
+import { getPackByKey } from "@/content-packs/registry";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { getPackStep } from "@/content-packs/registry";
 import { renderMarkdownToReact } from "@/lib/markdown/renderer";
-import "@/content-packs"; // Register all packs
+import { PageShell } from "@/components/page-shell";
+import { Card } from "@/components/ui/card";
 
 interface CompanionPageProps {
   params: Promise<{ packKey: string; slug: string }>;
@@ -13,15 +13,13 @@ interface CompanionPageProps {
 export default async function CompanionPage({ params }: CompanionPageProps) {
   const { packKey, slug } = await params;
 
-  const packStep = getPackStep(packKey, slug);
-  if (!packStep) {
-    notFound();
-  }
+  const pack = getPackByKey(packKey);
+  if (!pack) return notFound();
 
-  const { pack, step } = packStep;
+  const step = pack.steps.find((s) => s.slug === slug);
+  if (!step) return notFound();
 
-  // Load companion page markdown
-  const pageFile = step.pageFile || step.emailFile;
+  const pageFile = step.pageFile ?? step.emailFile;
   const pagePath = join(
     process.cwd(),
     "src/content-packs",
@@ -34,37 +32,21 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
   try {
     markdown = readFileSync(pagePath, "utf-8");
   } catch {
-    notFound();
+    return notFound();
   }
 
   const content = renderMarkdownToReact(markdown);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto max-w-3xl px-4 py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{pack.name}</h1>
-          <p className="text-muted-foreground">{pack.description}</p>
-        </div>
-
-        <article className="prose prose-lg dark:prose-invert max-w-none">
+    <PageShell
+      title={pack.name}
+      subtitle={pack.description ?? "A companion page for this email."}
+    >
+      <Card className="p-6 md:p-10">
+        <article className="prose prose-neutral max-w-none dark:prose-invert">
           {content}
         </article>
-
-        <div className="mt-12 pt-8 border-t">
-          <div className="flex gap-4 text-sm">
-            <Link href="/" className="text-muted-foreground hover:text-foreground">
-              Subscribe
-            </Link>
-            <Link
-              href="/manage"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Manage Subscription
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+      </Card>
+    </PageShell>
   );
 }

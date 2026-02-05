@@ -27,24 +27,31 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
     await service.confirmSubscription(tokenHash);
 
     redirect("/?confirmed=true");
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { digest?: unknown; message?: unknown };
+
     // `redirect()` throws a NEXT_REDIRECT error; don't swallow it.
-    if (error?.digest && String(error.digest).includes("NEXT_REDIRECT")) {
+    if (err?.digest && String(err.digest).includes("NEXT_REDIRECT")) {
       throw error;
     }
-    if (error?.message && String(error.message).includes("NEXT_REDIRECT")) {
+    if (err?.message && String(err.message).includes("NEXT_REDIRECT")) {
       throw error;
     }
 
+    const { PageShell } = await import("@/components/page-shell");
+    const { Card } = await import("@/components/ui/card");
+
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Confirmation Failed</h1>
-          <p className="text-muted-foreground">
+      <PageShell
+        title="Confirmation failed"
+        subtitle="That link may have already been used, or it expired."
+      >
+        <Card className="p-6 md:p-8">
+          <p className="text-sm text-muted-foreground">
             {error instanceof Error ? error.message : "An error occurred"}
           </p>
-        </div>
-      </div>
+        </Card>
+      </PageShell>
     );
   }
 }
