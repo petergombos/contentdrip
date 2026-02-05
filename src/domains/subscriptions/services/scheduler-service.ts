@@ -141,29 +141,36 @@ export class SchedulerService {
   /**
    * Fast-test scheduling.
    *
-   * During testing, treat "1 day" as N minutes so you can validate the drip end-to-end
-   * quickly, while still being compatible with Vercel Cron (typically hits /api/cron every minute).
+   * In fast mode, we speed up time so you can test a multi-day drip quickly.
+   *
+   * DRIP_TIME_SCALE is the multiplier vs real time.
+   * Example: 144 means 1 day (1440 minutes) becomes 10 minutes.
+   *
+   * Implementation detail: we convert the scale to a fixed "minutes between steps" threshold
+   * and check it against the last successful send timestamp.
    *
    * Enablement rules:
-   * - If DRIP_STEP_MINUTES is set -> fast-test mode using that many minutes (invalid => 10).
-   * - Else, if DRIP_TEST_MODE is truthy OR Vercel env is not production -> fast-test mode at 10 minutes.
+   * - If DRIP_TIME_SCALE is set and > 0 -> fast-test mode (scale). Invalid -> fallback scale 144.
+   * - Back-compat: if DRIP_STEP_MINUTES is set -> fast-test mode using that many minutes.
    * - Otherwise -> use real cron expressions.
    */
   private getFastTestStepMinutes(): number | null {
+    // Preferred: DRIP_TIME_SCALE
+    const scaleRaw = process.env.DRIP_TIME_SCALE;
+    if (scaleRaw !== undefined) {
+      const scale = Number.parseFloat(scaleRaw);
+      const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 144;
+      const minutesPerDay = 24 * 60;
+      const minutes = minutesPerDay / safeScale;
+      // Clamp to at least 1 minute to avoid zero/negative values.
+      return Math.max(1, Math.round(minutes));
+    }
+
+    // Back-compat: DRIP_STEP_MINUTES
     const raw = process.env.DRIP_STEP_MINUTES;
     if (raw !== undefined) {
       const parsed = Number.parseInt(raw, 10);
       if (Number.isFinite(parsed) && parsed > 0) return parsed;
-      return 10;
-    }
-
-    const testMode = process.env.DRIP_TEST_MODE;
-    const vercelEnv = process.env.VERCEL_ENV; // production|preview|development
-
-    const truthy = (v: string | undefined) =>
-      v !== undefined && v !== "0" && v.toLowerCase() !== "false";
-
-    if (truthy(testMode) || (vercelEnv && vercelEnv !== "production")) {
       return 10;
     }
 
