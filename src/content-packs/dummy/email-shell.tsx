@@ -16,23 +16,24 @@ import type { PackEmailShellProps } from "@/content-packs/registry";
  * Branded email shell for the dummy content pack.
  *
  * Each content pack can define its own email shell with custom branding
- * (header, colors, footer). This serves as a polished example.
+ * (header, colors, footer). This serves as a polished example with
+ * a warm, editorial aesthetic that matches the web experience.
  */
 export function DummyEmailShell(props: PackEmailShellProps) {
   return (
     <Html>
       <Head>
         <style>{`
-          img { max-width: 100%; height: auto; border-radius: 8px; margin: 20px 0; }
-          h2 { font-size: 20px; font-weight: 700; margin: 32px 0 12px; color: #1c1917; font-family: Georgia, 'Times New Roman', serif; }
-          h3 { font-size: 17px; font-weight: 600; margin: 24px 0 8px; color: #1c1917; }
-          p { margin: 0 0 16px; line-height: 28px; color: #44403c; }
-          blockquote { border-left: 3px solid #d97706; padding-left: 16px; margin: 20px 0; color: #57534e; font-style: italic; }
-          a { color: #b45309; }
-          ul, ol { padding-left: 24px; margin: 0 0 16px; }
-          li { margin-bottom: 8px; line-height: 26px; color: #44403c; }
-          hr { border: none; border-top: 1px solid #e7e5e4; margin: 28px 0; }
-          strong { color: #1c1917; }
+          img { max-width: 100%; height: auto; border-radius: 8px; margin: 24px 0; }
+          h2 { font-size: 20px; font-weight: 700; margin: 36px 0 12px; color: #2c2418; font-family: Georgia, 'Times New Roman', serif; }
+          h3 { font-size: 17px; font-weight: 600; margin: 28px 0 8px; color: #2c2418; }
+          p { margin: 0 0 18px; line-height: 30px; color: #4a3f33; }
+          blockquote { border-left: 2px solid #c4956a; padding-left: 18px; margin: 24px 0; color: #6b5c4d; font-style: italic; }
+          a { color: #8b6834; }
+          ul, ol { padding-left: 24px; margin: 0 0 18px; }
+          li { margin-bottom: 10px; line-height: 28px; color: #4a3f33; }
+          hr { border: none; border-top: 1px solid #e8e2d9; margin: 32px 0; }
+          strong { color: #2c2418; }
         `}</style>
       </Head>
       {props.preview ? <Preview>{props.preview}</Preview> : null}
@@ -40,6 +41,7 @@ export function DummyEmailShell(props: PackEmailShellProps) {
         <Container style={styles.container}>
           {/* ── Header ── */}
           <Section style={styles.header}>
+            <Text style={styles.headerLabel}>A Free 5-Day Email Course</Text>
             <Text style={styles.headerTitle}>
               The Art of Mindful Productivity
             </Text>
@@ -55,8 +57,7 @@ export function DummyEmailShell(props: PackEmailShellProps) {
           <Section style={styles.footer}>
             <Hr style={styles.hr} />
             <Text style={styles.footerBrand}>
-              The Art of Mindful Productivity&ensp;·&ensp;A free 5-day email
-              course
+              The Art of Mindful Productivity
             </Text>
             <Text style={styles.footerLinks}>
               {props.footer?.manageUrl ? (
@@ -68,7 +69,9 @@ export function DummyEmailShell(props: PackEmailShellProps) {
                     Manage preferences
                   </Link>
                   {props.footer?.unsubscribeUrl ? (
-                    <span style={styles.footerDivider}>&ensp;·&ensp;</span>
+                    <span style={styles.footerDivider}>
+                      &ensp;&middot;&ensp;
+                    </span>
                   ) : null}
                 </>
               ) : null}
@@ -82,8 +85,8 @@ export function DummyEmailShell(props: PackEmailShellProps) {
               ) : null}
             </Text>
             <Text style={styles.footerNote}>
-              You&apos;re receiving this because you signed up for our free email
-              course.
+              You&apos;re receiving this because you signed up for our free
+              email course.
             </Text>
           </Section>
         </Container>
@@ -96,84 +99,94 @@ export function DummyEmailShell(props: PackEmailShellProps) {
 
 const styles: Record<string, React.CSSProperties> = {
   body: {
-    backgroundColor: "#fafaf9",
+    backgroundColor: "#f8f5f0",
     fontFamily: "Georgia, 'Times New Roman', serif",
     margin: 0,
-    padding: "32px 0",
-    color: "#1c1917",
+    padding: "40px 0",
+    color: "#2c2418",
   },
   container: {
     margin: "0 auto",
     maxWidth: 560,
-    backgroundColor: "#ffffff",
-    border: "1px solid #e7e5e4",
+    backgroundColor: "#fffdf9",
+    border: "1px solid #e8e2d9",
+    borderRadius: 8,
+    overflow: "hidden",
   },
   /* Header bar */
   header: {
-    backgroundColor: "#fffbeb",
-    borderBottom: "3px solid #d97706",
-    padding: "20px 32px",
+    backgroundColor: "#faf6ef",
+    borderBottom: "2px solid #c4956a",
+    padding: "24px 32px 20px",
     textAlign: "center" as const,
+  },
+  headerLabel: {
+    margin: "0 0 4px",
+    fontSize: 10,
+    fontWeight: 600,
+    letterSpacing: "0.15em",
+    textTransform: "uppercase" as const,
+    color: "#8b8078",
+    fontFamily: "system-ui, -apple-system, sans-serif",
   },
   headerTitle: {
     margin: 0,
-    fontSize: 13,
-    fontWeight: 600,
-    letterSpacing: "0.1em",
-    textTransform: "uppercase" as const,
-    color: "#78350f",
+    fontSize: 15,
+    fontWeight: 700,
+    letterSpacing: "0.02em",
+    color: "#8b6834",
     fontFamily: "Georgia, 'Times New Roman', serif",
   },
   /* Main content area */
   main: {
-    padding: "32px 32px 8px",
+    padding: "36px 32px 12px",
   },
   h1: {
-    fontSize: 26,
-    lineHeight: "34px",
+    fontSize: 28,
+    lineHeight: "36px",
     fontWeight: 700,
-    margin: "0 0 20px",
-    color: "#1c1917",
+    margin: "0 0 24px",
+    color: "#2c2418",
     fontFamily: "Georgia, 'Times New Roman', serif",
   },
   content: {
     fontSize: 16,
-    lineHeight: "28px",
-    color: "#44403c",
+    lineHeight: "30px",
+    color: "#4a3f33",
   },
   /* Footer */
   footer: {
     padding: "0 32px 32px",
   },
   hr: {
-    borderColor: "#e7e5e4",
-    margin: "8px 0 20px",
+    borderColor: "#e8e2d9",
+    margin: "8px 0 24px",
   },
   footerBrand: {
     margin: "0 0 8px",
     fontSize: 12,
     fontWeight: 600,
-    color: "#92400e",
+    color: "#8b6834",
     textAlign: "center" as const,
     fontFamily: "Georgia, 'Times New Roman', serif",
   },
   footerLinks: {
     margin: "0 0 10px",
     fontSize: 12,
-    color: "#78716c",
+    color: "#8b8078",
     textAlign: "center" as const,
   },
   footerLink: {
-    color: "#78716c",
+    color: "#8b8078",
     textDecoration: "underline",
   },
   footerDivider: {
-    color: "#d6d3d1",
+    color: "#d4cdc4",
   },
   footerNote: {
     margin: 0,
     fontSize: 11,
-    color: "#a8a29e",
+    color: "#b5ada4",
     textAlign: "center" as const,
   },
 };

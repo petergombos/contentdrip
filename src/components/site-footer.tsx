@@ -2,31 +2,36 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t bg-muted/30">
-      <div className="mx-auto max-w-5xl px-4 py-12 md:py-16">
-        <div className="grid gap-8 sm:grid-cols-3">
+    <footer className="border-t bg-warm-subtle">
+      <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
+        <div className="grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
           {/* Brand */}
           <div>
             <Link
               href="/"
-              className="font-serif text-lg font-semibold no-underline text-foreground"
+              className="group inline-flex items-center gap-2 font-serif text-lg font-semibold no-underline text-foreground"
             >
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-[10px] font-bold text-primary">
+                C
+              </span>
               ContentDrip
             </Link>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Thoughtful content delivered at your pace. Subscribe, learn, grow
-              — one email at a time.
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Thoughtful content, delivered at your pace. Subscribe to curated
+              email courses and build lasting knowledge one lesson at a time.
             </p>
           </div>
 
-          {/* Links */}
+          {/* Navigation */}
           <div>
-            <p className="text-sm font-semibold">Links</p>
-            <ul className="mt-3 list-none space-y-2 p-0">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/70">
+              Navigate
+            </p>
+            <ul className="mt-4 list-none space-y-2.5 p-0">
               <li>
                 <Link
                   href="/"
-                  className="text-sm text-muted-foreground no-underline hover:text-foreground"
+                  className="text-sm text-muted-foreground no-underline transition-colors hover:text-foreground"
                 >
                   Home
                 </Link>
@@ -34,7 +39,7 @@ export function SiteFooter() {
               <li>
                 <Link
                   href="/manage"
-                  className="text-sm text-muted-foreground no-underline hover:text-foreground"
+                  className="text-sm text-muted-foreground no-underline transition-colors hover:text-foreground"
                 >
                   Manage Subscription
                 </Link>
@@ -42,24 +47,34 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Details */}
+          {/* Promise */}
           <div>
-            <p className="text-sm font-semibold">Details</p>
-            <ul className="mt-3 list-none space-y-2 p-0">
-              <li className="text-sm text-muted-foreground">Free forever</li>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/70">
+              Our Promise
+            </p>
+            <ul className="mt-4 list-none space-y-2.5 p-0">
+              <li className="text-sm text-muted-foreground">
+                Free forever, no catch
+              </li>
               <li className="text-sm text-muted-foreground">
                 Pause or cancel anytime
               </li>
               <li className="text-sm text-muted-foreground">
                 One-click unsubscribe
               </li>
+              <li className="text-sm text-muted-foreground">
+                No spam, no selling your data
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 border-t pt-6">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ContentDrip. All rights reserved.
+        <div className="mt-12 flex flex-col items-center gap-3 border-t pt-8 sm:flex-row sm:justify-between">
+          <p className="text-xs text-muted-foreground/60">
+            &copy; {new Date().getFullYear()} ContentDrip. All rights reserved.
+          </p>
+          <p className="text-xs text-muted-foreground/50">
+            Built with care for learners everywhere.
           </p>
         </div>
       </div>

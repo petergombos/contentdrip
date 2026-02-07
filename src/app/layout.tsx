@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter, Lora } from "next/font/google";
+import { DM_Sans, Fraunces } from "next/font/google";
 
-const fontSans = Inter({
+const fontSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-const fontSerif = Lora({
+const fontSerif = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
 export const metadata: Metadata = {

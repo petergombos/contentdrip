@@ -21,14 +21,15 @@ export function EmailShell(props: {
     <Html>
       <Head>
         <style>{`
-          img { max-width: 100%; height: auto; border-radius: 6px; margin: 16px 0; }
-          h2 { font-size: 20px; font-weight: 600; margin: 28px 0 12px; color: #1c1917; }
-          h3 { font-size: 17px; font-weight: 600; margin: 24px 0 8px; color: #1c1917; }
-          blockquote { border-left: 3px solid #d6d3d1; padding-left: 16px; margin: 16px 0; color: #57534e; font-style: italic; }
-          a { color: #b45309; }
+          img { max-width: 100%; height: auto; border-radius: 8px; margin: 20px 0; }
+          h2 { font-size: 20px; font-weight: 600; margin: 32px 0 12px; color: #2c2418; font-family: Georgia, 'Times New Roman', serif; }
+          h3 { font-size: 17px; font-weight: 600; margin: 24px 0 8px; color: #2c2418; }
+          blockquote { border-left: 2px solid #c4956a; padding-left: 16px; margin: 20px 0; color: #6b5c4d; font-style: italic; }
+          a { color: #8b6834; }
           ul, ol { padding-left: 24px; margin: 12px 0; }
-          li { margin-bottom: 6px; line-height: 24px; color: #44403c; }
-          hr { border: none; border-top: 1px solid #e7e5e4; margin: 24px 0; }
+          li { margin-bottom: 8px; line-height: 26px; color: #4a3f33; }
+          hr { border: none; border-top: 1px solid #e8e2d9; margin: 28px 0; }
+          strong { color: #2c2418; }
         `}</style>
       </Head>
       {props.preview ? <Preview>{props.preview}</Preview> : null}
@@ -58,7 +59,7 @@ export function EmailShell(props: {
                     Manage preferences
                   </Link>
                   {props.footer?.unsubscribeUrl ? (
-                    <span style={styles.footerDivider}>&ensp;·&ensp;</span>
+                    <span style={styles.footerDivider}>&ensp;&middot;&ensp;</span>
                   ) : null}
                 </>
               ) : null}
@@ -72,7 +73,7 @@ export function EmailShell(props: {
               ) : null}
             </Text>
             <Text style={styles.footerNote}>
-              Sent via ContentDrip — thoughtful content, delivered at your pace.
+              Sent with care by ContentDrip
             </Text>
           </Section>
         </Container>
@@ -83,67 +84,68 @@ export function EmailShell(props: {
 
 const styles: Record<string, React.CSSProperties> = {
   body: {
-    backgroundColor: "#fafaf9",
+    backgroundColor: "#f8f5f0",
     fontFamily:
       "Georgia, 'Times New Roman', serif",
     margin: 0,
-    padding: "32px 0",
-    color: "#1c1917",
+    padding: "40px 0",
+    color: "#2c2418",
   },
   container: {
     margin: "0 auto",
-    padding: "0 24px",
+    padding: "0 28px",
     maxWidth: 560,
   },
   brand: {
     paddingBottom: 16,
-    marginBottom: 24,
-    borderBottom: "1px solid #e7e5e4",
+    marginBottom: 28,
+    borderBottom: "1px solid #e8e2d9",
   },
   brandName: {
     margin: 0,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 600,
-    letterSpacing: "0.02em",
-    color: "#44403c",
+    letterSpacing: "0.04em",
+    color: "#8b6834",
+    fontFamily: "Georgia, 'Times New Roman', serif",
   },
   h1: {
-    fontSize: 26,
-    lineHeight: "34px",
+    fontSize: 28,
+    lineHeight: "36px",
     fontWeight: 700,
-    margin: "0 0 16px",
-    color: "#1c1917",
+    margin: "0 0 20px",
+    color: "#2c2418",
     fontFamily: "Georgia, 'Times New Roman', serif",
   },
   content: {
     fontSize: 16,
-    lineHeight: "26px",
-    color: "#44403c",
+    lineHeight: "28px",
+    color: "#4a3f33",
   },
   footer: {
-    marginTop: 8,
+    marginTop: 12,
   },
   hr: {
-    borderColor: "#e7e5e4",
-    margin: "24px 0",
+    borderColor: "#e8e2d9",
+    margin: "28px 0",
   },
   footerLinks: {
     margin: "0 0 8px",
     fontSize: 12,
-    color: "#78716c",
+    color: "#8b8078",
     textAlign: "center" as const,
   },
   footerLink: {
-    color: "#78716c",
+    color: "#8b8078",
     textDecoration: "underline",
   },
   footerDivider: {
-    color: "#d6d3d1",
+    color: "#d4cdc4",
   },
   footerNote: {
     margin: 0,
     fontSize: 11,
-    color: "#a8a29e",
+    color: "#b5ada4",
     textAlign: "center" as const,
   },
 };

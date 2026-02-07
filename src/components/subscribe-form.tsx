@@ -11,7 +11,6 @@ import { subscribeAction } from "@/domains/subscriptions/actions/subscription-ac
 import { useEffect, useMemo, useState } from "react";
 import { getAllPacks } from "@/content-packs/registry";
 import "@/content-packs"; // Register all packs
-import { Mail } from "lucide-react";
 
 const subscribeSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -70,7 +69,11 @@ export function SubscribeForm() {
       });
 
       if (result?.serverError) {
-        setError(typeof result.serverError === 'string' ? result.serverError : 'An error occurred');
+        setError(
+          typeof result.serverError === "string"
+            ? result.serverError
+            : "An error occurred"
+        );
       } else if (result?.data) {
         setSuccess(true);
       }
@@ -83,14 +86,35 @@ export function SubscribeForm() {
 
   if (success) {
     return (
-      <div className="py-2 text-center">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-          <Mail className="h-5 w-5 text-primary" />
+      <div className="py-3 text-center animate-scale-in">
+        {/* Animated check */}
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-olive/10">
+          <svg
+            className="h-7 w-7 text-olive"
+            viewBox="0 0 24 24"
+            fill="none"
+            strokeWidth={2.5}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path
+              d="M5 13l4 4L19 7"
+              style={{
+                strokeDasharray: 24,
+                strokeDashoffset: 0,
+                animation: "check-draw 0.4s ease-out 0.2s both",
+              }}
+            />
+          </svg>
         </div>
-        <h2 className="text-lg font-semibold">Check your inbox!</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          We&apos;ve sent a confirmation email. Click the link to start your
-          journey.
+        <h2 className="font-serif text-xl font-semibold text-foreground">
+          Check your inbox
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          We&apos;ve sent a confirmation email.
+          <br />
+          Click the link inside to start your journey.
         </p>
       </div>
     );
@@ -112,37 +136,50 @@ export function SubscribeForm() {
       {/* timezone is auto-detected; keep it in the form payload */}
       <input type="hidden" {...register("timezone")} />
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email address</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-xs font-medium">
+          Email address
+        </Label>
         <Input
           id="email"
           type="email"
           {...register("email")}
           placeholder="you@example.com"
           autoComplete="email"
+          className="h-10"
         />
         {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
+          <p className="text-xs text-destructive">{errors.email.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="sendTime">Preferred delivery time</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="sendTime" className="text-xs font-medium">
+          Preferred delivery time
+        </Label>
         <SendTimeSelector
           value={sendTime}
           onValueChange={(value) => setValue("sendTime", value)}
         />
-        <p className="text-xs text-muted-foreground">
-          Timezone:{" "}
-          <span className="font-mono">{timezone || "Detecting…"}</span>
+        <p className="text-[11px] text-muted-foreground/70">
+          {timezone ? (
+            <>
+              Delivering to{" "}
+              <span className="font-medium text-muted-foreground">
+                {timezone.replace(/_/g, " ")}
+              </span>
+            </>
+          ) : (
+            "Detecting your timezone…"
+          )}
         </p>
         {errors.timezone && (
-          <p className="text-sm text-destructive">{errors.timezone.message}</p>
+          <p className="text-xs text-destructive">{errors.timezone.message}</p>
         )}
       </div>
 
       {error && (
-        <div className="rounded-lg border border-destructive bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
           {error}
         </div>
       )}
@@ -150,10 +187,35 @@ export function SubscribeForm() {
       <Button
         type="submit"
         disabled={isSubmitting || !timezone}
-        className="w-full"
+        className="w-full h-10"
         size="lg"
       >
-        {isSubmitting ? "Subscribing…" : "Start My Free Course"}
+        {isSubmitting ? (
+          <span className="flex items-center gap-2">
+            <svg
+              className="h-3.5 w-3.5 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
+            Subscribing…
+          </span>
+        ) : (
+          "Start My Free Course"
+        )}
       </Button>
     </form>
   );
