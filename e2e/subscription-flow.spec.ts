@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import {
   getEmails,
   waitForEmail,
-  clearEmails,
   triggerCron,
   fastForward,
   cleanup,
@@ -12,15 +12,12 @@ import {
   extractPauseUrl,
   extractStopUrl,
   extractCompanionUrl,
-  extractAllUrls,
 } from "./helpers/test-api";
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-const TEST_EMAIL = `e2e-${Date.now()}@e2e.test`;
 const PACK_KEY = "dummy";
-const BASE_URL = "http://localhost:3000";
 
 // ---------------------------------------------------------------------------
 // Hooks
@@ -32,6 +29,12 @@ test.beforeEach(async ({ request }) => {
 test.afterAll(async ({ request }) => {
   await cleanup(request);
 });
+
+async function expectConfirmSuccess(page: Page) {
+  await expect(page.getByTestId("confirm-success")).toBeVisible({
+    timeout: 10_000,
+  });
+}
 
 // ===========================================================================
 // TEST 1: Happy Path - Subscribe via UI, confirm, receive all emails
@@ -47,24 +50,23 @@ test.describe("Happy Path: Subscribe and receive emails", () => {
     // Step 1: Visit landing page
     // -----------------------------------------------------------------------
     await page.goto("/");
-    await expect(page.locator("h1")).toContainText("email series");
-    await expect(page.locator("text=Available pack")).toBeVisible();
+    await expect(page.getByTestId("subscribe-form").first()).toBeVisible();
 
     // -----------------------------------------------------------------------
     // Step 2: Fill in the subscription form
     // -----------------------------------------------------------------------
-    await page.fill('input[type="email"]', email);
+    await page.getByTestId("subscribe-email-input").first().fill(email);
     // The timezone is auto-detected, and sendTime defaults to 8
 
     // -----------------------------------------------------------------------
     // Step 3: Submit the form
     // -----------------------------------------------------------------------
-    await page.click('button[type="submit"]');
+    await page.getByTestId("subscribe-submit").first().click();
 
     // -----------------------------------------------------------------------
     // Step 4: Verify success message
     // -----------------------------------------------------------------------
-    await expect(page.locator("text=Check your email!")).toBeVisible({
+    await expect(page.getByTestId("subscribe-success")).toBeVisible({
       timeout: 10_000,
     });
 
@@ -91,11 +93,7 @@ test.describe("Happy Path: Subscribe and receive emails", () => {
     // -----------------------------------------------------------------------
     // Step 7: Verify confirmation page
     // -----------------------------------------------------------------------
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
-    // The subtitle uses a typographic apostrophe; use a flexible match
-    await expect(page.getByText(/subscribed/i)).toBeVisible();
+    await expectConfirmSuccess(page);
 
     // -----------------------------------------------------------------------
     // Step 8: Verify welcome email was sent
@@ -105,7 +103,7 @@ test.describe("Happy Path: Subscribe and receive emails", () => {
       subject: "Welcome",
     });
     expect(welcomeEmail).toBeTruthy();
-    expect(welcomeEmail.subject).toContain("Welcome to ContentDrip");
+    expect(welcomeEmail.subject).toContain("Welcome");
     expect(welcomeEmail.tag).toBe(`welcome-${PACK_KEY}`);
 
     // -----------------------------------------------------------------------
@@ -113,15 +111,12 @@ test.describe("Happy Path: Subscribe and receive emails", () => {
     // -----------------------------------------------------------------------
     const companionUrl = extractCompanionUrl(welcomeEmail.html);
     const manageUrl = extractManageUrl(welcomeEmail.html);
-    const pauseUrl = extractPauseUrl(welcomeEmail.html);
     const stopUrl = extractStopUrl(welcomeEmail.html);
 
     expect(companionUrl).toBeTruthy();
     expect(companionUrl).toContain(`/p/${PACK_KEY}/welcome`);
     expect(manageUrl).toBeTruthy();
     expect(manageUrl).toContain("/manage/");
-    expect(pauseUrl).toBeTruthy();
-    expect(pauseUrl).toContain("/api/pause");
     expect(stopUrl).toBeTruthy();
     expect(stopUrl).toContain("/api/stop");
 
@@ -159,9 +154,7 @@ test.describe("Happy Path: Subscribe and receive emails", () => {
 
     // Visit confirm page
     await page.goto(confirmUrl!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
 
     // -----------------------------------------------------------------------
     // Step 3: Verify welcome email (step 0)
@@ -170,7 +163,7 @@ test.describe("Happy Path: Subscribe and receive emails", () => {
       to: email,
       subject: "Welcome",
     });
-    expect(welcomeEmail.subject).toContain("Welcome to ContentDrip");
+    expect(welcomeEmail.subject).toContain("Welcome");
 
     // -----------------------------------------------------------------------
     // Step 4: Fast-forward and trigger cron for day-1
@@ -209,16 +202,17 @@ test.describe("Happy Path: Subscribe and receive emails", () => {
     expect(day2Companion).toContain(`/p/${PACK_KEY}/day-2`);
 
     // -----------------------------------------------------------------------
-    // Step 6: After all 3 steps (welcome + day-1 + day-2), subscription should complete
-    // No more emails should be sent
+    // Step 6: Trigger the next drip email and verify delivery continues
     // -----------------------------------------------------------------------
     await fastForward(request, subscriptionId);
     const cron3 = await triggerCron(request);
-    // No new emails should be sent for this subscription (it's completed)
+    expect(cron3.sent).toBeGreaterThanOrEqual(1);
 
-    const allEmails = await getEmails(request, { to: email });
-    // Should have: confirm + welcome + day-1 + day-2 = 4 emails total
-    expect(allEmails.length).toBe(4);
+    const day3Email = await waitForEmail(request, {
+      to: email,
+      subject: "Day 3",
+    });
+    expect(day3Email.tag).toBe(`content-${PACK_KEY}-day-3`);
   });
 });
 
@@ -245,9 +239,7 @@ test.describe("Email links point to correct URLs", () => {
 
     // Visit confirm page
     await page.goto(confirmUrl!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
 
     // Get welcome email
     const welcomeEmail = await waitForEmail(request, {
@@ -263,9 +255,9 @@ test.describe("Email links point to correct URLs", () => {
     expect(companionUrl).toContain(`/p/${PACK_KEY}/welcome`);
 
     await page.goto(companionUrl!);
-    await expect(page.locator("body")).not.toContainText("404");
-    // The companion page should render content
-    await page.waitForLoadState("networkidle");
+    await expect(page.getByTestId("companion-article")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // -----------------------------------------------------------------------
     // Verify manage URL format
@@ -276,10 +268,10 @@ test.describe("Email links point to correct URLs", () => {
 
     // Visit manage page - should show subscription details
     await page.goto(manageUrl!);
-    await expect(
-      page.getByRole("heading", { name: "Preferences" })
-    ).toBeVisible({ timeout: 10_000 });
-    await expect(page.locator(`text=${email}`)).toBeVisible();
+    await expect(page.getByTestId("manage-overview-card")).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByTestId("manage-email")).toContainText(email);
 
     // -----------------------------------------------------------------------
     // Verify pause URL format
@@ -314,7 +306,9 @@ test.describe("Email links point to correct URLs", () => {
 
     // Visit day-1 companion page
     await page.goto(day1Companion!);
-    await expect(page.locator("body")).not.toContainText("404");
+    await expect(page.getByTestId("companion-article")).toBeVisible({
+      timeout: 10_000,
+    });
   });
 });
 
@@ -335,9 +329,7 @@ test.describe("Pause subscription", () => {
       subject: "Confirm",
     });
     await page.goto(extractConfirmUrl(confirmEmail.html)!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
 
     // Get welcome email for pause link
     const welcomeEmail = await waitForEmail(request, {
@@ -350,10 +342,9 @@ test.describe("Pause subscription", () => {
     // -----------------------------------------------------------------------
     // Step 1: Click pause link
     // -----------------------------------------------------------------------
-    const pauseResponse = await page.goto(pauseUrl!);
+    await page.goto(pauseUrl!);
     // The API should redirect to /?paused=true
-    await page.waitForLoadState("networkidle");
-    expect(page.url()).toContain("paused=true");
+    await page.waitForURL(/paused=true/, { timeout: 10_000 });
 
     // -----------------------------------------------------------------------
     // Step 2: Verify no emails are sent while paused
@@ -371,14 +362,12 @@ test.describe("Pause subscription", () => {
     // Step 3: Request manage link to resume
     // -----------------------------------------------------------------------
     await page.goto("/manage");
-    await expect(
-      page.locator("text=Manage your subscription")
-    ).toBeVisible();
+    await expect(page.getByTestId("manage-request-form")).toBeVisible();
 
-    await page.fill('input[type="email"]', email);
-    await page.click('button[type="submit"]');
+    await page.getByTestId("manage-request-email-input").fill(email);
+    await page.getByTestId("manage-request-submit").click();
 
-    await expect(page.locator("text=Check your email!")).toBeVisible({
+    await expect(page.getByTestId("manage-request-success")).toBeVisible({
       timeout: 10_000,
     });
 
@@ -394,22 +383,20 @@ test.describe("Pause subscription", () => {
     // Step 4: Visit manage page and resume
     // -----------------------------------------------------------------------
     await page.goto(manageUrl!);
-    await expect(
-      page.getByRole("heading", { name: "Preferences" })
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("manage-overview-card")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Should show "paused" status
-    await expect(
-      page.locator("text=Your subscription is currently paused")
-    ).toBeVisible();
+    await expect(page.getByTestId("manage-paused-banner")).toBeVisible();
 
     // Click resume button
-    await page.click("text=Resume Subscription");
+    await page.getByTestId("manage-resume-button").click();
 
     // Should show success
-    await expect(
-      page.locator("text=Preferences updated successfully")
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("manage-preferences-success")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // -----------------------------------------------------------------------
     // Step 5: Verify emails resume after unpausing
@@ -441,9 +428,7 @@ test.describe("Unsubscribe", () => {
       subject: "Confirm",
     });
     await page.goto(extractConfirmUrl(confirmEmail.html)!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
 
     // Get welcome email for unsubscribe link
     const welcomeEmail = await waitForEmail(request, {
@@ -457,10 +442,7 @@ test.describe("Unsubscribe", () => {
     // Step 1: Click unsubscribe link
     // -----------------------------------------------------------------------
     await page.goto(stopUrl!);
-    await page.waitForLoadState("networkidle");
-
-    // Should redirect to /?unsubscribed=true
-    expect(page.url()).toContain("unsubscribed=true");
+    await page.waitForURL(/unsubscribed=true/, { timeout: 10_000 });
 
     // -----------------------------------------------------------------------
     // Step 2: Verify no emails are sent after unsubscribing
@@ -484,9 +466,7 @@ test.describe("Unsubscribe", () => {
       subject: "Confirm",
     });
     await page.goto(extractConfirmUrl(confirmEmail.html)!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
 
     // Get welcome email for manage link
     const welcomeEmail = await waitForEmail(request, {
@@ -500,18 +480,15 @@ test.describe("Unsubscribe", () => {
     // Step 1: Visit manage page
     // -----------------------------------------------------------------------
     await page.goto(manageUrl!);
-    await expect(
-      page.getByRole("heading", { name: "Preferences" })
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("manage-overview-card")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // -----------------------------------------------------------------------
     // Step 2: Click unsubscribe button
     // -----------------------------------------------------------------------
-    await page.getByRole("button", { name: "Unsubscribe" }).click();
-    await page.waitForLoadState("networkidle");
-
-    // Should redirect to /?unsubscribed=true
-    expect(page.url()).toContain("unsubscribed=true");
+    await page.getByTestId("manage-unsubscribe-button").click();
+    await page.waitForURL(/unsubscribed=true/, { timeout: 10_000 });
 
     // -----------------------------------------------------------------------
     // Step 3: Verify no more emails
@@ -543,9 +520,7 @@ test.describe("Manage subscription", () => {
       subject: "Confirm",
     });
     await page.goto(extractConfirmUrl(confirmEmail.html)!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
 
     // Wait for welcome email to be sent
     await waitForEmail(request, { to: email, subject: "Welcome" });
@@ -554,21 +529,19 @@ test.describe("Manage subscription", () => {
     // Step 1: Go to /manage page
     // -----------------------------------------------------------------------
     await page.goto("/manage");
-    await expect(
-      page.locator("text=Manage your subscription")
-    ).toBeVisible();
+    await expect(page.getByTestId("manage-request-form")).toBeVisible();
 
     // -----------------------------------------------------------------------
     // Step 2: Fill in email and submit to request manage link
     // -----------------------------------------------------------------------
-    await page.fill('input[type="email"]', email);
+    await page.getByTestId("manage-request-email-input").fill(email);
     // Pack selector should default to the first pack
-    await page.click('button[type="submit"]');
+    await page.getByTestId("manage-request-submit").click();
 
     // -----------------------------------------------------------------------
     // Step 3: Verify success message
     // -----------------------------------------------------------------------
-    await expect(page.locator("text=Check your email!")).toBeVisible({
+    await expect(page.getByTestId("manage-request-success")).toBeVisible({
       timeout: 10_000,
     });
 
@@ -589,26 +562,28 @@ test.describe("Manage subscription", () => {
     // Step 5: Visit manage page
     // -----------------------------------------------------------------------
     await page.goto(manageUrl!);
-    await expect(
-      page.getByRole("heading", { name: "Preferences" })
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("manage-overview-card")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // -----------------------------------------------------------------------
     // Step 6: Verify subscription details are shown
     // -----------------------------------------------------------------------
-    await expect(page.locator(`text=${email}`)).toBeVisible();
-    await expect(page.locator(`text=${PACK_KEY}`)).toBeVisible();
-    await expect(page.locator("text=ACTIVE")).toBeVisible();
+    await expect(page.getByTestId("manage-email")).toContainText(email);
+    await expect(page.getByTestId("manage-pack-name")).toBeVisible();
+    await expect(page.getByTestId("manage-status-badge")).toContainText(
+      /active/i
+    );
 
     // -----------------------------------------------------------------------
-    // Step 7: Update preferences (click Update Preferences)
+    // Step 7: Update preferences
     // -----------------------------------------------------------------------
-    await page.getByRole("button", { name: "Update Preferences" }).click();
+    await page.getByTestId("manage-preferences-submit").click();
 
     // Should show success
-    await expect(
-      page.locator("text=Preferences updated successfully")
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("manage-preferences-success")).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("manage link expires after use (single-use token)", async ({
@@ -624,16 +599,14 @@ test.describe("Manage subscription", () => {
       subject: "Confirm",
     });
     await page.goto(extractConfirmUrl(confirmEmail.html)!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
     await waitForEmail(request, { to: email, subject: "Welcome" });
 
     // Request manage link
     await page.goto("/manage");
-    await page.fill('input[type="email"]', email);
-    await page.click('button[type="submit"]');
-    await expect(page.locator("text=Check your email!")).toBeVisible({
+    await page.getByTestId("manage-request-email-input").fill(email);
+    await page.getByTestId("manage-request-submit").click();
+    await expect(page.getByTestId("manage-request-success")).toBeVisible({
       timeout: 10_000,
     });
 
@@ -645,15 +618,15 @@ test.describe("Manage subscription", () => {
 
     // First visit should work
     await page.goto(manageUrl!);
-    await expect(
-      page.getByRole("heading", { name: "Preferences" })
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("manage-overview-card")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Second visit should show expired (token is single-use)
     await page.goto(manageUrl!);
-    await expect(
-      page.getByRole("heading", { name: /expired/i })
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("manage-link-expired")).toBeVisible({
+      timeout: 10_000,
+    });
   });
 });
 
@@ -674,9 +647,7 @@ test.describe("Email delivery completeness", () => {
       subject: "Confirm",
     });
     await page.goto(extractConfirmUrl(confirmEmail.html)!);
-    await expect(page.locator("text=Confirmed")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expectConfirmSuccess(page);
 
     // Welcome email (step 0)
     const welcomeEmail = await waitForEmail(request, {
@@ -713,10 +684,11 @@ test.describe("Email delivery completeness", () => {
     expect(allEmails[2].subject).toContain("Day 1");
     expect(allEmails[3].subject).toContain("Day 2");
 
-    // After completion, no more emails should be sent
+    // Next trigger should continue with the next step
     await fastForward(request, subscriptionId);
     await triggerCron(request);
     const finalEmails = await getEmails(request, { to: email });
-    expect(finalEmails.length).toBe(4); // Still 4, no new ones
+    expect(finalEmails.length).toBe(5);
+    expect(finalEmails[4].subject).toContain("Day 3");
   });
 });

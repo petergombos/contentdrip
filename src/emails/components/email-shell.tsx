@@ -15,7 +15,7 @@ export function EmailShell(props: {
   preview?: string;
   title: string;
   children: React.ReactNode;
-  footer?: { unsubscribeUrl?: string; manageUrl?: string };
+  footer?: { unsubscribeUrl?: string; manageUrl?: string; pauseUrl?: string };
 }) {
   return (
     <Html>
@@ -57,6 +57,16 @@ export function EmailShell(props: {
                     style={styles.footerLink}
                   >
                     Manage preferences
+                  </Link>
+                  {props.footer?.pauseUrl || props.footer?.unsubscribeUrl ? (
+                    <span style={styles.footerDivider}>&ensp;&middot;&ensp;</span>
+                  ) : null}
+                </>
+              ) : null}
+              {props.footer?.pauseUrl ? (
+                <>
+                  <Link href={props.footer.pauseUrl} style={styles.footerLink}>
+                    Pause delivery
                   </Link>
                   {props.footer?.unsubscribeUrl ? (
                     <span style={styles.footerDivider}>&ensp;&middot;&ensp;</span>

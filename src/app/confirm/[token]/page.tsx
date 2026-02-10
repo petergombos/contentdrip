@@ -36,7 +36,10 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
   if (status === "ok") {
     return (
       <PageShell warm>
-        <div className="mx-auto max-w-md text-center">
+        <div
+          className="mx-auto max-w-md text-center"
+          data-testid="confirm-success"
+        >
           {/* Celebratory icon */}
           <div className="animate-scale-in mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-olive/10">
             <svg
@@ -52,7 +55,10 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
             </svg>
           </div>
 
-          <h1 className="animate-fade-in-up delay-1 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
+          <h1
+            className="animate-fade-in-up delay-1 font-serif text-3xl font-semibold tracking-tight md:text-4xl"
+            data-testid="confirm-success-title"
+          >
             You&apos;re In
           </h1>
           <p className="animate-fade-in-up delay-2 mt-3 text-muted-foreground">
@@ -114,7 +120,10 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
       title="Confirmation failed"
       subtitle="That link may have already been used, or it has expired."
     >
-      <Card className="p-6 md:p-8 space-y-4 animate-fade-in-up">
+      <Card
+        className="p-6 md:p-8 space-y-4 animate-fade-in-up"
+        data-testid="confirm-error"
+      >
         <p className="text-sm text-muted-foreground">{errorMessage}</p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button asChild variant="outline">

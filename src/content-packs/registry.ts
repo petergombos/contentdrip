@@ -8,7 +8,7 @@ export interface PackEmailShellProps {
   preview?: string;
   title: string;
   children: React.ReactNode;
-  footer?: { unsubscribeUrl?: string; manageUrl?: string };
+  footer?: { unsubscribeUrl?: string; manageUrl?: string; pauseUrl?: string };
 }
 
 export interface ContentPack {

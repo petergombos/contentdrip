@@ -73,7 +73,10 @@ export function ManageRequestForm() {
 
   if (success) {
     return (
-      <div className="py-4 text-center animate-scale-in">
+      <div
+        className="py-4 text-center animate-scale-in"
+        data-testid="manage-request-success"
+      >
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-olive/10">
           <svg
             className="h-7 w-7 text-olive"
@@ -88,7 +91,10 @@ export function ManageRequestForm() {
             <polyline points="3 7 12 13 21 7" />
           </svg>
         </div>
-        <h2 className="font-serif text-xl font-semibold text-foreground">
+        <h2
+          className="font-serif text-xl font-semibold text-foreground"
+          data-testid="manage-request-success-title"
+        >
           Check your email
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -100,7 +106,11 @@ export function ManageRequestForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4"
+      data-testid="manage-request-form"
+    >
       <div className="space-y-1.5">
         <Label htmlFor="email" className="text-xs font-medium">
           Email address
@@ -109,6 +119,7 @@ export function ManageRequestForm() {
           id="email"
           type="email"
           {...register("email")}
+          data-testid="manage-request-email-input"
           placeholder="you@example.com"
           className="h-10"
         />
@@ -151,7 +162,12 @@ export function ManageRequestForm() {
         </div>
       )}
 
-      <Button type="submit" disabled={isSubmitting} className="w-full h-10">
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full h-10"
+        data-testid="manage-request-submit"
+      >
         {isSubmitting ? (
           <span className="flex items-center gap-2">
             <svg

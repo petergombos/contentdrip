@@ -83,7 +83,10 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
 
       {/* Article content */}
       <main className="flex-1">
-        <article className="mx-auto max-w-3xl px-6 py-12 md:py-16">
+        <article
+          className="mx-auto max-w-3xl px-6 py-12 md:py-16"
+          data-testid="companion-article"
+        >
           <div className="prose-reading animate-fade-in-up">{content}</div>
         </article>
 

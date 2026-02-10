@@ -62,7 +62,10 @@ export default async function ManageTokenPage({
         title="Link Expired"
         subtitle="This management link has already been used or has expired. Request a new one below."
       >
-        <Card className="animate-fade-in-up delay-2 p-6 md:p-8">
+        <Card
+          className="animate-fade-in-up delay-2 p-6 md:p-8"
+          data-testid="manage-link-expired"
+        >
           <p className="text-sm text-muted-foreground">
             Management links are single-use for security. You can request a
             fresh one at any time.
@@ -93,21 +96,31 @@ export default async function ManageTokenPage({
       warm
     >
       {/* ── Overview card ── */}
-      <Card className="animate-fade-in-up delay-2 p-6 md:p-8 space-y-5">
+      <Card
+        className="animate-fade-in-up delay-2 p-6 md:p-8 space-y-5"
+        data-testid="manage-overview-card"
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60">
               Course
             </p>
-            <h2 className="mt-1 font-serif text-lg font-semibold text-foreground">
+            <h2
+              className="mt-1 font-serif text-lg font-semibold text-foreground"
+              data-testid="manage-pack-name"
+            >
               {packName}
             </h2>
-            <p className="mt-0.5 text-sm text-muted-foreground">
+            <p
+              className="mt-0.5 text-sm text-muted-foreground"
+              data-testid="manage-email"
+            >
               {subscription.email}
             </p>
           </div>
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusInfo.color}`}
+            data-testid="manage-status-badge"
           >
             {statusInfo.label}
           </span>
@@ -147,7 +160,10 @@ export default async function ManageTokenPage({
       </Card>
 
       {/* ── Danger zone ── */}
-      <Card className="animate-fade-in-up delay-4 mt-6 border-destructive/20 p-6 md:p-8">
+      <Card
+        className="animate-fade-in-up delay-4 mt-6 border-destructive/20 p-6 md:p-8"
+        data-testid="manage-danger-zone"
+      >
         <p className="text-xs font-medium uppercase tracking-widest text-destructive/60">
           Unsubscribe
         </p>
@@ -178,6 +194,7 @@ export default async function ManageTokenPage({
             variant="destructive"
             className="mt-4"
             size="sm"
+            data-testid="manage-unsubscribe-button"
           >
             Unsubscribe from course
           </Button>

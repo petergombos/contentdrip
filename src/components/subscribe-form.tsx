@@ -86,7 +86,10 @@ export function SubscribeForm() {
 
   if (success) {
     return (
-      <div className="py-3 text-center animate-scale-in">
+      <div
+        className="py-3 text-center animate-scale-in"
+        data-testid="subscribe-success"
+      >
         {/* Animated check */}
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-olive/10">
           <svg
@@ -108,7 +111,10 @@ export function SubscribeForm() {
             />
           </svg>
         </div>
-        <h2 className="font-serif text-xl font-semibold text-foreground">
+        <h2
+          className="font-serif text-xl font-semibold text-foreground"
+          data-testid="subscribe-success-title"
+        >
           Check your inbox
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -132,7 +138,11 @@ export function SubscribeForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-4"
+      data-testid="subscribe-form"
+    >
       {/* timezone is auto-detected; keep it in the form payload */}
       <input type="hidden" {...register("timezone")} />
 
@@ -144,6 +154,7 @@ export function SubscribeForm() {
           id="email"
           type="email"
           {...register("email")}
+          data-testid="subscribe-email-input"
           placeholder="you@example.com"
           autoComplete="email"
           className="h-10"
@@ -189,6 +200,7 @@ export function SubscribeForm() {
         disabled={isSubmitting || !timezone}
         className="w-full h-10"
         size="lg"
+        data-testid="subscribe-submit"
       >
         {isSubmitting ? (
           <span className="flex items-center gap-2">

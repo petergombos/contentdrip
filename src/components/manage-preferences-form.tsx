@@ -112,7 +112,10 @@ export function ManagePreferencesForm({
 
   if (success) {
     return (
-      <div className="rounded-lg border border-olive/20 bg-olive/5 px-4 py-4 text-center animate-scale-in">
+      <div
+        className="rounded-lg border border-olive/20 bg-olive/5 px-4 py-4 text-center animate-scale-in"
+        data-testid="manage-preferences-success"
+      >
         <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-olive/10">
           <svg
             className="h-5 w-5 text-olive"
@@ -139,7 +142,10 @@ export function ManagePreferencesForm({
   return (
     <div className="space-y-5">
       {subscription.status === "PAUSED" && (
-        <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-4">
+        <div
+          className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-4"
+          data-testid="manage-paused-banner"
+        >
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <svg
@@ -163,6 +169,7 @@ export function ManagePreferencesForm({
               onClick={handleResume}
               disabled={isSubmitting}
               size="sm"
+              data-testid="manage-resume-button"
             >
               Resume
             </Button>
@@ -170,7 +177,11 @@ export function ManagePreferencesForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+        data-testid="manage-preferences-form"
+      >
         <div className="space-y-1.5">
           <Label htmlFor="timezone" className="text-xs font-medium">
             Timezone
@@ -217,7 +228,12 @@ export function ManagePreferencesForm({
           </div>
         )}
 
-        <Button type="submit" disabled={isSubmitting} className="w-full h-10">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full h-10"
+          data-testid="manage-preferences-submit"
+        >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
               <svg

@@ -7,7 +7,7 @@ export function ContentMarkdownEmail(props: {
   title: string;
   preview?: string;
   html: string;
-  footer?: { unsubscribeUrl?: string; manageUrl?: string };
+  footer?: { unsubscribeUrl?: string; manageUrl?: string; pauseUrl?: string };
   EmailShell?: React.ComponentType<PackEmailShellProps>;
 }) {
   const Shell = props.EmailShell ?? DefaultEmailShell;

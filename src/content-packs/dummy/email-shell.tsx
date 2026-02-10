@@ -68,6 +68,18 @@ export function DummyEmailShell(props: PackEmailShellProps) {
                   >
                     Manage preferences
                   </Link>
+                  {props.footer?.pauseUrl || props.footer?.unsubscribeUrl ? (
+                    <span style={styles.footerDivider}>
+                      &ensp;&middot;&ensp;
+                    </span>
+                  ) : null}
+                </>
+              ) : null}
+              {props.footer?.pauseUrl ? (
+                <>
+                  <Link href={props.footer.pauseUrl} style={styles.footerLink}>
+                    Pause delivery
+                  </Link>
                   {props.footer?.unsubscribeUrl ? (
                     <span style={styles.footerDivider}>
                       &ensp;&middot;&ensp;

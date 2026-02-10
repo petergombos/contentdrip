@@ -328,7 +328,7 @@ export class SubscriptionService {
         title: parsed.frontmatter.subject || "Welcome",
         preview: parsed.frontmatter.preview,
         html: parsed.html,
-        footer: { unsubscribeUrl: stopUrl, manageUrl },
+        footer: { unsubscribeUrl: stopUrl, manageUrl, pauseUrl },
         EmailShell: pack.EmailShell,
       })
     );

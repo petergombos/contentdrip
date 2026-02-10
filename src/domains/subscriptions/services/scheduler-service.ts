@@ -239,7 +239,7 @@ export class SchedulerService {
         title: parsed.frontmatter.subject || "Your daily message",
         preview: parsed.frontmatter.preview,
         html: parsed.html,
-        footer: { unsubscribeUrl: stopUrl, manageUrl },
+        footer: { unsubscribeUrl: stopUrl, manageUrl, pauseUrl },
         EmailShell: pack.EmailShell,
       })
     );
