@@ -199,6 +199,24 @@ export class SubscriptionService {
   }
 
   /**
+   * Pause subscription (from manage page, already authenticated)
+   */
+  async pauseSubscription(subscriptionId: string): Promise<void> {
+    const subscription = await this.repo.findById(subscriptionId);
+    if (!subscription) {
+      throw new Error("Subscription not found");
+    }
+
+    if (subscription.status !== SubscriptionStatus.ACTIVE) {
+      throw new Error("Subscription is not active");
+    }
+
+    await this.repo.update(subscription.id, {
+      status: SubscriptionStatus.PAUSED,
+    });
+  }
+
+  /**
    * Resume paused subscription
    */
   async resumeSubscription(subscriptionId: string): Promise<void> {

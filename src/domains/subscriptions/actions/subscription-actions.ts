@@ -107,6 +107,18 @@ export const stopFromEmailAction = actionClient
     return { success: true };
   });
 
+const pauseSubscriptionSchema = z.object({
+  subscriptionId: z.string(),
+});
+
+export const pauseSubscriptionAction = actionClient
+  .schema(pauseSubscriptionSchema)
+  .action(async ({ parsedInput }) => {
+    const service = getSubscriptionService();
+    await service.pauseSubscription(parsedInput.subscriptionId);
+    return { success: true };
+  });
+
 const resumeSubscriptionSchema = z.object({
   subscriptionId: z.string(),
 });

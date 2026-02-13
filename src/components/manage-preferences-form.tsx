@@ -10,6 +10,7 @@ import { TimezoneSelector } from "@/components/timezone-selector";
 import { SendTimeSelector, hourToCron } from "@/components/send-time-selector";
 import {
   updateSubscriptionAction,
+  pauseSubscriptionAction,
   resumeSubscriptionAction,
 } from "@/domains/subscriptions/actions/subscription-actions";
 import { useState } from "react";
@@ -65,6 +66,32 @@ export function ManagePreferencesForm({
         subscriptionId: subscription.id,
         timezone: data.timezone,
         cronExpression,
+      });
+
+      if (result?.serverError) {
+        setError(
+          typeof result.serverError === "string"
+            ? result.serverError
+            : "An error occurred"
+        );
+      } else if (result?.data) {
+        setSuccess(true);
+        onUpdate?.();
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePause = async () => {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const result = await pauseSubscriptionAction({
+        subscriptionId: subscription.id,
       });
 
       if (result?.serverError) {
@@ -141,6 +168,42 @@ export function ManagePreferencesForm({
 
   return (
     <div className="space-y-5">
+      {subscription.status === "ACTIVE" && (
+        <div
+          className="rounded-lg border border-olive/20 bg-olive/5 px-4 py-4"
+          data-testid="manage-active-banner"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-olive/10">
+              <svg
+                className="h-4 w-4 text-olive"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground">
+                Your subscription is active
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Pause to temporarily stop receiving lessons.
+              </p>
+            </div>
+            <Button
+              onClick={handlePause}
+              disabled={isSubmitting}
+              size="sm"
+              variant="outline"
+              data-testid="manage-pause-button"
+            >
+              Pause
+            </Button>
+          </div>
+        </div>
+      )}
+
       {subscription.status === "PAUSED" && (
         <div
           className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-4"
