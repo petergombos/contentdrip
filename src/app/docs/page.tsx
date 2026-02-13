@@ -280,10 +280,6 @@ POSTMARK_SERVER_TOKEN=your-postmark-server-token
 POSTMARK_MESSAGE_STREAM=content-emails
 MAIL_FROM=you@yourdomain.com
 
-# Auth — used for signing tokens
-BETTER_AUTH_SECRET=generate-a-random-string-here
-NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
-
 # Cron — authenticates the /api/cron endpoint
 CRON_SECRET=generate-another-random-string
 
@@ -844,8 +840,6 @@ export function MyEmailShell(props: PackEmailShellProps) {
                       ["POSTMARK_SERVER_TOKEN", "Yes", "Postmark API key for sending emails"],
                       ["POSTMARK_MESSAGE_STREAM", "Yes", "Postmark message stream name (e.g. content-emails)"],
                       ["MAIL_FROM", "Yes", "Sender email address (must be verified in Postmark)"],
-                      ["BETTER_AUTH_SECRET", "Yes", "Secret used for signing confirmation and manage tokens"],
-                      ["NEXT_PUBLIC_BETTER_AUTH_URL", "Yes", "Base URL of the app (e.g. https://yourdomain.com)"],
                       ["CRON_SECRET", "Yes", "Bearer token to authenticate /api/cron requests"],
                       ["DRIP_TIME_SCALE", "No", "Speed multiplier for testing. 144 = 1 day per 10 min. 1440 = 1 day per 1 min."],
                       ["DRIP_STEP_MINUTES", "No", "Legacy: fixed minutes between delivery steps for testing"],
