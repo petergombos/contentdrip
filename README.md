@@ -2,7 +2,7 @@
 
 Open-source email drip course template built with Next.js. Write your content in markdown, define a delivery schedule, deploy — subscribers receive one lesson at a time, at the hour they choose, in their timezone.
 
-**[Live Demo](https://content-drip.vercel.app/example)** · **[Documentation](https://content-drip.vercel.app/docs)**
+**[Live Demo](https://contentdrip.dev/example)** · **[Documentation](https://contentdrip.dev/docs)**
 
 ## What it does
 
