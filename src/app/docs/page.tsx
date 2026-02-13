@@ -476,9 +476,7 @@ DRIP_TIME_SCALE=144
 
 # 1 day becomes 1 minute (1440x speed)
 DRIP_TIME_SCALE=1440
-
-# Legacy alternative: fixed 5 minutes between steps
-DRIP_STEP_MINUTES=5`}</CodeBlock>
+`}</CodeBlock>
               <P>
                 In fast-test mode, the scheduler ignores cron expressions
                 entirely and instead checks how many minutes have elapsed since
@@ -842,7 +840,6 @@ export function MyEmailShell(props: PackEmailShellProps) {
                       ["MAIL_FROM", "Yes", "Sender email address (must be verified in Postmark)"],
                       ["CRON_SECRET", "Yes", "Bearer token to authenticate /api/cron requests"],
                       ["DRIP_TIME_SCALE", "No", "Speed multiplier for testing. 144 = 1 day per 10 min. 1440 = 1 day per 1 min."],
-                      ["DRIP_STEP_MINUTES", "No", "Legacy: fixed minutes between delivery steps for testing"],
                       ["VERCEL_ENV", "No", "Set automatically by Vercel. Enables preview-mode cron auth."],
                     ].map(([name, req, desc]) => (
                       <tr key={name}>

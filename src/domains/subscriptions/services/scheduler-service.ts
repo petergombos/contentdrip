@@ -151,7 +151,6 @@ export class SchedulerService {
    *
    * Enablement rules:
    * - If DRIP_TIME_SCALE is set and > 0 -> fast-test mode (scale). Invalid -> fallback scale 144.
-   * - Back-compat: if DRIP_STEP_MINUTES is set -> fast-test mode using that many minutes.
    * - Otherwise -> use real cron expressions.
    */
   private getFastTestStepMinutes(): number | null {
@@ -164,14 +163,6 @@ export class SchedulerService {
       const minutes = minutesPerDay / safeScale;
       // Clamp to at least 1 minute to avoid zero/negative values.
       return Math.max(1, Math.round(minutes));
-    }
-
-    // Back-compat: DRIP_STEP_MINUTES
-    const raw = process.env.DRIP_STEP_MINUTES;
-    if (raw !== undefined) {
-      const parsed = Number.parseInt(raw, 10);
-      if (Number.isFinite(parsed) && parsed > 0) return parsed;
-      return 10;
     }
 
     return null;
