@@ -280,17 +280,24 @@ cd content-drip`}</CodeBlock>
               <H3 id="qs-env">3. Configure environment variables</H3>
               <P>
                 Create a <Code>.env</Code> file in the project root. You need a
-                Turso database, a Postmark account for sending emails, and a
-                secret for cron authentication.
+                Turso database, an email provider (<Strong>Resend</Strong> or{" "}
+                <Strong>Postmark</Strong>), and a secret for cron
+                authentication.
               </P>
               <CodeBlock label=".env">{`# Database — Turso (LibSQL)
 TURSO_DATABASE_URL=libsql://your-db-name.turso.io
 TURSO_AUTH_TOKEN=your-turso-auth-token
 
-# Email — Postmark
-POSTMARK_SERVER_TOKEN=your-postmark-server-token
-POSTMARK_MESSAGE_STREAM=content-emails
+# Email — pick ONE provider:
+
+# Option A: Resend
+RESEND_API_KEY=re_your-api-key
 MAIL_FROM=you@yourdomain.com
+
+# Option B: Postmark
+# POSTMARK_SERVER_TOKEN=your-postmark-server-token
+# POSTMARK_MESSAGE_STREAM=content-emails
+# MAIL_FROM=you@yourdomain.com
 
 # Cron — authenticates the /api/cron endpoint
 CRON_SECRET=generate-another-random-string
@@ -298,6 +305,10 @@ CRON_SECRET=generate-another-random-string
 # Optional — speed up delivery for local testing
 # Makes 1 day = 10 minutes (24*60 / 144 = 10)
 # DRIP_TIME_SCALE=144`}</CodeBlock>
+              <P>
+                If <Code>RESEND_API_KEY</Code> is set, ContentDrip uses Resend.
+                Otherwise it falls back to Postmark. Only one provider is needed.
+              </P>
 
               <H3 id="qs-db">4. Push the database schema</H3>
               <P>
@@ -874,9 +885,10 @@ export function MyEmailShell(props: PackEmailShellProps) {
                     {[
                       ["TURSO_DATABASE_URL", "Yes", "LibSQL / Turso database connection URL"],
                       ["TURSO_AUTH_TOKEN", "Yes", "Database authentication token"],
-                      ["POSTMARK_SERVER_TOKEN", "Yes", "Postmark API key for sending emails"],
-                      ["POSTMARK_MESSAGE_STREAM", "Yes", "Postmark message stream name (e.g. content-emails)"],
-                      ["MAIL_FROM", "Yes", "Sender email address (must be verified in Postmark)"],
+                      ["RESEND_API_KEY", "No*", "Resend API key. If set, Resend is used as the email provider"],
+                      ["POSTMARK_SERVER_TOKEN", "No*", "Postmark API key. Used when RESEND_API_KEY is not set"],
+                      ["POSTMARK_MESSAGE_STREAM", "No", "Postmark message stream name (e.g. content-emails)"],
+                      ["MAIL_FROM", "Yes", "Sender email address (must be verified with your email provider)"],
                       ["CRON_SECRET", "Yes", "Bearer token to authenticate /api/cron requests"],
                       ["DRIP_TIME_SCALE", "No", "Speed multiplier for testing. 144 = 1 day per 10 min. 1440 = 1 day per 1 min."],
                       ["VERCEL_ENV", "No", "Set automatically by Vercel. Enables preview-mode cron auth."],

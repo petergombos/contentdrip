@@ -21,17 +21,23 @@ cd content-drip
 npm install
 ```
 
-Create a `.env` file:
+Create a `.env` file with one of the two email provider configs:
 
 ```env
 # Database — Turso (LibSQL)
 TURSO_DATABASE_URL=libsql://your-db.turso.io
 TURSO_AUTH_TOKEN=your-token
 
-# Email — Postmark
-POSTMARK_SERVER_TOKEN=your-postmark-token
-POSTMARK_MESSAGE_STREAM=content-emails
+# Email — pick ONE provider:
+
+# Option A: Resend
+RESEND_API_KEY=re_your-api-key
 MAIL_FROM=you@yourdomain.com
+
+# Option B: Postmark
+# POSTMARK_SERVER_TOKEN=your-postmark-token
+# POSTMARK_MESSAGE_STREAM=content-emails
+# MAIL_FROM=you@yourdomain.com
 
 # Cron authentication
 CRON_SECRET=generate-a-random-string
@@ -156,7 +162,7 @@ Any Node.js host that supports Next.js works. Set up an external cron to hit `/a
 - [React Email](https://react.email) — cross-client email templates
 - [Drizzle ORM](https://orm.drizzle.team) — type-safe SQL
 - [SQLite / Turso](https://turso.tech) — edge-ready database
-- [Postmark](https://postmarkapp.com) — transactional email
+- [Resend](https://resend.com) / [Postmark](https://postmarkapp.com) — transactional email (pick one)
 - [Tailwind CSS](https://tailwindcss.com) — styling
 
 ## Development
