@@ -10,8 +10,11 @@ import { ContentMarkdownEmail } from "@/emails/content-markdown-email";
 import { renderEmail } from "@/emails/render";
 import { SubscriptionStatus } from "../model/types";
 import { TokenType } from "../model/types";
+import type { Subscription } from "../model/types";
 // Ensure packs are registered
 import "@/content-packs";
+
+const DEFAULT_BATCH_SIZE = 5;
 
 export class SchedulerService {
   constructor(
@@ -20,74 +23,194 @@ export class SchedulerService {
   ) {}
 
   /**
-   * Send emails for all due subscriptions
+   * Send emails for all due subscriptions, processing in parallel batches.
    */
-  async sendDueSubscriptions(): Promise<{
+  async sendDueSubscriptions(options?: {
+    batchSize?: number;
+  }): Promise<{
     sent: number;
     errors: number;
   }> {
+    const batchSize = options?.batchSize ?? DEFAULT_BATCH_SIZE;
     const activeSubscriptions = await this.repo.findActiveSubscriptions();
     const now = new Date();
     const fastTestStepMinutes = this.getFastTestStepMinutes();
     let sent = 0;
     let errors = 0;
 
-    for (const subscription of activeSubscriptions) {
-      try {
-        const isDue = fastTestStepMinutes
-          ? await this.isDueByElapsedMinutes(subscription.id, subscription.updatedAt, now, fastTestStepMinutes)
-          : this.isDueByCron(subscription.cronExpression, subscription.timezone, now);
-        
-        if (!isDue) {
-          continue;
-        }
+    // Process in batches
+    for (let i = 0; i < activeSubscriptions.length; i += batchSize) {
+      const batch = activeSubscriptions.slice(i, i + batchSize);
 
-        // Check idempotency - has this step already been sent?
-        const nextStep = getNextStep(subscription.packKey, subscription.currentStepIndex);
-        if (!nextStep) {
-          // All steps completed
-          await this.repo.update(subscription.id, {
-            status: SubscriptionStatus.COMPLETED,
+      const results = await Promise.allSettled(
+        batch.map((sub) =>
+          this.processSubscription(sub, now, fastTestStepMinutes)
+        )
+      );
+
+      for (let j = 0; j < results.length; j++) {
+        const result = results[j];
+        if (result.status === "fulfilled") {
+          if (result.value === "sent") sent++;
+        } else {
+          errors++;
+          const subscription = batch[j];
+          console.error(
+            `Error sending email for subscription ${subscription.id}:`,
+            result.reason
+          );
+
+          await this.repo.logSend({
+            subscriptionId: subscription.id,
+            packKey: subscription.packKey,
+            stepSlug:
+              getNextStep(subscription.packKey, subscription.currentStepIndex)
+                ?.slug || "unknown",
+            provider: "postmark",
+            status: "FAILED",
+            error:
+              result.reason instanceof Error
+                ? result.reason.message
+                : String(result.reason),
           });
-          continue;
         }
-
-        // Check if already sent (idempotency)
-        const alreadySent = await this.repo.hasSentStep(
-          subscription.id,
-          nextStep.slug
-        );
-        if (alreadySent) {
-          // Already sent, advance step index
-          await this.repo.update(subscription.id, {
-            currentStepIndex: subscription.currentStepIndex + 1,
-          });
-          continue;
-        }
-
-        // Send the email
-        await this.sendStepEmail(subscription, nextStep);
-        sent++;
-      } catch (error) {
-        console.error(
-          `Error sending email for subscription ${subscription.id}:`,
-          error
-        );
-        errors++;
-
-        // Log the error
-        await this.repo.logSend({
-          subscriptionId: subscription.id,
-          packKey: subscription.packKey,
-          stepSlug: getNextStep(subscription.packKey, subscription.currentStepIndex)?.slug || "unknown",
-          provider: "postmark",
-          status: "FAILED",
-          error: error instanceof Error ? error.message : String(error),
-        });
       }
     }
 
     return { sent, errors };
+  }
+
+  /**
+   * Process a batch of subscriptions by ID. Used by the fan-out worker endpoint.
+   * Loads full subscriptions, then processes in sub-batches of 5.
+   */
+  async processBatch(
+    subscriptionIds: string[],
+    now: Date,
+    fastTestStepMinutes: number | null
+  ): Promise<{
+    sent: number;
+    skipped: number;
+    completed: number;
+    errors: number;
+    failures: { subscriptionId: string; error: string }[];
+  }> {
+    if (subscriptionIds.length === 0) {
+      return { sent: 0, skipped: 0, completed: 0, errors: 0, failures: [] };
+    }
+
+    const subs = await this.repo.findByIds(subscriptionIds);
+    let sent = 0;
+    let skipped = 0;
+    let completed = 0;
+    let errors = 0;
+    const failures: { subscriptionId: string; error: string }[] = [];
+
+    for (let i = 0; i < subs.length; i += DEFAULT_BATCH_SIZE) {
+      const batch = subs.slice(i, i + DEFAULT_BATCH_SIZE);
+
+      const results = await Promise.allSettled(
+        batch.map((sub) =>
+          this.processSubscription(sub, now, fastTestStepMinutes)
+        )
+      );
+
+      for (let j = 0; j < results.length; j++) {
+        const result = results[j];
+        if (result.status === "fulfilled") {
+          switch (result.value) {
+            case "sent":
+              sent++;
+              break;
+            case "skipped":
+              skipped++;
+              break;
+            case "completed":
+              completed++;
+              break;
+          }
+        } else {
+          errors++;
+          const sub = batch[j];
+          const errorMsg =
+            result.reason instanceof Error
+              ? result.reason.message
+              : String(result.reason);
+
+          console.error(
+            `Error processing subscription ${sub.id}:`,
+            result.reason
+          );
+          failures.push({ subscriptionId: sub.id, error: errorMsg });
+
+          await this.repo.logSend({
+            subscriptionId: sub.id,
+            packKey: sub.packKey,
+            stepSlug:
+              getNextStep(sub.packKey, sub.currentStepIndex)?.slug ||
+              "unknown",
+            provider: "postmark",
+            status: "FAILED",
+            error: errorMsg,
+          });
+        }
+      }
+    }
+
+    return { sent, skipped, completed, errors, failures };
+  }
+
+  /**
+   * Process a single subscription: check if due, check idempotency, send email.
+   */
+  async processSubscription(
+    subscription: Subscription,
+    now: Date,
+    fastTestStepMinutes: number | null
+  ): Promise<"sent" | "skipped" | "completed"> {
+    const isDue = fastTestStepMinutes
+      ? await this.isDueByElapsedMinutes(
+          subscription.id,
+          subscription.updatedAt,
+          now,
+          fastTestStepMinutes
+        )
+      : this.isDueByCron(
+          subscription.cronExpression,
+          subscription.timezone,
+          now
+        );
+
+    if (!isDue) {
+      return "skipped";
+    }
+
+    const nextStep = getNextStep(
+      subscription.packKey,
+      subscription.currentStepIndex
+    );
+    if (!nextStep) {
+      await this.repo.update(subscription.id, {
+        status: SubscriptionStatus.COMPLETED,
+      });
+      return "completed";
+    }
+
+    // Check if already sent (idempotency)
+    const alreadySent = await this.repo.hasSentStep(
+      subscription.id,
+      nextStep.slug
+    );
+    if (alreadySent) {
+      await this.repo.update(subscription.id, {
+        currentStepIndex: subscription.currentStepIndex + 1,
+      });
+      return "skipped";
+    }
+
+    // Send the email
+    await this.sendStepEmail(subscription, nextStep);
+    return "sent";
   }
 
   /**
@@ -99,19 +222,14 @@ export class SchedulerService {
     now: Date
   ): boolean {
     try {
-      // Parse cron expression with the subscription timezone.
-      // currentDate keeps evaluation anchored to "now", while tz applies local-wall-clock matching.
       const interval = CronExpressionParser.parse(cronExpression, {
         currentDate: now,
         tz: timezone,
       });
 
-      // Get the previous scheduled time
       const prev = interval.prev();
       const prevTime = prev.getTime();
 
-      // Check if the previous scheduled time is within the last minute
-      // (allowing for cron job running every minute)
       const diff = now.getTime() - prevTime;
       const oneMinute = 60 * 1000;
 
@@ -131,7 +249,8 @@ export class SchedulerService {
     now: Date,
     stepMinutes: number
   ): Promise<boolean> {
-    const lastSentAt = await this.repo.getLastSuccessfulSendAt(subscriptionId);
+    const lastSentAt =
+      await this.repo.getLastSuccessfulSendAt(subscriptionId);
     const anchor = lastSentAt ?? fallbackLastUpdatedAt;
 
     const elapsedMs = now.getTime() - anchor.getTime();
@@ -141,27 +260,16 @@ export class SchedulerService {
   /**
    * Fast-test scheduling.
    *
-   * In fast mode, we speed up time so you can test a multi-day drip quickly.
-   *
    * DRIP_TIME_SCALE is the multiplier vs real time.
    * Example: 144 means 1 day (1440 minutes) becomes 10 minutes.
-   *
-   * Implementation detail: we convert the scale to a fixed "minutes between steps" threshold
-   * and check it against the last successful send timestamp.
-   *
-   * Enablement rules:
-   * - If DRIP_TIME_SCALE is set and > 0 -> fast-test mode (scale). Invalid -> fallback scale 144.
-   * - Otherwise -> use real cron expressions.
    */
-  private getFastTestStepMinutes(): number | null {
-    // Preferred: DRIP_TIME_SCALE
+  getFastTestStepMinutes(): number | null {
     const scaleRaw = process.env.DRIP_TIME_SCALE;
     if (scaleRaw !== undefined) {
       const scale = Number.parseFloat(scaleRaw);
       const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 144;
       const minutesPerDay = 24 * 60;
       const minutes = minutesPerDay / safeScale;
-      // Clamp to at least 1 minute to avoid zero/negative values.
       return Math.max(1, Math.round(minutes));
     }
 
@@ -214,8 +322,14 @@ export class SchedulerService {
       step.slug
     );
     const manageUrl = this.emailService.buildManageUrl(manageToken);
-    const pauseUrl = this.emailService.buildPauseUrl(subscription.id, pauseToken);
-    const stopUrl = this.emailService.buildStopUrl(subscription.id, stopToken);
+    const pauseUrl = this.emailService.buildPauseUrl(
+      subscription.id,
+      pauseToken
+    );
+    const stopUrl = this.emailService.buildStopUrl(
+      subscription.id,
+      stopToken
+    );
 
     // Replace placeholders BEFORE parsing markdown to HTML
     markdown = markdown.replace("{{companionUrl}}", companionUrl);

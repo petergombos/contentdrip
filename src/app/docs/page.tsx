@@ -94,6 +94,7 @@ const NAV = [
       { id: "content-packs", label: "Content Packs" },
       { id: "subscriber-flow", label: "Subscriber Flow" },
       { id: "scheduling", label: "Scheduling & Delivery" },
+      { id: "scheduling-fanout", label: "Fan-Out Dispatch" },
       { id: "email-templates", label: "Email Templates" },
     ],
   },
@@ -332,7 +333,8 @@ CRON_SECRET=generate-another-random-string
 │   ├── p/[packKey]/[slug]/   # Companion pages
 │   └── api/
 │       ├── subscribe/        # Subscription creation
-│       ├── cron/             # Scheduled email delivery
+│       ├── cron/             # Dispatch: schedules email delivery
+│       ├── send-batch/       # Worker: processes a batch of subscriptions
 │       ├── pause/            # Pause/stop from email links
 │       └── stop/             # Unsubscribe from email links
 ├── content-packs/            # Your courses live here
@@ -502,6 +504,32 @@ DRIP_TIME_SCALE=1440
                 been logged. This prevents duplicate deliveries if the cron job
                 runs multiple times within the same minute or if there are
                 retries.
+              </P>
+              <H3 id="scheduling-fanout">Fan-Out Dispatch</H3>
+              <P>
+                To scale beyond what a single serverless function can handle
+                within its timeout window (60s hobby / 300s pro on Vercel),
+                ContentDrip uses a fan-out dispatch architecture. The cron
+                endpoint acts as a lightweight dispatcher:
+              </P>
+              <CodeBlock label="dispatch flow">{`GET /api/cron (dispatcher)
+  → queries active subscription IDs (SELECT id only)
+  → ≤25 subs: processes locally (zero overhead)
+  → >25 subs: chunks into batches of 25,
+    fires parallel POST /api/send-batch workers,
+    aggregates results via Promise.allSettled`}</CodeBlock>
+              <P>
+                The dispatcher captures a shared <Code>now</Code> timestamp and
+                passes it to all workers. This ensures consistent cron
+                due-checking across the same minute window, regardless of when
+                each worker starts executing. Each worker lambda handles at most
+                25 subscriptions, processing them in sub-batches of 5 with{" "}
+                <Code>Promise.allSettled</Code> for failure isolation.
+              </P>
+              <P>
+                For small deployments (up to 25 active subscribers), the
+                dispatcher processes everything in-process with no self-invoke
+                overhead. The fan-out path only activates when needed.
               </P>
               <H3 id="scheduling-retries">Retry Logic</H3>
               <P>
@@ -933,19 +961,47 @@ createdAt         integer  creation timestamp (ms)`}</CodeBlock>
 
               <H3 id="api-cron">GET /api/cron</H3>
               <P>
-                Triggers the email delivery scheduler. Should be called every
+                Triggers the email delivery dispatcher. Should be called every
                 minute by a cron job. Authenticated via{" "}
                 <Code>Authorization: Bearer {"{CRON_SECRET}"}</Code> header. In
                 non-production Vercel environments, also accepts{" "}
-                <Code>?secret={"{CRON_SECRET}"}</Code> as a query parameter.
+                <Code>?secret={"{CRON_SECRET}"}</Code> as a query parameter. For
+                small subscriber counts (&le;25), processes locally. For larger
+                counts, fans out to parallel{" "}
+                <Code>/api/send-batch</Code> workers.
               </P>
-              <CodeBlock label="response">{`{
+              <CodeBlock label="response (local mode)">{`{
   "success": true,
-  "sent": 3,       // emails sent this run
-  "errors": 0,     // send failures
-  "attempt": 1,    // retry attempt number
+  "mode": "local",
+  "sent": 3,
+  "skipped": 12,
+  "completed": 0,
+  "errors": 0,
+  "total": 15,
   "timestamp": "2025-01-15T08:00:00.000Z"
 }`}</CodeBlock>
+              <CodeBlock label="response (fan-out mode)">{`{
+  "success": true,
+  "mode": "fan-out",
+  "batches": 4,
+  "sent": 12,
+  "skipped": 78,
+  "completed": 1,
+  "errors": 0,
+  "total": 91,
+  "failures": [],
+  "workerFailures": [],
+  "timestamp": "2025-01-15T08:00:00.000Z"
+}`}</CodeBlock>
+
+              <H3 id="api-send-batch">POST /api/send-batch</H3>
+              <P>
+                Internal worker endpoint called by the cron dispatcher during
+                fan-out. Authenticated via{" "}
+                <Code>Authorization: Bearer {"{CRON_SECRET}"}</Code>. Receives a
+                batch of subscription IDs, a shared timestamp, and the
+                fast-test step interval. Not intended to be called directly.
+              </P>
 
               <H3 id="api-pause">GET /api/pause</H3>
               <P>

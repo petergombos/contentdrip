@@ -107,6 +107,29 @@ Welcome to the course!
 [Manage]({{manageUrl}}) · [Pause]({{pauseUrl}}) · [Unsubscribe]({{stopUrl}})
 ```
 
+## Email Dispatch Architecture
+
+ContentDrip uses a fan-out dispatch pattern to scale email delivery beyond what a single serverless function can handle.
+
+```
+Vercel Cron (every minute)
+  → GET /api/cron (dispatcher)
+      → queries active subscription IDs (lightweight)
+      → ≤25 subs: processes locally, no overhead
+      → >25 subs: chunks into batches of 25,
+        fires parallel POST /api/send-batch workers,
+        aggregates results
+```
+
+**Why this matters:** Vercel functions have a 60s (hobby) / 300s (pro) timeout. A single function processing 1000+ subscriptions sequentially would exceed that. The fan-out pattern splits work across parallel lambda invocations, each handling a small batch.
+
+**Key design decisions:**
+
+- **Local fallback** — when there are ≤25 active subscriptions, the dispatcher processes everything in-process. Zero self-invoke overhead during early growth.
+- **Shared `now` timestamp** — the dispatcher captures the current time once and passes it to all workers, ensuring consistent cron due-checking across the same minute window.
+- **Idempotency** — every email send is logged to a `send_log` table with a `hasSentStep()` check. Overlapping workers or retries never send duplicates.
+- **Graceful failure isolation** — `Promise.allSettled` ensures one failing subscription doesn't block others. Per-subscription and per-worker failures are tracked and returned in the response.
+
 ## Deployment
 
 ### Vercel (recommended)
@@ -142,6 +165,7 @@ Any Node.js host that supports Next.js works. Set up an external cron to hit `/a
 npm run dev          # Start dev server
 npm run build        # Production build
 npx drizzle-kit push # Push schema to database
+npx vitest run       # Run unit tests
 npm run test:e2e     # Run Playwright E2E tests
 ```
 
