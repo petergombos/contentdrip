@@ -53,8 +53,8 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
             You&apos;re In
           </h1>
           <p className="animate-fade-in-up delay-2 mt-3 text-muted-foreground">
-            Your subscription is confirmed. Your first lesson will arrive at
-            your chosen time tomorrow morning.
+            Your subscription is confirmed. Your first lesson will arrive
+            tomorrow at your chosen delivery time.
           </p>
 
           <Card className="animate-fade-in-up delay-3 mt-8 p-6 md:p-8 text-left">
@@ -67,7 +67,7 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
                   1
                 </span>
                 <span>
-                  Your <strong className="text-foreground">welcome email</strong>{" "}
+                  Your <strong className="text-foreground">first lesson</strong>{" "}
                   arrives at your chosen delivery time
                 </span>
               </li>
@@ -76,8 +76,8 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
                   2
                 </span>
                 <span>
-                  One lesson per day for{" "}
-                  <strong className="text-foreground">five days</strong>
+                  One lesson per day at{" "}
+                  <strong className="text-foreground">your own pace</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2.5">

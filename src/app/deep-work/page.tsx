@@ -121,7 +121,7 @@ export default function DeepWorkPage() {
               How it works
             </p>
             <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
-              Two steps to laser focus
+              Three steps to laser focus
             </h2>
           </div>
 
@@ -262,8 +262,8 @@ export default function DeepWorkPage() {
             Ready to Master Deep Work?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/60">
-            Two days. Two lessons. One email at a time, at the hour you choose.
-            No spam, no nonsense — just focused work.
+            Two days. Two focused lessons. One email at a time, at the hour you
+            choose. No spam, no nonsense — just focused work.
           </p>
           <div className="mx-auto mt-10 max-w-sm">
             <Card className="p-6 shadow-2xl ring-1 ring-white/10">

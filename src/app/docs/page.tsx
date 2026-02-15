@@ -418,7 +418,7 @@ interface ContentStep {
                 each active subscription: is the next step due based on the
                 subscriber&apos;s chosen time and timezone? If yes, it loads the
                 markdown, replaces placeholder variables with signed URLs,
-                renders through the EmailShell, and sends via your configured email adapter.
+                renders it through the EmailShell, and sends it via your configured email adapter.
               </P>
               <P>
                 <Strong>Pause / Resume:</Strong> Subscribers can pause delivery
@@ -1010,9 +1010,8 @@ createdAt         integer  creation timestamp (ms)`}</CodeBlock>
 
               <H3 id="api-subscribe">POST /api/subscribe</H3>
               <P>
-                Creates a new subscription. Called by the subscribe form via
-                server action. Requires <Code>CRON_SECRET</Code> as a Bearer
-                token in the Authorization header.
+                Creates a new subscription. Called by the subscribe form via a
+                server action.
               </P>
               <CodeBlock label="request body">{`{
   "email": "user@example.com",

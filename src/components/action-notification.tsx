@@ -39,7 +39,7 @@ const NOTIFICATIONS: Record<
   },
   unsubscribed: {
     icon: "stop",
-    title: "You've been unsubscribed",
+    title: "You've unsubscribed",
     description:
       "You won't receive any more emails from this course. If this was a mistake, you can resubscribe below.",
     undoLabel: "Resubscribe",

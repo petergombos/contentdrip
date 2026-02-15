@@ -297,8 +297,8 @@ export default function MindfulProductivityPage() {
             What You&apos;ll Learn
           </h2>
           <p className="mt-3 max-w-lg text-muted-foreground">
-            Six carefully sequenced lessons, each building on the last. Read in
-            five minutes, practice for a lifetime.
+            A welcome email plus five daily lessons, each building on the last.
+            Read in five minutes, practice for a lifetime.
           </p>
 
           <div className="mt-12 space-y-0 divide-y divide-border/60">
