@@ -2,9 +2,11 @@ import {
   ArrowRight,
   CircleCheckBig,
   Clock,
+  Code,
   FileText,
   Globe,
   KeyRound,
+  Layers,
   LogOut,
   Mail,
   Pause,
@@ -12,12 +14,13 @@ import {
   Plug,
   RefreshCcw,
   ShieldCheck,
+  Users,
   UserPlus,
   Workflow,
+  Zap,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DripBackground } from "@/components/drip-background";
 import { HeroAnimation } from "@/components/hero-animation";
 import { HowItWorksSection } from "@/components/how-it-works-section";
 
@@ -86,10 +89,9 @@ export default function HomePage() {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden border-b border-[#1a1a1a]">
         <div className="absolute inset-0 bg-grid-dark" />
-        <DripBackground />
 
         <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-20 md:pb-32 md:pt-28">
-          {/* Right: animated subscription → drip visual (absolutely positioned) */}
+          {/* Right: animated subscription → drip visual (absolutely positioned on lg) */}
           <div className="pointer-events-none absolute bottom-0 right-6 top-0 hidden w-[340px] items-center lg:flex">
             <div className="animate-fade-in delay-3 w-full">
               <HeroAnimation />
@@ -133,6 +135,13 @@ export default function HomePage() {
           <p className="animate-fade-in-up delay-4 mt-6 font-mono text-xs uppercase tracking-widest text-[#333]">
             MIT Licensed &middot; Self-Hosted &middot; No Vendor Lock-In
           </p>
+
+          {/* Mobile: hero animation inline */}
+          <div className="pointer-events-none mt-12 flex justify-center lg:hidden">
+            <div className="animate-fade-in delay-3 w-full max-w-[340px]">
+              <HeroAnimation />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -561,7 +570,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Content Packs ── */}
-      <section className="border-b border-[#1a1a1a]">
+      <section className="overflow-hidden border-b border-[#1a1a1a]">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#444]">
             Content Packs
@@ -577,7 +586,7 @@ export default function HomePage() {
           {/* Visual pipeline */}
           <div className="mt-12 grid items-stretch gap-0 lg:grid-cols-[1fr_auto_1fr]">
             {/* Left: Markdown input */}
-            <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+            <div className="min-w-0 border border-[#1a1a1a] bg-[#0a0a0a]">
               <div className="flex items-center gap-2 border-b border-[#1a1a1a] px-4 py-2.5">
                 <div className="flex gap-1.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-[#1a1a1a]" />
@@ -586,7 +595,7 @@ export default function HomePage() {
                 </div>
                 <span className="font-mono text-xs text-[#444]">day-1.md</span>
               </div>
-              <pre className="p-5 font-mono text-[13px] leading-[1.8] text-[#555]">
+              <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-[1.8] text-[#555]">
                 <code>
                   <span className="text-[#444]">---</span>
                   {"\n"}
@@ -642,7 +651,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Pipeline steps */}
-                <div className="flex gap-2 lg:flex-col lg:gap-3">
+                <div className="flex flex-wrap justify-center gap-2 lg:flex-col lg:gap-3">
                   {["parse frontmatter", "inject URLs", "render email"].map(
                     (step) => (
                       <div
@@ -675,7 +684,7 @@ export default function HomePage() {
             </div>
 
             {/* Right: Email output mockup */}
-            <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+            <div className="min-w-0 border border-[#1a1a1a] bg-[#0a0a0a]">
               <div className="flex items-center gap-2 border-b border-[#1a1a1a] px-4 py-2.5">
                 <svg
                   className="h-4 w-4 text-[#333]"
@@ -763,6 +772,580 @@ export default function HomePage() {
                 <p className="mt-1 text-[13px] text-[#555]">{v.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Multiple Packs ── */}
+      <section className="border-b border-[#1a1a1a]">
+        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#444]">
+            Multi-Pack
+          </p>
+          <h2 className="mt-4 max-w-xl text-3xl font-bold tracking-tight md:text-4xl">
+            One deploy, many courses.
+          </h2>
+          <p className="mt-3 max-w-xl font-mono text-base leading-relaxed text-[#555]">
+            Each content pack is fully independent — its own subscribers, its
+            own schedule, its own branding. Deploy once, run as many courses as
+            you want from a single instance.
+          </p>
+
+          {/* Shared brand header */}
+          <div className="mt-12 flex items-center gap-3 border border-[#1a1a1a] border-b-0 bg-[#0a0a0a] px-5 py-3">
+            <div className="flex h-6 w-6 items-center justify-center bg-[#c8ff00] text-[11px] font-bold text-[#050505]">
+              L
+            </div>
+            <span className="font-mono text-[13px] font-medium text-[#888]">
+              Learnwise
+            </span>
+            <span className="ml-auto font-mono text-[11px] text-[#333]">
+              2 packs &middot; 1 deploy
+            </span>
+          </div>
+
+          {/* Pack cards */}
+          <div className="flex flex-col gap-px bg-[#1a1a1a] p-px md:flex-row">
+            {[
+              {
+                name: "The Art of Mindful Productivity",
+                slug: "/mindful-productivity",
+                desc: "A free 5-day email course on building sustainable focus and productivity habits.",
+                steps: 6,
+                cadence: "daily at 8am",
+                subs: 142,
+                active: 89,
+                completed: 53,
+                accent: "#c8ff00",
+                files: [
+                  "welcome.md",
+                  "day-1.md",
+                  "day-2.md",
+                  "day-3.md",
+                  "day-4.md",
+                  "day-5.md",
+                ],
+              },
+              {
+                name: "Deep Work Essentials",
+                slug: "/deep-work",
+                desc: "A free 2-day email course on mastering deep work.",
+                steps: 3,
+                cadence: "subscriber picks",
+                subs: 56,
+                active: 41,
+                completed: 15,
+                accent: "#ff6b9d",
+                files: ["welcome.md", "day-1.md", "day-2.md"],
+              },
+            ].map((pack) => (
+              <div
+                key={pack.name}
+                className="flex flex-1 flex-col bg-[#050505] p-5 md:p-6"
+              >
+                {/* Pack header with accent stripe */}
+                <div
+                  className="mb-4 h-1 w-12"
+                  style={{ backgroundColor: pack.accent }}
+                />
+                <p className="text-[16px] font-bold text-[#e8e8e8]">
+                  {pack.name}
+                </p>
+                <p className="mt-1 font-mono text-[11px] text-[#444]">
+                  {pack.slug}
+                </p>
+                <p className="mt-2 text-[13px] leading-relaxed text-[#555]">
+                  {pack.desc}
+                </p>
+
+                {/* Stats row */}
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="border border-[#1a1a1a] bg-[#0a0a0a] px-2 py-0.5 font-mono text-[11px] text-[#666]">
+                    {pack.steps} lessons
+                  </span>
+                  <span className="font-mono text-[11px] text-[#444]">
+                    {pack.cadence}
+                  </span>
+                </div>
+
+                {/* Mini file tree */}
+                <div className="mt-4 border border-[#1a1a1a] bg-[#0a0a0a] p-3">
+                  <p className="mb-1.5 font-mono text-[10px] uppercase tracking-wider text-[#333]">
+                    emails/
+                  </p>
+                  {pack.files.map((file, i) => (
+                    <div
+                      key={`${pack.name}-${i}`}
+                      className="flex items-center gap-2 py-0.5"
+                    >
+                      <span className="font-mono text-[10px] text-[#333]">
+                        └
+                      </span>
+                      <span className="font-mono text-[11px] text-[#555]">
+                        {file}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Subscriber breakdown */}
+                <div className="mt-auto pt-5">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 font-mono text-[12px] text-[#777]">
+                      <Users className="h-3 w-3" />
+                      {pack.subs} subscribers
+                    </span>
+                  </div>
+                  <div className="mt-2 flex h-1.5 w-full overflow-hidden bg-[#111]">
+                    <div
+                      className="h-full"
+                      style={{
+                        width: `${(pack.active / pack.subs) * 100}%`,
+                        backgroundColor: pack.accent,
+                        opacity: 0.4,
+                      }}
+                    />
+                    <div
+                      className="h-full"
+                      style={{
+                        width: `${(pack.completed / pack.subs) * 100}%`,
+                        backgroundColor: pack.accent,
+                        opacity: 0.15,
+                      }}
+                    />
+                  </div>
+                  <div className="mt-1.5 flex gap-4 font-mono text-[10px] text-[#444]">
+                    <span>{pack.active} active</span>
+                    <span>{pack.completed} completed</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Key facts row */}
+          <div className="mt-6 grid gap-px bg-[#1a1a1a] p-px sm:grid-cols-3">
+            {[
+              {
+                label: "Independent Subscribers",
+                desc: "Each pack has its own subscriber list — no cross-talk, no shared state.",
+              },
+              {
+                label: "Namespaced URLs",
+                desc: "Routes are scoped per pack. /mindful-productivity and /deep-work coexist cleanly.",
+              },
+              {
+                label: "Per-Pack Branding",
+                desc: "Every pack gets its own email shell, colors, and companion page styling.",
+              },
+            ].map((fact) => (
+              <div key={fact.label} className="bg-[#050505] p-4">
+                <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                  {fact.label}
+                </p>
+                <p className="mt-1 text-[13px] text-[#555]">{fact.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Companion Pages ── */}
+      <section className="border-b border-[#1a1a1a]">
+        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#444]">
+            Companion Pages
+          </p>
+          <h2 className="mt-4 max-w-xl text-3xl font-bold tracking-tight md:text-4xl">
+            Every email gets a web page.
+          </h2>
+          <p className="mt-3 max-w-xl font-mono text-base leading-relaxed text-[#555]">
+            Each lesson can have a companion page — a shareable, persistent web
+            version. Keep it minimal or go deeper than the email with extended
+            content, images, and rich formatting. For many courses, the page
+            becomes the main event.
+          </p>
+
+          {/* Split-screen: Email vs Web */}
+          <div className="mt-12 grid items-stretch gap-0 lg:grid-cols-[1fr_auto_1fr]">
+            {/* Left: Email mockup */}
+            <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+              <div className="flex items-center gap-2 border-b border-[#1a1a1a] px-4 py-2.5">
+                <Mail className="h-4 w-4 text-[#333]" />
+                <span className="font-mono text-xs text-[#444]">
+                  Email inbox
+                </span>
+              </div>
+              <div className="p-5">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#c8ff00]/20" />
+                  <span className="font-mono text-[12px] font-medium text-[#888]">
+                    Day 1: Getting Started
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-2 w-full bg-[#151515]" />
+                  <div className="h-2 w-5/6 bg-[#151515]" />
+                  <div className="h-2 w-4/5 bg-[#151515]" />
+                  <div className="h-2 w-2/3 bg-[#151515]" />
+                </div>
+                <div className="mt-4 space-y-1 text-[11px] text-[#333]">
+                  <div className="flex gap-2 font-mono">
+                    <span>Manage</span>
+                    <span>&middot;</span>
+                    <span>Pause</span>
+                    <span>&middot;</span>
+                    <span>Unsubscribe</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Center: Connector bridge */}
+            <div className="flex items-center justify-center py-6 lg:px-6 lg:py-0">
+              <div className="flex items-center gap-3 lg:flex-col lg:gap-3">
+                <div className="h-px w-8 border-t border-dashed border-[#333] lg:h-8 lg:w-px lg:border-l lg:border-t-0" />
+                <div className="whitespace-nowrap border border-[#c8ff00]/20 bg-[#c8ff00]/5 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[#c8ff00]/60">
+                  linked pair
+                </div>
+                <div className="h-px w-8 border-t border-dashed border-[#333] lg:h-8 lg:w-px lg:border-l lg:border-t-0" />
+              </div>
+            </div>
+
+            {/* Right: Browser/web page mockup — visually richer */}
+            <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+              <div className="flex items-center gap-2 border-b border-[#1a1a1a] px-4 py-2.5">
+                <div className="flex gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#1a1a1a]" />
+                  <span className="h-2 w-2 rounded-full bg-[#1a1a1a]" />
+                  <span className="h-2 w-2 rounded-full bg-[#1a1a1a]" />
+                </div>
+                <span className="ml-1 font-mono text-[10px] text-[#333]">
+                  yoursite.com/p/course/day-1
+                </span>
+              </div>
+              <div className="p-5">
+                <div className="mb-3">
+                  <span className="font-mono text-[12px] font-medium text-[#888]">
+                    Day 1: Getting Started
+                  </span>
+                </div>
+                {/* Intro paragraph lines */}
+                <div className="space-y-2">
+                  <div className="h-2 w-full rounded-sm bg-[#151515]" />
+                  <div className="h-2 w-5/6 rounded-sm bg-[#151515]" />
+                  <div className="h-2 w-4/5 rounded-sm bg-[#151515]" />
+                </div>
+                {/* Image placeholder — shows richer content */}
+                <div className="my-3 flex h-14 items-center justify-center border border-dashed border-[#1a1a1a] bg-[#080808]">
+                  <span className="font-mono text-[10px] text-[#333]">
+                    image / embed
+                  </span>
+                </div>
+                {/* Extended content — more lines than the email */}
+                <div className="space-y-2">
+                  <div className="h-2 w-full rounded-sm bg-[#151515]" />
+                  <div className="h-2 w-5/6 rounded-sm bg-[#151515]" />
+                  <div className="h-2 w-full rounded-sm bg-[#151515]" />
+                  <div className="h-2 w-2/3 rounded-sm bg-[#151515]" />
+                </div>
+                <div className="mt-3 flex items-center gap-2 font-mono text-[11px] text-[#444]">
+                  <Globe className="h-3 w-3" />
+                  Shareable &middot; permanent &middot; any device
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature callouts */}
+          <div className="mt-6 grid gap-px bg-[#1a1a1a] p-px sm:grid-cols-3">
+            <div className="bg-[#050505] p-4">
+              <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                Go Deeper
+              </p>
+              <p className="mt-1 text-[13px] text-[#555]">
+                Pages aren&apos;t limited to what fits in an email. Add images,
+                embeds, extended writing — no inbox constraints.
+              </p>
+            </div>
+            <div className="bg-[#050505] p-4">
+              <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                Permanent URLs
+              </p>
+              <p className="mt-1 text-[13px] text-[#555]">
+                Every page has a shareable link. Subscribers share content
+                without forwarding emails.
+              </p>
+            </div>
+            <div className="bg-[#050505] p-4">
+              <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                Optional Per Lesson
+              </p>
+              <p className="mt-1 text-[13px] text-[#555]">
+                Add a companion page to any lesson or skip it entirely. Each
+                step decides for itself.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Fully Customizable ── */}
+      <section className="border-b border-[#1a1a1a]">
+        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#444]">
+            Your Design
+          </p>
+          <h2 className="mt-4 max-w-xl text-3xl font-bold tracking-tight md:text-4xl">
+            It&apos;s just Next.js. Customize everything.
+          </h2>
+          <p className="mt-3 max-w-xl font-mono text-base leading-relaxed text-[#555]">
+            No locked-down templates. Every surface is a React component you
+            own — landing pages, emails, companion pages, and subscribe forms.
+          </p>
+
+          {/* 4 mini-mockup cards */}
+          <div className="mt-12 grid gap-px bg-[#1a1a1a] p-px sm:grid-cols-2">
+            {/* Landing Page */}
+            <div className="bg-[#050505] p-5 md:p-6">
+              <div className="border border-dashed border-[#222] bg-[#0a0a0a] p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="h-3 w-20 bg-[#1a1a1a]" />
+                  <div className="ml-auto h-3 w-8 bg-[#1a1a1a]" />
+                </div>
+                <div className="space-y-2">
+                  <div className="h-5 w-3/4 bg-[#151515]" />
+                  <div className="h-2 w-full bg-[#111]" />
+                  <div className="h-2 w-2/3 bg-[#111]" />
+                </div>
+                <div className="mt-3 h-7 w-24 bg-[#c8ff00]/10" />
+              </div>
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Landing Page
+                  </p>
+                  <p className="mt-1 text-[13px] text-[#555]">
+                    Subscribe page, hero, social proof — all yours
+                  </p>
+                </div>
+                <Code className="h-4 w-4 text-[#333]" />
+              </div>
+            </div>
+
+            {/* Email Template */}
+            <div className="bg-[#050505] p-5 md:p-6">
+              <div className="border border-dashed border-[#222] bg-[#0a0a0a] p-4">
+                <div className="mb-2 h-4 w-16 border border-dashed border-[#c8ff00]/20 bg-[#c8ff00]/5" />
+                <div className="space-y-1.5">
+                  <div className="h-2 w-full bg-[#151515]" />
+                  <div className="h-2 w-4/5 bg-[#151515]" />
+                </div>
+                <div className="mt-3 h-px w-full bg-[#1a1a1a]" />
+                <div className="mt-2 h-3 w-20 border border-dashed border-[#c8ff00]/20 bg-[#c8ff00]/5" />
+              </div>
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Email Template
+                  </p>
+                  <p className="mt-1 text-[13px] text-[#555]">
+                    React Email shell — header, footer, styles
+                  </p>
+                </div>
+                <Code className="h-4 w-4 text-[#333]" />
+              </div>
+            </div>
+
+            {/* Companion Pages */}
+            <div className="bg-[#050505] p-5 md:p-6">
+              <div className="border border-dashed border-[#222] bg-[#0a0a0a] p-4">
+                <div className="mb-2 flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#222]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#222]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#222]" />
+                  <div className="ml-1 h-2 w-24 bg-[#111]" />
+                </div>
+                <div className="space-y-1.5">
+                  <div className="h-3 w-2/3 bg-[#151515]" />
+                  <div className="h-2 w-full bg-[#111]" />
+                  <div className="h-2 w-5/6 bg-[#111]" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Companion Pages
+                  </p>
+                  <p className="mt-1 text-[13px] text-[#555]">
+                    Custom typography, layout, and navigation
+                  </p>
+                </div>
+                <Code className="h-4 w-4 text-[#333]" />
+              </div>
+            </div>
+
+            {/* Subscribe Form */}
+            <div className="bg-[#050505] p-5 md:p-6">
+              <div className="border border-dashed border-[#222] bg-[#0a0a0a] p-4">
+                <div className="space-y-2">
+                  <div className="h-2 w-12 bg-[#1a1a1a]" />
+                  <div className="h-7 w-full border border-[#1a1a1a] bg-[#050505]" />
+                  <div className="h-2 w-16 bg-[#1a1a1a]" />
+                  <div className="h-7 w-full border border-[#1a1a1a] bg-[#050505]" />
+                  <div className="h-7 w-20 bg-[#c8ff00]/10" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Subscribe Form
+                  </p>
+                  <p className="mt-1 text-[13px] text-[#555]">
+                    Fields, validation, and styling — fully yours
+                  </p>
+                </div>
+                <Code className="h-4 w-4 text-[#333]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Code snippet */}
+          <div className="mt-6 border border-[#1a1a1a] bg-[#0a0a0a]">
+            <div className="flex items-center gap-2 border-b border-[#1a1a1a] px-4 py-2">
+              <Layers className="h-3 w-3 text-[#333]" />
+              <span className="font-mono text-[11px] text-[#444]">
+                email-shell.tsx
+              </span>
+            </div>
+            <pre className="overflow-x-auto p-4 font-mono text-[12px] leading-[1.8] text-[#555]">
+              <code>
+                <span className="text-[#666]">export</span>{" "}
+                <span className="text-[#666]">function</span>{" "}
+                <span className="text-[#c8ff00]/60">EmailShell</span>
+                {"({ "}
+                <span className="text-[#888]">children, packName, accentColor, logoUrl</span>
+                {" }) {"}
+                {"\n  "}
+                <span className="text-[#666]">return</span> {"("}
+                {"\n    "}
+                <span className="text-[#444]">
+                  {"<Html> <Body> <Container>"}
+                </span>
+                {"\n      "}
+                <span className="text-[#444]">
+                  {"<Header logo={logoUrl} /> "}
+                </span>
+                <span className="text-[#333]">
+                  {"// ← your component"}
+                </span>
+                {"\n      "}
+                <span className="text-[#444]">{"{children}"}</span>
+                {"\n      "}
+                <span className="text-[#444]">
+                  {"<Footer />"}
+                </span>
+                {"\n    "}
+                <span className="text-[#444]">
+                  {"</Container> </Body> </Html>"}
+                </span>
+                {"\n  );\n}"}
+              </code>
+            </pre>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Dev Mode ── */}
+      <section className="border-b border-[#1a1a1a]">
+        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#444]">
+            Dev Mode
+          </p>
+          <h2 className="mt-4 max-w-xl text-3xl font-bold tracking-tight md:text-4xl">
+            Compress days into minutes.
+          </h2>
+          <p className="mt-3 max-w-xl font-mono text-base leading-relaxed text-[#555]">
+            Fast-test mode scales down all delivery intervals so you can
+            preview your entire course without waiting days.
+          </p>
+
+          <div className="mt-12 space-y-8">
+            {/* Normal timeline */}
+            <div>
+              <p className="mb-3 font-mono text-[11px] uppercase tracking-wider text-[#444]">
+                Normal schedule
+              </p>
+              <div className="relative flex items-center justify-between">
+                <div className="absolute left-0 right-0 top-1/2 h-px bg-[#1a1a1a]" />
+                {["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"].map(
+                  (day) => (
+                    <div
+                      key={day}
+                      className="relative z-10 flex flex-col items-center"
+                    >
+                      <div className="h-3 w-3 rounded-full border border-[#333] bg-[#0a0a0a]" />
+                      <span className="mt-2 font-mono text-[11px] text-[#555]">
+                        {day}
+                      </span>
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+
+            {/* Compression indicator */}
+            <div className="flex items-center justify-center gap-3">
+              <div className="h-px flex-1 border-t border-dashed border-[#222]" />
+              <div className="flex items-center gap-2 border border-[#c8ff00]/20 bg-[#c8ff00]/5 px-3 py-1.5">
+                <Zap className="h-3 w-3 text-[#c8ff00]/60" />
+                <span className="font-mono text-[11px] uppercase tracking-wider text-[#c8ff00]/60">
+                  1440× faster
+                </span>
+              </div>
+              <div className="h-px flex-1 border-t border-dashed border-[#222]" />
+            </div>
+
+            {/* Compressed timeline */}
+            <div>
+              <p className="mb-3 font-mono text-[11px] uppercase tracking-wider text-[#444]">
+                Fast-test mode
+              </p>
+              <div className="relative flex items-center">
+                <div className="absolute left-0 right-[40%] top-1/2 h-px bg-[#c8ff00]/20" />
+                <div className="relative z-10 flex items-center gap-4">
+                  {["1min", "2min", "3min", "4min", "5min"].map((t) => (
+                    <div key={t} className="flex flex-col items-center">
+                      <div className="h-3 w-3 rounded-full border border-[#c8ff00]/30 bg-[#c8ff00]/10" />
+                      <span className="mt-2 font-mono text-[11px] text-[#c8ff00]/50">
+                        {t}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Env var + callout */}
+          <div className="mt-10 grid gap-px bg-[#1a1a1a] p-px sm:grid-cols-2">
+            <div className="bg-[#0a0a0a] p-5">
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-[#444]">
+                .env
+              </p>
+              <code className="font-mono text-[14px] text-[#c8ff00]">
+                DRIP_TIME_SCALE=1440
+              </code>
+              <p className="mt-2 font-mono text-[12px] text-[#555]">
+                1 day → 1 minute
+              </p>
+            </div>
+            <div className="flex items-center bg-[#050505] p-5">
+              <p className="font-mono text-[14px] leading-relaxed text-[#666]">
+                Test your entire 7-day course in{" "}
+                <span className="text-[#c8ff00]">7 minutes</span>.
+              </p>
+            </div>
           </div>
         </div>
       </section>
