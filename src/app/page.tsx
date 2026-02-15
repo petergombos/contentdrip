@@ -1,6 +1,22 @@
+import {
+  ArrowRight,
+  CircleCheckBig,
+  Clock,
+  FileText,
+  Globe,
+  KeyRound,
+  LogOut,
+  Mail,
+  Pause,
+  Play,
+  Plug,
+  RefreshCcw,
+  ShieldCheck,
+  UserPlus,
+  Workflow,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "ContentDrip — Open-Source Email Drip Courses",
@@ -9,45 +25,6 @@ export const metadata: Metadata = {
 };
 
 /* ── Data ── */
-
-const FEATURES = [
-  {
-    label: "Content Packs",
-    desc: "Each course is a self-contained pack — a folder of markdown emails, companion web pages, and a custom email template. Create one pack or twenty. They're independent, portable, and easy to reason about.",
-  },
-  {
-    label: "Scheduled Delivery",
-    desc: "Subscribers choose the hour they want to receive emails. A cron job evaluates every active subscription each minute and sends emails at the exact time the subscriber chose. No batching, no approximation.",
-  },
-  {
-    label: "Timezone Aware",
-    desc: "Timezones are auto-detected from the subscriber's browser via the Intl API and stored per subscription. The scheduler evaluates cron expressions in the subscriber's local timezone, so 8am means 8am wherever they are.",
-  },
-  {
-    label: "Companion Pages",
-    desc: "Every email has a web-readable companion page at /p/{pack}/{step}. Subscribers can share links, read on any device, and access content without digging through their inbox. Pages are generated from markdown in your pack's pages/ directory.",
-  },
-  {
-    label: "Subscriber Management",
-    desc: "Built-in manage page where subscribers update their delivery time, timezone, or unsubscribe — all via secure, signed, single-use token links. No account creation, no passwords. Just click the link in any email.",
-  },
-  {
-    label: "Pause & Resume",
-    desc: "Subscribers pause delivery with one click from any email. When they resume, they pick up exactly where they left off — the scheduler tracks which step was last sent and continues from the next one.",
-  },
-  {
-    label: "Email Branding",
-    desc: "Each pack defines its own EmailShell — a React Email component that wraps every outgoing email in custom branding. Headers, footers, typography, colors, images — full control over every pixel, tested across email clients.",
-  },
-  {
-    label: "One-Click Unsubscribe",
-    desc: "Every email includes a signed, one-click unsubscribe link that immediately stops delivery. The link is unique per subscriber and cryptographically verified. CAN-SPAM and GDPR compliant out of the box.",
-  },
-  {
-    label: "Pluggable Email Adapters",
-    desc: "Ships with Postmark and Resend adapters out of the box. The email layer uses a simple adapter interface — implement one method and plug in any provider you want. No vendor lock-in.",
-  },
-];
 
 const STEPS = [
   {
@@ -77,7 +54,10 @@ const STACK = [
   { name: "React Email", note: "Type-safe, cross-client email templates" },
   { name: "Drizzle ORM", note: "Type-safe SQL with zero-overhead" },
   { name: "SQLite / Turso", note: "Edge-ready, zero-config database" },
-  { name: "Postmark / Resend", note: "Pluggable email adapters — bring your own provider" },
+  {
+    name: "Postmark / Resend",
+    note: "Pluggable email adapters — bring your own provider",
+  },
   { name: "Tailwind CSS", note: "Utility-first styling throughout" },
 ];
 
@@ -140,9 +120,9 @@ export default function HomePage() {
 
           <p className="animate-fade-in-up delay-2 mt-6 max-w-xl font-mono text-base leading-relaxed text-[#777]">
             ContentDrip is an open-source Next.js template for building
-            automated email drip courses. You write content in markdown, define a
-            delivery schedule, and subscribers receive one lesson at a time — at
-            the hour they choose, in their timezone.
+            automated email drip courses. You write content in markdown, define
+            a delivery schedule, and subscribers receive one lesson at a time —
+            at the hour they choose, in their timezone.
           </p>
 
           {/* Terminal */}
@@ -159,14 +139,12 @@ export default function HomePage() {
               <p>
                 <span className="text-[#c8ff00]">$</span>{" "}
                 <span className="text-[#999]">
-                  git clone content-drip my-course
+                  git clone petergombos/content-drip.git
                 </span>
               </p>
               <p>
                 <span className="text-[#c8ff00]">$</span>{" "}
-                <span className="text-[#999]">
-                  cd my-course && npm install
-                </span>
+                <span className="text-[#999]">cd my-course && npm install</span>
               </p>
               <p>
                 <span className="text-[#c8ff00]">$</span>{" "}
@@ -220,76 +198,111 @@ export default function HomePage() {
             <div className="border-b border-[#1a1a1a] px-4 py-2 font-mono text-xs uppercase tracking-widest text-[#444]">
               subscription lifecycle
             </div>
-            <div className="p-5 font-mono text-[13px] leading-[2.2] text-[#666] md:p-6">
-              <p>
-                <span className="text-[#c8ff00]">01</span>{" "}
-                <span className="text-[#999]">subscribe</span>
-                <span className="text-[#333]">
-                  {" "}
-                  ── visitor enters email + preferred delivery time
-                </span>
-              </p>
-              <p>
-                <span className="text-[#c8ff00]">02</span>{" "}
-                <span className="text-[#999]">confirm</span>
-                <span className="text-[#333]">
-                  {" "}
-                  ─── signed token email → click to activate
-                </span>
-              </p>
-              <p>
-                <span className="text-[#c8ff00]">03</span>{" "}
-                <span className="text-[#999]">welcome</span>
-                <span className="text-[#333]">
-                  {" "}
-                  ─── step 0 sent immediately on confirmation
-                </span>
-              </p>
-              <p>
-                <span className="text-[#c8ff00]">04</span>{" "}
-                <span className="text-[#999]">drip</span>
-                <span className="text-[#333]">
-                  {" "}
-                  ──── one lesson per day at the chosen time & timezone
-                </span>
-              </p>
-              <p>
-                <span className="text-[#c8ff00]">05</span>{" "}
-                <span className="text-[#999]">complete</span>
-                <span className="text-[#333]">
-                  {" "}
-                  ── subscription marked as completed after final step
-                </span>
-              </p>
-              <p className="mt-3 border-t border-[#1a1a1a] pt-3 text-[#444]">
-                <span className="text-[#666]">
-                  at any point: pause ──→ resume exactly where they left off
-                </span>
-              </p>
-              <p className="text-[#444]">
-                <span className="text-[#666]">
-                  at any point: unsubscribe ──→ one-click, signed link, instant
-                </span>
-              </p>
+            <div className="space-y-0 p-5 font-mono text-[13px] md:p-6">
+              {(
+                [
+                  {
+                    icon: UserPlus,
+                    num: "01",
+                    label: "subscribe",
+                    desc: "visitor enters email + preferred delivery time",
+                  },
+                  {
+                    icon: ShieldCheck,
+                    num: "02",
+                    label: "confirm",
+                    desc: "signed token email → click to activate",
+                  },
+                  {
+                    icon: Mail,
+                    num: "03",
+                    label: "welcome",
+                    desc: "step 0 sent immediately on confirmation",
+                  },
+                  {
+                    icon: Clock,
+                    num: "04",
+                    label: "drip",
+                    desc: "one lesson per day at the chosen time & timezone",
+                  },
+                  {
+                    icon: CircleCheckBig,
+                    num: "05",
+                    label: "complete",
+                    desc: "subscription marked as completed after final step",
+                  },
+                ] as const
+              ).map((step, i) => (
+                <div key={step.num} className="flex items-center gap-3 py-3">
+                  <step.icon
+                    className="h-4 w-4 shrink-0 text-[#c8ff00]"
+                    strokeWidth={1.5}
+                  />
+                  <div className="flex min-w-0 items-baseline gap-2">
+                    <span className="text-[#c8ff00]">{step.num}</span>
+                    <span className="text-[#999]">{step.label}</span>
+                    <span className="hidden text-[#333] sm:inline">
+                      ── {step.desc}
+                    </span>
+                  </div>
+                  {i < 4 && (
+                    <div className="ml-auto hidden h-px flex-1 bg-[#1a1a1a] lg:block" />
+                  )}
+                </div>
+              ))}
+
+              {/* Anytime actions */}
+              <div className="mt-1 space-y-0 border-t border-[#1a1a1a] pt-3">
+                <div className="flex items-center gap-3 py-2">
+                  <Pause
+                    className="h-4 w-4 shrink-0 text-[#c8ff00]"
+                    strokeWidth={1.5}
+                  />
+                  <span className="text-[#666]">
+                    at any point: pause ──→ resume exactly where they left off
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 py-2">
+                  <LogOut
+                    className="h-4 w-4 shrink-0 text-[#c8ff00]"
+                    strokeWidth={1.5}
+                  />
+                  <span className="text-[#666]">
+                    at any point: unsubscribe ──→ one-click, signed link,
+                    instant
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="mt-6 grid gap-px bg-[#1a1a1a] p-px sm:grid-cols-3">
-            {[
-              {
-                label: "Signed Tokens",
-                desc: "Every action link (confirm, manage, pause, stop) uses a cryptographically signed, single-use token. No passwords, no sessions.",
-              },
-              {
-                label: "Idempotent Delivery",
-                desc: "The send log tracks every email sent. If the cron job runs twice, the same step is never sent again. Safe to retry, safe to overlap.",
-              },
-              {
-                label: "Status Machine",
-                desc: "Subscriptions move through PENDING_CONFIRM → ACTIVE → PAUSED → COMPLETED or STOPPED. Every transition is logged and auditable.",
-              },
-            ].map((item) => (
+            {(
+              [
+                {
+                  icon: KeyRound,
+                  label: "Signed Tokens",
+                  desc: "Every action link (confirm, manage, pause, stop) uses a cryptographically signed, single-use token. No passwords, no sessions.",
+                },
+                {
+                  icon: RefreshCcw,
+                  label: "Idempotent Delivery",
+                  desc: "The send log tracks every email sent. If the cron job runs twice, the same step is never sent again. Safe to retry, safe to overlap.",
+                },
+                {
+                  icon: Workflow,
+                  label: "Status Machine",
+                  desc: "Subscriptions move through PENDING_CONFIRM → ACTIVE → PAUSED → COMPLETED or STOPPED. Every transition is logged and auditable.",
+                },
+              ] as const
+            ).map((item) => (
               <div key={item.label} className="bg-[#050505] p-5">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-[#c8ff0020] bg-[#c8ff0008] shadow-[0_0_16px_#c8ff0015]">
+                  <item.icon
+                    className="h-5 w-5 text-[#c8ff00]"
+                    strokeWidth={1.5}
+                  />
+                </div>
                 <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
                   {item.label}
                 </p>
@@ -305,29 +318,267 @@ export default function HomePage() {
       {/* ── Features ── */}
       <section className="border-b border-[#1a1a1a]">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-          <div className="flex items-baseline justify-between">
-            <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#444]">
-              Features
-            </p>
-            <p className="hidden font-mono text-[13px] text-[#333] sm:block">
-              {FEATURES.length} built-in
-            </p>
-          </div>
+          <p className="font-mono text-[13px] uppercase tracking-[0.3em] text-[#444]">
+            Features
+          </p>
           <h2 className="mt-4 max-w-xl text-3xl font-bold tracking-tight md:text-4xl">
             Everything you need, nothing you don&apos;t.
           </h2>
 
-          <div className="mt-10 grid gap-px bg-[#1a1a1a] p-px sm:grid-cols-2">
-            {FEATURES.map((f, i) => (
-              <div key={i} className="bg-[#050505] p-5 md:p-6">
-                <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
-                  {f.label}
-                </p>
-                <p className="mt-2 text-[15px] leading-relaxed text-[#777]">
-                  {f.desc}
-                </p>
+          <div className="mt-10 flex flex-col gap-px bg-[#1a1a1a] p-px">
+            {/* Row 1: Three tall feature cards */}
+            <div className="grid gap-px md:grid-cols-3">
+              {/* Content Packs */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <pre className="font-mono text-[12px] leading-[1.7] text-[#444]">
+                  {`📁 my-course/
+├── pack.ts
+├── email-shell.tsx
+├── emails/
+│   ├── welcome.md
+│   └── day-1.md
+└── pages/
+    └── day-1.md`}
+                </pre>
+                <div className="mt-auto pt-5">
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Content Packs
+                  </p>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-[#666]">
+                    Self-contained folders of markdown emails, web pages, and a
+                    branded email template.
+                  </p>
+                </div>
               </div>
-            ))}
+
+              {/* Scheduled Delivery */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-[#c8ff00]/40" />
+                  <div className="font-mono text-[12px] text-[#444]">
+                    subscriber picks a time
+                  </div>
+                </div>
+                <div className="mt-4 space-y-1.5">
+                  {["06:00", "08:00", "09:30", "12:00", "18:00"].map(
+                    (time, i) => (
+                      <div key={time} className="flex items-center gap-3">
+                        <span className="w-12 font-mono text-[12px] text-[#555]">
+                          {time}
+                        </span>
+                        <div className="flex-1 border-b border-dashed border-[#1a1a1a]" />
+                        <div
+                          className={`h-1.5 w-1.5 rounded-full ${i === 1 ? "bg-[#c8ff00]" : "bg-[#222]"}`}
+                        />
+                      </div>
+                    ),
+                  )}
+                </div>
+                <div className="mt-auto pt-5">
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Scheduled Delivery
+                  </p>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-[#666]">
+                    Subscribers choose their delivery hour. Emails arrive at the
+                    exact time they chose. No batching.
+                  </p>
+                </div>
+              </div>
+
+              {/* Timezone Aware */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="flex items-center gap-3">
+                  <Globe className="h-5 w-5 text-[#c8ff00]/40" />
+                  <div className="font-mono text-[12px] text-[#444]">
+                    auto-detected via Intl API
+                  </div>
+                </div>
+                <div className="mt-4 space-y-1.5 font-mono text-[12px]">
+                  {[
+                    { tz: "America/New_York", time: "08:00", label: "EST" },
+                    { tz: "Europe/London", time: "13:00", label: "GMT" },
+                    { tz: "Asia/Tokyo", time: "22:00", label: "JST" },
+                  ].map((row) => (
+                    <div
+                      key={row.tz}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-[#555]">{row.tz}</span>
+                      <span className="text-[#777]">
+                        <span className="text-[#c8ff00]/60">{row.label}</span>{" "}
+                        {row.time}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-auto pt-5">
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Timezone Aware
+                  </p>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-[#666]">
+                    8am means 8am wherever they are. Timezones are auto-detected
+                    and stored per subscription.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Two wide cards */}
+            <div className="grid gap-px md:grid-cols-2">
+              {/* Companion Pages */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+                  <div className="flex items-center gap-1.5 border-b border-[#1a1a1a] px-3 py-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#333]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#333]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#333]" />
+                    <span className="ml-2 font-mono text-[10px] text-[#333]">
+                      yoursite.com/p/my-course/day-1
+                    </span>
+                  </div>
+                  <div className="space-y-1.5 px-4 py-3">
+                    <div className="h-2 w-3/4 rounded-sm bg-[#1a1a1a]" />
+                    <div className="h-2 w-full rounded-sm bg-[#1a1a1a]" />
+                    <div className="h-2 w-5/6 rounded-sm bg-[#1a1a1a]" />
+                    <div className="h-2 w-2/3 rounded-sm bg-[#1a1a1a]" />
+                  </div>
+                </div>
+                <div className="mt-auto pt-5">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-[#c8ff00]/40" />
+                    <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                      Companion Pages
+                    </p>
+                  </div>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-[#666]">
+                    Every email gets a web-readable page. Subscribers share
+                    links and read on any device — no inbox digging.
+                  </p>
+                </div>
+              </div>
+
+              {/* Email Branding */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+                  <div className="flex items-center justify-between border-b border-[#1a1a1a] px-3 py-1.5">
+                    <span className="font-mono text-[10px] text-[#333]">
+                      EmailShell.tsx
+                    </span>
+                    <Mail className="h-3 w-3 text-[#333]" />
+                  </div>
+                  <div className="px-4 py-3">
+                    <div className="mx-auto max-w-[200px] border border-dashed border-[#222] p-2">
+                      <div className="mb-2 h-3 w-16 bg-[#c8ff00]/10" />
+                      <div className="space-y-1">
+                        <div className="h-1.5 w-full rounded-sm bg-[#1a1a1a]" />
+                        <div className="h-1.5 w-4/5 rounded-sm bg-[#1a1a1a]" />
+                      </div>
+                      <div className="mt-2 h-2 w-12 bg-[#c8ff00]/10" />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-auto pt-5">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-[#c8ff00]/40" />
+                    <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                      Email Branding
+                    </p>
+                  </div>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-[#666]">
+                    Each pack has its own React Email shell. Full control over
+                    headers, footers, typography, and colors.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Four compact cards */}
+            <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-4">
+              {/* Pause & Resume */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-7 w-7 items-center justify-center border border-[#1a1a1a] bg-[#0a0a0a]">
+                    <Pause className="h-3 w-3 text-[#c8ff00]/60" />
+                  </div>
+                  <div className="h-px flex-1 bg-[#1a1a1a]" />
+                  <div className="flex h-7 w-7 items-center justify-center border border-[#1a1a1a] bg-[#0a0a0a]">
+                    <Play className="h-3 w-3 text-[#c8ff00]/60" />
+                  </div>
+                </div>
+                <div className="mt-auto pt-4">
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Pause &amp; Resume
+                  </p>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-[#666]">
+                    One click to pause, pick up exactly where they left off.
+                  </p>
+                </div>
+              </div>
+
+              {/* Subscriber Management */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="font-mono text-[11px] leading-[1.8] text-[#444]">
+                  <span className="text-[#c8ff00]/40">→</span> update time
+                  <br />
+                  <span className="text-[#c8ff00]/40">→</span> change timezone
+                  <br />
+                  <span className="text-[#c8ff00]/40">→</span> unsubscribe
+                </div>
+                <div className="mt-auto pt-4">
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Self-Serve Manage
+                  </p>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-[#666]">
+                    Signed token links. No passwords, no accounts.
+                  </p>
+                </div>
+              </div>
+
+              {/* One-Click Unsubscribe */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-[#c8ff00]/40" />
+                  <span className="font-mono text-[11px] text-[#444]">
+                    CAN-SPAM · GDPR
+                  </span>
+                </div>
+                <div className="mt-auto pt-4">
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    One-Click Unsub
+                  </p>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-[#666]">
+                    Signed, cryptographically verified. Compliant out of the
+                    box.
+                  </p>
+                </div>
+              </div>
+
+              {/* Pluggable Adapters */}
+              <div className="flex flex-col bg-[#050505] p-5 md:p-6">
+                <div className="flex items-center gap-2">
+                  <Plug className="h-4 w-4 text-[#c8ff00]/40" />
+                  <div className="flex gap-1">
+                    {["Postmark", "Resend", "…"].map((name) => (
+                      <span
+                        key={name}
+                        className="border border-[#1a1a1a] bg-[#0a0a0a] px-1.5 py-0.5 font-mono text-[10px] text-[#555]"
+                      >
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-auto pt-4">
+                  <p className="font-mono text-[13px] font-bold uppercase tracking-wider text-[#c8ff00]">
+                    Pluggable Adapters
+                  </p>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-[#666]">
+                    Swap email providers with a single adapter. No vendor
+                    lock-in.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -370,91 +621,181 @@ export default function HomePage() {
             Markdown in, emails out.
           </h2>
           <p className="mt-3 max-w-xl font-mono text-base leading-relaxed text-[#555]">
-            A content pack is a folder. Inside: a config file, an email
-            template, and markdown files for each lesson. ContentDrip reads the
-            markdown, replaces template variables with signed subscriber URLs,
-            renders it through your EmailShell, and sends it via your configured email provider (Postmark or Resend out of the box — or bring your own).
+            Write lessons in markdown. ContentDrip handles templating,
+            rendering, and delivery.
           </p>
 
-          {/* Three-panel code view */}
-          <div className="mt-10 grid gap-px bg-[#1a1a1a] p-px lg:grid-cols-3">
-            {/* Directory tree */}
-            <div className="bg-[#050505]">
-              <div className="border-b border-[#1a1a1a] px-4 py-2 font-mono text-xs uppercase tracking-widest text-[#444]">
-                structure
+          {/* Visual pipeline */}
+          <div className="mt-12 grid items-stretch gap-0 lg:grid-cols-[1fr_auto_1fr]">
+            {/* Left: Markdown input */}
+            <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+              <div className="flex items-center gap-2 border-b border-[#1a1a1a] px-4 py-2.5">
+                <div className="flex gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#1a1a1a]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#1a1a1a]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#1a1a1a]" />
+                </div>
+                <span className="font-mono text-xs text-[#444]">day-1.md</span>
               </div>
-              <pre className="p-5 font-mono text-[13px] leading-[1.9] text-[#666]">
-                {`src/content-packs/
-└── my-course/
-    ├── pack.ts
-    ├── email-shell.tsx
-    ├── emails/
-    │   ├── welcome.md
-    │   ├── day-1.md
-    │   ├── day-2.md
-    │   └── day-3.md
-    └── pages/
-        ├── welcome.md
-        ├── day-1.md
-        └── day-2.md`}
+              <pre className="p-5 font-mono text-[13px] leading-[1.8] text-[#555]">
+                <code>
+                  <span className="text-[#444]">---</span>
+                  {"\n"}
+                  <span className="text-[#666]">subject:</span>{" "}
+                  <span className="text-[#888]">
+                    {'"'}Day 1: Getting Started{'"'}
+                  </span>
+                  {"\n"}
+                  <span className="text-[#666]">preview:</span>{" "}
+                  <span className="text-[#888]">
+                    {'"'}Your first lesson{'"'}
+                  </span>
+                  {"\n"}
+                  <span className="text-[#444]">---</span>
+                  {"\n\n"}
+                  <span className="text-[#666]">Good morning!</span>
+                  {"\n\n"}
+                  <span className="text-[#666]">
+                    Today we{`'`}re covering the
+                  </span>
+                  {"\n"}
+                  <span className="text-[#666]">fundamentals of...</span>
+                  {"\n\n"}
+                  <span className="text-[#666]">## The Key Idea</span>
+                  {"\n\n"}
+                  <span className="text-[#666]">Content in **markdown**.</span>
+                  {"\n\n"}
+                  <span className="text-[#666]">[Read online →](</span>
+                  <span className="text-[#c8ff00]">{"{{companionUrl}}"}</span>
+                  <span className="text-[#666]">)</span>
+                </code>
               </pre>
             </div>
 
-            {/* Pack config */}
-            <div className="bg-[#050505]">
-              <div className="border-b border-[#1a1a1a] px-4 py-2 font-mono text-xs uppercase tracking-widest text-[#444]">
-                pack.ts
-              </div>
-              <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-[1.9] text-[#666]">
-                <code>{`const pack: ContentPack = {
-  key: "my-course",
-  name: "My Email Course",
-  description: "...",
-  steps: [
-    { slug: "welcome",
-      emailFile: "welcome.md" },
-    { slug: "day-1",
-      emailFile: "day-1.md" },
-    { slug: "day-2",
-      emailFile: "day-2.md" },
-    { slug: "day-3",
-      emailFile: "day-3.md" },
-  ],
-  EmailShell: MyShell,
-};
+            {/* Center: Pipeline connector */}
+            <div className="flex items-center justify-center py-6 lg:px-6 lg:py-0">
+              <div className="flex items-center gap-3 lg:flex-col lg:gap-4">
+                {/* Arrow / chevrons */}
+                <div className="flex gap-1 text-[#333] lg:flex-col">
+                  <svg
+                    className="h-5 w-5 rotate-90 lg:rotate-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
 
-registerPack(pack);`}</code>
-              </pre>
+                {/* Pipeline steps */}
+                <div className="flex gap-2 lg:flex-col lg:gap-3">
+                  {["parse frontmatter", "inject URLs", "render email"].map(
+                    (step) => (
+                      <div
+                        key={step}
+                        className="whitespace-nowrap border border-[#1a1a1a] bg-[#0a0a0a] px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[#444]"
+                      >
+                        {step}
+                      </div>
+                    ),
+                  )}
+                </div>
+
+                {/* Arrow / chevrons */}
+                <div className="flex gap-1 text-[#333] lg:flex-col">
+                  <svg
+                    className="h-5 w-5 rotate-90 lg:rotate-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            {/* Email markdown */}
-            <div className="bg-[#050505]">
-              <div className="border-b border-[#1a1a1a] px-4 py-2 font-mono text-xs uppercase tracking-widest text-[#444]">
-                emails/day-1.md
+            {/* Right: Email output mockup */}
+            <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
+              <div className="flex items-center gap-2 border-b border-[#1a1a1a] px-4 py-2.5">
+                <svg
+                  className="h-4 w-4 text-[#333]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                  />
+                </svg>
+                <span className="font-mono text-xs text-[#444]">
+                  Delivered email
+                </span>
               </div>
-              <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-[1.9] text-[#666]">
-                <code>{`---
-subject: "Day 1: Getting
-  Started"
-preview: "Your first
-  lesson awaits"
----
+              <div className="p-5">
+                {/* Email header area */}
+                <div className="mb-4 border-b border-[#1a1a1a] pb-4">
+                  <div className="mb-2 h-5 w-24 bg-[#1a1a1a]" />
+                  <p className="font-mono text-sm font-medium text-[#888]">
+                    Day 1: Getting Started
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] text-[#444]">
+                    Your first lesson
+                  </p>
+                </div>
 
-Good morning!
+                {/* Email body skeleton */}
+                <div className="space-y-3">
+                  <p className="font-mono text-[13px] leading-relaxed text-[#666]">
+                    Good morning!
+                  </p>
+                  <p className="font-mono text-[13px] leading-relaxed text-[#555]">
+                    Today we{`'`}re covering the fundamentals of...
+                  </p>
 
-Today we're covering...
+                  {/* Section heading */}
+                  <p className="mt-1 font-mono text-[13px] font-semibold text-[#777]">
+                    The Key Idea
+                  </p>
 
-![hero](https://...)
+                  {/* Body skeleton lines */}
+                  <div className="space-y-2">
+                    <div className="h-2.5 w-full bg-[#111]" />
+                    <div className="h-2.5 w-4/5 bg-[#111]" />
+                  </div>
 
-## The Key Idea
+                  {/* CTA button */}
+                  <div className="pt-2">
+                    <div className="inline-block border border-[#c8ff00] px-4 py-2 font-mono text-[12px] font-medium text-[#c8ff00]">
+                      Read online →
+                    </div>
+                  </div>
+                </div>
 
-Content goes here in
-standard **markdown**.
-
-[Read online →](
-  {{companionUrl}}
-)`}</code>
-              </pre>
+                {/* Footer area */}
+                <div className="mt-5 border-t border-[#1a1a1a] pt-3">
+                  <div className="flex gap-3 font-mono text-[10px] text-[#333]">
+                    <span>Manage</span>
+                    <span>·</span>
+                    <span>Pause</span>
+                    <span>·</span>
+                    <span>Unsubscribe</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -490,7 +831,9 @@ standard **markdown**.
           <div className="mt-10 grid gap-px bg-[#1a1a1a] p-px sm:grid-cols-2 lg:grid-cols-3">
             {STACK.map((tech) => (
               <div key={tech.name} className="bg-[#050505] p-5">
-                <p className="text-base font-bold tracking-tight">{tech.name}</p>
+                <p className="text-base font-bold tracking-tight">
+                  {tech.name}
+                </p>
                 <p className="mt-1 font-mono text-[13px] text-[#555]">
                   {tech.note}
                 </p>
@@ -564,7 +907,11 @@ standard **markdown**.
                 className="text-[#444] no-underline transition-colors hover:text-[#888]"
                 aria-label="GitHub"
               >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
                 </svg>
               </a>
@@ -575,7 +922,11 @@ standard **markdown**.
                 className="text-[#444] no-underline transition-colors hover:text-[#888]"
                 aria-label="X (Twitter)"
               >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </a>
