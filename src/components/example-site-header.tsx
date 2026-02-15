@@ -38,7 +38,7 @@ export function ExampleSiteHeader() {
             href="/manage"
             className="text-[13px] font-medium text-muted-foreground no-underline transition-colors hover:text-foreground"
           >
-            Manage
+            Manage Subscription
           </Link>
         </nav>
       </div>
