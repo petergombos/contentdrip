@@ -28,6 +28,26 @@ export const metadata: Metadata = {
   title: "ContentDrip — Open-Source Email Drip Courses",
   description:
     "Turn your knowledge into automated email courses. Open-source, self-hosted, built with Next.js.",
+  openGraph: {
+    title: "ContentDrip — Open-Source Email Drip Courses",
+    description:
+      "Turn your knowledge into automated email courses. Open-source, self-hosted, built with Next.js.",
+    images: [
+      {
+        url: "/api/og?type=default&title=Ship+email+courses+from+markdown.&label=Open+Source",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    title: "ContentDrip — Open-Source Email Drip Courses",
+    description:
+      "Turn your knowledge into automated email courses. Open-source, self-hosted, built with Next.js.",
+    images: [
+      "/api/og?type=default&title=Ship+email+courses+from+markdown.&label=Open+Source",
+    ],
+  },
 };
 
 /* ── Data ── */

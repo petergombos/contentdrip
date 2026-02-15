@@ -7,6 +7,24 @@ export const metadata: Metadata = {
   title: "Documentation",
   description:
     "Learn how to set up and customize ContentDrip — the open-source email drip course template.",
+  openGraph: {
+    title: "Documentation — ContentDrip",
+    description:
+      "Learn how to set up and customize ContentDrip — the open-source email drip course template.",
+    images: [
+      {
+        url: "/api/og?type=default&title=Documentation&label=ContentDrip",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    title: "Documentation — ContentDrip",
+    images: [
+      "/api/og?type=default&title=Documentation&label=ContentDrip",
+    ],
+  },
 };
 
 /* ── Helper Components ── */

@@ -3,8 +3,12 @@ import { ExampleSiteFooter } from "@/components/example-site-footer";
 import { ExampleSiteHeader } from "@/components/example-site-header";
 import "@/content-packs";
 import { getPackByKey } from "@/content-packs/registry";
-import { renderMarkdownToReact } from "@/lib/markdown/renderer";
+import {
+  extractFrontmatter,
+  renderMarkdownToReact,
+} from "@/lib/markdown/renderer";
 import { readFileSync } from "fs";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { join } from "path";
@@ -13,15 +17,12 @@ interface CompanionPageProps {
   params: Promise<{ packKey: string; slug: string }>;
 }
 
-export default async function CompanionPage({ params }: CompanionPageProps) {
-  const { packKey, slug } = await params;
-
+function readPageMarkdown(packKey: string, slug: string) {
   const pack = getPackByKey(packKey);
-  if (!pack) return notFound();
+  if (!pack) return null;
 
-  const stepIndex = pack.steps.findIndex((s) => s.slug === slug);
-  const step = stepIndex >= 0 ? pack.steps[stepIndex] : undefined;
-  if (!step) return notFound();
+  const step = pack.steps.find((s) => s.slug === slug);
+  if (!step) return null;
 
   const pageFile = step.pageFile ?? step.emailFile;
   const pagePath = join(
@@ -32,13 +33,51 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
     pageFile,
   );
 
-  let markdown: string;
   try {
-    markdown = readFileSync(pagePath, "utf-8");
+    return { markdown: readFileSync(pagePath, "utf-8"), pack };
   } catch {
-    return notFound();
+    return null;
   }
+}
 
+export async function generateMetadata({
+  params,
+}: CompanionPageProps): Promise<Metadata> {
+  const { packKey, slug } = await params;
+  const result = readPageMarkdown(packKey, slug);
+  if (!result) return {};
+
+  const { markdown, pack } = result;
+  const fm = extractFrontmatter(markdown);
+  const title = fm.subject ?? `${pack.name} — ${slug}`;
+  const description = fm.preview ?? pack.description;
+
+  const ogUrl = `/api/og?type=companion&title=${encodeURIComponent(title)}&label=${encodeURIComponent(pack.name)}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: ogUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      title,
+      description,
+      images: [ogUrl],
+    },
+  };
+}
+
+export default async function CompanionPage({ params }: CompanionPageProps) {
+  const { packKey, slug } = await params;
+
+  const result = readPageMarkdown(packKey, slug);
+  if (!result) return notFound();
+
+  const { markdown, pack } = result;
+  const stepIndex = pack.steps.findIndex((s) => s.slug === slug);
   const content = renderMarkdownToReact(markdown);
 
   return (

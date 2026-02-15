@@ -12,6 +12,24 @@ export const metadata: Metadata = {
   title: "Deep Work Essentials — Learnwise",
   description:
     "A free email course on mastering deep work. Learn to achieve laser focus and produce your best work.",
+  openGraph: {
+    title: "Deep Work Essentials",
+    description:
+      "A free email course on mastering deep work. Learn to achieve laser focus and produce your best work.",
+    images: [
+      {
+        url: "/api/og?type=landing&title=Deep+Work+Essentials&description=A+free+email+course+on+mastering+deep+work.+Learn+to+achieve+laser+focus+and+produce+your+best+work.",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    title: "Deep Work Essentials — Learnwise",
+    images: [
+      "/api/og?type=landing&title=Deep+Work+Essentials&description=A+free+email+course+on+mastering+deep+work.+Learn+to+achieve+laser+focus+and+produce+your+best+work.",
+    ],
+  },
 };
 
 /* -- Static data -- */

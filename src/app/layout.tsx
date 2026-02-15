@@ -19,11 +19,18 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://contentdrip.dev"),
   title: {
     default: "ContentDrip",
     template: "%s — ContentDrip",
   },
   description: "Thoughtful content, delivered at your pace.",
+  openGraph: {
+    siteName: "ContentDrip",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

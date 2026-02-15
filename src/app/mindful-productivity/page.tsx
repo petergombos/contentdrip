@@ -12,6 +12,24 @@ export const metadata: Metadata = {
   title: "The Art of Mindful Productivity — Learnwise",
   description:
     "A free 5-day email course on building sustainable focus and productivity habits.",
+  openGraph: {
+    title: "The Art of Mindful Productivity",
+    description:
+      "A free 5-day email course on building sustainable focus and productivity habits.",
+    images: [
+      {
+        url: "/api/og?type=landing&title=The+Art+of+Mindful+Productivity&description=A+free+5-day+email+course+on+building+sustainable+focus+and+productivity+habits.",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    title: "The Art of Mindful Productivity — Learnwise",
+    images: [
+      "/api/og?type=landing&title=The+Art+of+Mindful+Productivity&description=A+free+5-day+email+course+on+building+sustainable+focus+and+productivity+habits.",
+    ],
+  },
 };
 
 /* ── Static data ── */
