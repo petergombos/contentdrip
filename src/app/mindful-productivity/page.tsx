@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ExampleSiteFooter } from "@/components/example-site-footer";
 import { ExampleSiteHeader } from "@/components/example-site-header";
 import { SubscribeForm } from "@/components/subscribe-form";
@@ -6,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import "@/content-packs";
 import { ChevronDown } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "The Art of Mindful Productivity — Learnwise",
@@ -125,29 +125,134 @@ export default function MindfulProductivityPage() {
         {/* Warm gradient wash */}
         <div className="absolute inset-0 bg-linear-to-b from-(--surface-warm) via-(--surface-warm)/60 to-background" />
 
-        <div className="relative mx-auto max-w-3xl px-6 pb-24 pt-20 text-center md:pb-32 md:pt-28">
-          <p className="animate-fade-in-up text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-            Free 5-Day Email Course
-          </p>
-
-          <h1 className="animate-fade-in-up delay-1 mx-auto mt-6 max-w-2xl font-serif text-[2.75rem] font-semibold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Master the Art of{" "}
-            <span className="italic text-primary">Mindful Productivity</span>
-          </h1>
-
-          <p className="animate-fade-in-up delay-2 mx-auto mt-6 max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
-            One actionable lesson in your inbox each morning. Five days to
-            transform how you work, think, and focus.
-          </p>
-
-          <div className="animate-fade-in-up delay-3 mx-auto mt-10 max-w-sm">
-            <Card className="p-6 shadow-xl shadow-foreground/3 ring-1 ring-border/60">
-              <SubscribeForm packKey="mindful-productivity" cadence="0 8 * * *" />
-            </Card>
-            <p className="mt-5 text-[11px] tracking-wide text-muted-foreground/70">
-              No spam&ensp;&middot;&ensp;Unsubscribe
-              anytime&ensp;&middot;&ensp;Free forever
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 pb-24 pt-20 md:grid-cols-[1.15fr_0.85fr] md:items-center md:gap-12 md:pb-32 md:pt-28 lg:gap-20">
+          {/* ── Left: Copy ── */}
+          <div className="max-w-xl">
+            <p className="animate-fade-in-up inline-flex items-center gap-2 rounded-full border border-primary/25 bg-background/60 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary shadow-sm backdrop-blur-sm">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+              </span>
+              Free 5-Day Email Course
             </p>
+
+            <h1 className="animate-fade-in-up delay-1 mt-8 font-serif text-[2.75rem] font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.75rem]">
+              Master the Art of{" "}
+              <span className="relative inline-block italic text-primary">
+                Mindful
+                <svg
+                  className="absolute -bottom-2 left-0 w-full"
+                  viewBox="0 0 200 14"
+                  fill="none"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M2 10c30-7 60-7 98-3.5 38 3.5 68 1 98-3.5"
+                    stroke="currentColor"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    className="text-primary/50"
+                  />
+                </svg>
+              </span>{" "}
+              <span className="italic text-primary">Productivity</span>
+            </h1>
+
+            <p className="animate-fade-in-up delay-2 mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:text-[17px] md:leading-[1.75]">
+              One actionable lesson in your inbox each morning. Five days to
+              transform how you work, think, and focus.
+            </p>
+
+            {/* Social proof strip */}
+            <div className="animate-fade-in-up delay-3 mt-10 flex items-center gap-4">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  2,400+ learners
+                </p>
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, j) => (
+                    <svg
+                      key={j}
+                      className="h-3.5 w-3.5 fill-current text-amber-500/80"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                  <span className="ml-1.5 text-xs font-medium text-muted-foreground">
+                    4.9 avg
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Trust markers */}
+            <div className="animate-fade-in-up delay-4 mt-7 flex flex-wrap gap-3">
+              {["No spam", "Unsubscribe anytime", "Free forever"].map(
+                (label) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-background/50 px-3 py-1.5 text-[11px] font-medium tracking-wide text-muted-foreground shadow-sm ring-1 ring-border/40 backdrop-blur-sm"
+                  >
+                    <svg
+                      className="h-3 w-3 text-primary/70"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    {label}
+                  </span>
+                ),
+              )}
+            </div>
+          </div>
+
+          {/* ── Right: Form composition ── */}
+          <div className="animate-fade-in-up delay-2 relative flex items-center justify-center md:justify-end">
+            {/* The form card */}
+            <Card className="relative z-[5] w-full max-w-sm overflow-hidden pt-0 shadow-2xl shadow-foreground/8 ring-1 ring-border/50">
+              {/* Card header with warm accent bar */}
+              <div className="bg-linear-to-r from-primary/10 via-primary/5 to-transparent px-7 pb-4 pt-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 shadow-sm">
+                    <svg
+                      className="h-5 w-5 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[15px] font-semibold text-foreground">
+                      Start your journey
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      5 lessons delivered to your inbox
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="px-7 pb-7 pt-2">
+                <SubscribeForm
+                  packKey="mindful-productivity"
+                  cadence="0 8 * * *"
+                />
+              </div>
+            </Card>
           </div>
         </div>
       </section>
@@ -416,7 +521,10 @@ export default function MindfulProductivityPage() {
           </p>
           <div className="mx-auto mt-10 max-w-sm">
             <Card className="p-6 shadow-2xl ring-1 ring-white/10">
-              <SubscribeForm packKey="mindful-productivity" cadence="0 8 * * *" />
+              <SubscribeForm
+                packKey="mindful-productivity"
+                cadence="0 8 * * *"
+              />
             </Card>
           </div>
         </div>

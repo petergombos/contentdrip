@@ -1,17 +1,23 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import {
+  IntervalSelector,
+  intervalToCron,
+} from "@/components/interval-selector";
+import {
+  SendTimeSelector,
+  mergeHourIntoCron,
+} from "@/components/send-time-selector";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SendTimeSelector, mergeHourIntoCron } from "@/components/send-time-selector";
-import { IntervalSelector, intervalToCron } from "@/components/interval-selector";
-import { subscribeAction } from "@/domains/subscriptions/actions/subscription-actions";
-import { useEffect, useMemo, useState } from "react";
-import { getAllPacks } from "@/content-packs/registry";
 import "@/content-packs"; // Register all packs
+import { getAllPacks } from "@/content-packs/registry";
+import { subscribeAction } from "@/domains/subscriptions/actions/subscription-actions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const subscribeSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -34,7 +40,10 @@ export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const packs = getAllPacks();
-  const defaultPackKey = useMemo(() => packKey || packs[0]?.key || "", [packKey, packs]);
+  const defaultPackKey = useMemo(
+    () => packKey || packs[0]?.key || "",
+    [packKey, packs],
+  );
   const hasFixedCadence = !!cadence;
 
   const {
@@ -70,7 +79,10 @@ export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
     try {
       const cronExpression = hasFixedCadence
         ? mergeHourIntoCron(cadence!, data.sendTime)
-        : mergeHourIntoCron(intervalToCron(data.interval || "Daily"), data.sendTime);
+        : mergeHourIntoCron(
+            intervalToCron(data.interval || "Daily"),
+            data.sendTime,
+          );
 
       const result = await subscribeAction({
         email: data.email,
@@ -83,7 +95,7 @@ export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
         setError(
           typeof result.serverError === "string"
             ? result.serverError
-            : "An error occurred"
+            : "An error occurred",
         );
       } else if (result?.data) {
         setSuccess(true);
@@ -189,24 +201,21 @@ export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
 
       <div className="space-y-1.5">
         <Label htmlFor="sendTime" className="text-xs font-medium">
-          Preferred delivery time
-        </Label>
-        <SendTimeSelector
-          value={sendTime}
-          onValueChange={(value) => setValue("sendTime", value)}
-        />
-        <p className="text-[11px] text-muted-foreground/70">
+          Preferred delivery time{" "}
           {timezone ? (
             <>
-              Delivering to{" "}
               <span className="font-medium text-muted-foreground">
-                {timezone.replace(/_/g, " ")}
+                ({timezone.replace(/_/g, " ")})
               </span>
             </>
           ) : (
             "Detecting your timezone…"
           )}
-        </p>
+        </Label>
+        <SendTimeSelector
+          value={sendTime}
+          onValueChange={(value) => setValue("sendTime", value)}
+        />
         {errors.timezone && (
           <p className="text-xs text-destructive">{errors.timezone.message}</p>
         )}
