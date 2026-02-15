@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { CodeBlock } from "./code-block";
 
 export const metadata: Metadata = {
   title: "Documentation",
@@ -18,20 +19,6 @@ function Code({ children }: { children: React.ReactNode }) {
   );
 }
 
-function CodeBlock({ label, children }: { label?: string; children: string }) {
-  return (
-    <div className="border border-[#1a1a1a] bg-[#0a0a0a]">
-      {label && (
-        <div className="border-b border-[#1a1a1a] px-4 py-2 font-mono text-xs uppercase tracking-widest text-[#444]">
-          {label}
-        </div>
-      )}
-      <pre className="overflow-x-auto p-4 font-mono text-[13px] leading-[1.8] text-[#888]">
-        <code>{children}</code>
-      </pre>
-    </div>
-  );
-}
 
 function H2({
   id,
@@ -95,6 +82,7 @@ const NAV = [
       { id: "subscriber-flow", label: "Subscriber Flow" },
       { id: "scheduling", label: "Scheduling & Delivery" },
       { id: "scheduling-fanout", label: "Fan-Out Dispatch" },
+      { id: "email-adapters", label: "Email Adapters" },
       { id: "email-templates", label: "Email Templates" },
     ],
   },
@@ -442,7 +430,7 @@ interface ContentStep {
                 each active subscription: is the next step due based on the
                 subscriber&apos;s chosen time and timezone? If yes, it loads the
                 markdown, replaces placeholder variables with signed URLs,
-                renders through the EmailShell, and sends via Postmark.
+                renders through the EmailShell, and sends via your configured email adapter.
               </P>
               <P>
                 <Strong>Pause / Resume:</Strong> Subscribers can pause delivery
@@ -552,6 +540,61 @@ DRIP_TIME_SCALE=1440
               </P>
             </section>
 
+            {/* ── Email Adapters ── */}
+            <section className="space-y-4">
+              <H2 id="email-adapters">Email Adapters</H2>
+              <P>
+                ContentDrip uses a pluggable adapter pattern for sending emails.
+                Two adapters ship out of the box:{" "}
+                <Strong>Resend</Strong> and <Strong>Postmark</Strong>. The
+                active adapter is determined automatically from your environment
+                variables — if <Code>RESEND_API_KEY</Code> is set, Resend is
+                used. Otherwise, it falls back to Postmark.
+              </P>
+              <H3 id="adapters-interface">The MailAdapter interface</H3>
+              <P>
+                Every adapter implements a single <Code>send</Code> method.
+                This is the entire contract:
+              </P>
+              <CodeBlock label="src/domains/mail/ports/mail-adapter.ts">{`interface MailAdapter {
+  send(options: {
+    to: string;
+    subject: string;
+    html: string;
+    text?: string;
+    tag?: string;
+    headers?: Record<string, string>;
+  }): Promise<{ providerMessageId?: string }>;
+}`}</CodeBlock>
+              <H3 id="adapters-custom">Building a custom adapter</H3>
+              <P>
+                To use a different email provider (SendGrid, AWS SES,
+                Mailgun, etc.), create a class that implements{" "}
+                <Code>MailAdapter</Code> and wire it up in{" "}
+                <Code>src/domains/mail/create-adapter.ts</Code>:
+              </P>
+              <CodeBlock label="example: custom adapter">{`import type { MailAdapter } from "../ports/mail-adapter";
+
+export class MyCustomAdapter implements MailAdapter {
+  async send(options) {
+    // Call your provider's API here
+    const result = await myProvider.sendEmail({
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+    });
+    return { providerMessageId: result.id };
+  }
+}`}</CodeBlock>
+              <P>
+                Then update <Code>create-adapter.ts</Code> to return your
+                adapter based on an environment variable. That&apos;s it — no
+                other changes needed. The rest of the system (scheduler,
+                send log, retry logic) works the same regardless of which
+                adapter is active.
+              </P>
+            </section>
+
             {/* ── Email Templates ── */}
             <section className="space-y-4">
               <H2 id="email-templates">Email Templates</H2>
@@ -567,7 +610,7 @@ DRIP_TIME_SCALE=1440
 4. Convert markdown → HTML (via gray-matter + markdown parser)
 5. Wrap HTML in pack's EmailShell (React Email component)
 6. Render React Email → final HTML string
-7. Send via Postmark with subject, preview, and tag`}</CodeBlock>
+7. Send via configured email adapter (Postmark, Resend, or custom)`}</CodeBlock>
               <P>
                 The <Code>EmailShell</Code> component receives{" "}
                 <Code>PackEmailShellProps</Code>:

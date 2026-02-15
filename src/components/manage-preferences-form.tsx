@@ -6,9 +6,9 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { IntervalSelector } from "@/components/interval-selector";
+import { IntervalSelector, intervalToCron, cronToInterval } from "@/components/interval-selector";
 import { TimezoneSelector } from "@/components/timezone-selector";
-import { SendTimeSelector, hourToCron } from "@/components/send-time-selector";
+import { SendTimeSelector, mergeHourIntoCron } from "@/components/send-time-selector";
 import {
   updateSubscriptionAction,
   pauseSubscriptionAction,
@@ -28,16 +28,21 @@ type UpdateSubscriptionFormData = z.infer<typeof updateSubscriptionSchema>;
 interface ManagePreferencesFormProps {
   subscription: Subscription;
   onUpdate?: () => void;
+  /** When set, locks the cadence — hides the interval selector. */
+  cadence?: string;
 }
 
 export function ManagePreferencesForm({
   subscription,
   onUpdate,
+  cadence,
 }: ManagePreferencesFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  const hasFixedCadence = !!cadence;
 
   // Parse cron to get interval and hour
   const cronParts = subscription.cronExpression.split(" ");
@@ -52,7 +57,7 @@ export function ManagePreferencesForm({
     resolver: zodResolver(updateSubscriptionSchema),
     defaultValues: {
       timezone: subscription.timezone,
-      interval: "Daily",
+      interval: cronToInterval(subscription.cronExpression),
       sendTime,
     },
   });
@@ -62,7 +67,9 @@ export function ManagePreferencesForm({
     setError(null);
 
     try {
-      const cronExpression = hourToCron(data.sendTime);
+      const cronExpression = hasFixedCadence
+        ? mergeHourIntoCron(cadence!, data.sendTime)
+        : mergeHourIntoCron(intervalToCron(data.interval), data.sendTime);
 
       const result = await updateSubscriptionAction({
         subscriptionId: subscription.id,
@@ -301,20 +308,22 @@ export function ManagePreferencesForm({
           )}
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="interval" className="text-xs font-medium">
-            Frequency
-          </Label>
-          <IntervalSelector
-            value={watch("interval")}
-            onValueChange={(value) => setValue("interval", value)}
-          />
-          {errors.interval && (
-            <p className="text-xs text-destructive">
-              {errors.interval.message}
-            </p>
-          )}
-        </div>
+        {!hasFixedCadence && (
+          <div className="space-y-1.5">
+            <Label htmlFor="interval" className="text-xs font-medium">
+              Frequency
+            </Label>
+            <IntervalSelector
+              value={watch("interval")}
+              onValueChange={(value) => setValue("interval", value)}
+            />
+            {errors.interval && (
+              <p className="text-xs text-destructive">
+                {errors.interval.message}
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <Label htmlFor="sendTime" className="text-xs font-medium">

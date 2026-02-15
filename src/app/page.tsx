@@ -43,6 +43,10 @@ const FEATURES = [
     label: "One-Click Unsubscribe",
     desc: "Every email includes a signed, one-click unsubscribe link that immediately stops delivery. The link is unique per subscriber and cryptographically verified. CAN-SPAM and GDPR compliant out of the box.",
   },
+  {
+    label: "Pluggable Email Adapters",
+    desc: "Ships with Postmark and Resend adapters out of the box. The email layer uses a simple adapter interface — implement one method and plug in any provider you want. No vendor lock-in.",
+  },
 ];
 
 const STEPS = [
@@ -59,7 +63,7 @@ const STEPS = [
   {
     n: "03",
     title: "Deploy",
-    desc: "Push to Vercel (or any Node.js host). Set your environment variables for the database (Turso), email provider (Postmark), and cron secret. Configure a cron job to hit /api/cron every minute. That's the infrastructure.",
+    desc: "Push to Vercel (or any Node.js host). Set your environment variables for the database (Turso), email provider (Postmark or Resend), and cron secret. Configure a cron job to hit /api/cron every minute. That's the infrastructure.",
   },
   {
     n: "04",
@@ -73,7 +77,7 @@ const STACK = [
   { name: "React Email", note: "Type-safe, cross-client email templates" },
   { name: "Drizzle ORM", note: "Type-safe SQL with zero-overhead" },
   { name: "SQLite / Turso", note: "Edge-ready, zero-config database" },
-  { name: "Postmark", note: "Transactional email with delivery tracking" },
+  { name: "Postmark / Resend", note: "Pluggable email adapters — bring your own provider" },
   { name: "Tailwind CSS", note: "Utility-first styling throughout" },
 ];
 
@@ -369,7 +373,7 @@ export default function HomePage() {
             A content pack is a folder. Inside: a config file, an email
             template, and markdown files for each lesson. ContentDrip reads the
             markdown, replaces template variables with signed subscriber URLs,
-            renders it through your EmailShell, and sends it via Postmark.
+            renders it through your EmailShell, and sends it via your configured email provider (Postmark or Resend out of the box — or bring your own).
           </p>
 
           {/* Three-panel code view */}

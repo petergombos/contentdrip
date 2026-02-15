@@ -29,6 +29,7 @@ interface SubscriptionCardProps {
   action?: string;
   defaultExpanded?: boolean;
   onUnsubscribe: (subscriptionId: string) => Promise<void>;
+  cadence?: string;
 }
 
 export function SubscriptionCard({
@@ -39,6 +40,7 @@ export function SubscriptionCard({
   action,
   defaultExpanded = false,
   onUnsubscribe,
+  cadence,
 }: SubscriptionCardProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
 
@@ -134,6 +136,7 @@ export function SubscriptionCard({
               <ManagePreferencesForm
                 key={subscription.status}
                 subscription={subscription}
+                cadence={cadence}
               />
             </div>
 

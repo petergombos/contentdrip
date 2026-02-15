@@ -45,3 +45,13 @@ export function SendTimeSelector({
 export function hourToCron(hour: number): string {
   return `0 ${hour} * * *`;
 }
+
+/**
+ * Replace the hour field in a cron expression with a new hour value.
+ * e.g. mergeHourIntoCron("0 9 * * 1-5", 14) → "0 14 * * 1-5"
+ */
+export function mergeHourIntoCron(cronExpression: string, hour: number): string {
+  const parts = cronExpression.split(" ");
+  parts[1] = String(hour);
+  return parts.join(" ");
+}

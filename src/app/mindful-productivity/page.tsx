@@ -142,7 +142,7 @@ export default function MindfulProductivityPage() {
 
           <div className="animate-fade-in-up delay-3 mx-auto mt-10 max-w-sm">
             <Card className="p-6 shadow-xl shadow-foreground/3 ring-1 ring-border/60">
-              <SubscribeForm packKey="mindful-productivity" />
+              <SubscribeForm packKey="mindful-productivity" cadence="0 8 * * *" />
             </Card>
             <p className="mt-5 text-[11px] tracking-wide text-muted-foreground/70">
               No spam&ensp;&middot;&ensp;Unsubscribe
@@ -416,7 +416,7 @@ export default function MindfulProductivityPage() {
           </p>
           <div className="mx-auto mt-10 max-w-sm">
             <Card className="p-6 shadow-2xl ring-1 ring-white/10">
-              <SubscribeForm packKey="mindful-productivity" />
+              <SubscribeForm packKey="mindful-productivity" cadence="0 8 * * *" />
             </Card>
           </div>
         </div>

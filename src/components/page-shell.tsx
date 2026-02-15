@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { ExampleSiteHeader } from "@/components/example-site-header";
+import { ExampleSiteFooter } from "@/components/example-site-footer";
 
 export function PageShell(props: {
   title?: string;
@@ -12,7 +12,7 @@ export function PageShell(props: {
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+      <ExampleSiteHeader />
 
       <main className="flex-1">
         {/* Optional warm header band */}
@@ -48,7 +48,7 @@ export function PageShell(props: {
         </div>
       </main>
 
-      <SiteFooter />
+      <ExampleSiteFooter />
     </div>
   );
 }

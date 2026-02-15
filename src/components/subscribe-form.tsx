@@ -6,7 +6,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SendTimeSelector, hourToCron } from "@/components/send-time-selector";
+import { SendTimeSelector, mergeHourIntoCron } from "@/components/send-time-selector";
+import { IntervalSelector, intervalToCron } from "@/components/interval-selector";
 import { subscribeAction } from "@/domains/subscriptions/actions/subscription-actions";
 import { useEffect, useMemo, useState } from "react";
 import { getAllPacks } from "@/content-packs/registry";
@@ -16,21 +17,25 @@ const subscribeSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   sendTime: z.number().min(0).max(23),
   timezone: z.string().min(1, "Missing timezone"),
+  interval: z.string().optional(),
 });
 
 type SubscribeFormData = z.infer<typeof subscribeSchema>;
 
 interface SubscribeFormProps {
   packKey?: string;
+  /** When set, locks the cadence — hides the interval selector. */
+  cadence?: string;
 }
 
-export function SubscribeForm({ packKey }: SubscribeFormProps) {
+export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const packs = getAllPacks();
   const defaultPackKey = useMemo(() => packKey || packs[0]?.key || "", [packKey, packs]);
+  const hasFixedCadence = !!cadence;
 
   const {
     register,
@@ -43,6 +48,7 @@ export function SubscribeForm({ packKey }: SubscribeFormProps) {
     defaultValues: {
       sendTime: 8,
       timezone: "",
+      interval: "Daily",
     },
   });
 
@@ -62,8 +68,9 @@ export function SubscribeForm({ packKey }: SubscribeFormProps) {
     setError(null);
 
     try {
-      // Daily cadence for the base template: run at the selected hour.
-      const cronExpression = hourToCron(data.sendTime);
+      const cronExpression = hasFixedCadence
+        ? mergeHourIntoCron(cadence!, data.sendTime)
+        : mergeHourIntoCron(intervalToCron(data.interval || "Daily"), data.sendTime);
 
       const result = await subscribeAction({
         email: data.email,
@@ -167,6 +174,18 @@ export function SubscribeForm({ packKey }: SubscribeFormProps) {
           <p className="text-xs text-destructive">{errors.email.message}</p>
         )}
       </div>
+
+      {!hasFixedCadence && (
+        <div className="space-y-1.5">
+          <Label htmlFor="interval" className="text-xs font-medium">
+            Frequency
+          </Label>
+          <IntervalSelector
+            value={watch("interval") || "Daily"}
+            onValueChange={(value) => setValue("interval", value)}
+          />
+        </div>
+      )}
 
       <div className="space-y-1.5">
         <Label htmlFor="sendTime" className="text-xs font-medium">

@@ -16,6 +16,7 @@ const pack: ContentPack = {
     { slug: "day-5", emailFile: "day-5.md" },
   ],
   EmailShell: DefaultEmailShell,
+  cadence: "0 8 * * *",
 };
 
 registerPack(pack);
