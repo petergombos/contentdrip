@@ -1,4 +1,4 @@
-import { ServerClient } from "postmark";
+import { ServerClient, Models } from "postmark";
 import type { MailAdapter } from "../../ports/mail-adapter";
 
 export class PostmarkAdapter implements MailAdapter {
@@ -36,8 +36,10 @@ export class PostmarkAdapter implements MailAdapter {
       };
 
       if (options.headers) {
-        // TODO: enable this later
-        // emailOptions.Headers = Object.entries(options.headers);
+        (emailOptions as Record<string, unknown>).Headers =
+          Object.entries(options.headers).map(
+            ([name, value]) => new Models.Header(name, value)
+          );
       }
 
       const response = await this.client.sendEmail(emailOptions);

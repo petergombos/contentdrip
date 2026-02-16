@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { pauseFromEmailAction, stopFromEmailAction } from "@/domains/subscriptions/actions/subscription-actions";
 import { EmailService } from "@/domains/mail/services/email-service";
 import { createMailAdapter } from "@/domains/mail/create-adapter";
+import { resolveBaseUrl } from "@/lib/base-url";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     // Create a manage token so the user lands on an authenticated manage page
     const emailService = new EmailService(
       createMailAdapter(),
-      process.env.APP_BASE_URL || "http://localhost:3000"
+      resolveBaseUrl(process.env.APP_BASE_URL)
     );
     const { token: manageToken } = await emailService.createToken(id, "MANAGE");
     const actionParam = !action || action === "pause" ? "paused" : "unsubscribed";

@@ -48,7 +48,7 @@ function makeSub(overrides: Partial<Subscription> = {}): Subscription {
     email: "test@example.com",
     packKey: "my-pack",
     timezone: "UTC",
-    cronExpression: "* * * * *", // every minute
+    cronExpression: "0 8 * * *", // daily at 8 AM
     status: SubscriptionStatus.ACTIVE,
     currentStepIndex: 0,
     createdAt: new Date("2025-01-01"),
@@ -327,6 +327,148 @@ describe("SchedulerService", () => {
       // 30 minute step interval — 10 min elapsed < 30, so not due
       const result = await service.processSubscription(sub, now, 30);
       expect(result).toBe("skipped");
+    });
+  });
+
+  // ==========================================
+  // isDueByCron (tested via processSubscription)
+  // ==========================================
+  describe("isDueByCron (via processSubscription)", () => {
+    it("daily cron — due when prev match is after last send", async () => {
+      const sub = makeSub({
+        cronExpression: "0 8 * * *",
+        timezone: "UTC",
+      });
+      // Last send was yesterday morning
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-06-14T08:01:00.000Z")
+      );
+      // Now is today at 9 AM UTC — prev match is today 8:00 > yesterday's send
+      const now = new Date("2025-06-15T09:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      expect(result).toBe("sent");
+    });
+
+    it("daily cron — not due when already sent after today's match", async () => {
+      const sub = makeSub({
+        cronExpression: "0 8 * * *",
+        timezone: "UTC",
+      });
+      // Sent today at 8:01
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-06-15T08:01:00.000Z")
+      );
+      // Now is today at 9 AM — prev match is 8:00 which is NOT > 8:01 send
+      const now = new Date("2025-06-15T09:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      expect(result).toBe("skipped");
+    });
+
+    it("weekly cron (Monday only) — skips on Saturday", async () => {
+      const sub = makeSub({
+        cronExpression: "0 8 * * 1", // Monday at 8 AM
+        timezone: "UTC",
+      });
+      // Last send was last Monday
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-06-09T08:01:00.000Z") // Monday
+      );
+      // Now is Saturday June 14 — prev match is still Monday June 9 which is NOT > last send
+      const now = new Date("2025-06-14T10:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      expect(result).toBe("skipped");
+    });
+
+    it("weekly cron (Monday only) — due on Monday", async () => {
+      const sub = makeSub({
+        cronExpression: "0 8 * * 1", // Monday at 8 AM
+        timezone: "UTC",
+      });
+      // Last send was last Monday
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-06-09T08:01:00.000Z") // Monday
+      );
+      // Now is next Monday June 16 at 9 AM — prev match is today 8:00 > last send
+      const now = new Date("2025-06-16T09:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      expect(result).toBe("sent");
+    });
+
+    it("DST spring-forward — cron at 2:30 AM handles gap (Europe/Berlin)", async () => {
+      // On March 30 2025, Europe/Berlin springs forward: 2:00→3:00 AM
+      // A cron at 2:30 AM local doesn't exist that day
+      const sub = makeSub({
+        cronExpression: "30 2 * * *",
+        timezone: "Europe/Berlin",
+      });
+      // Last send was March 29 (before DST)
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-03-29T01:31:00.000Z") // 2:31 AM CET = UTC+1
+      );
+      // Now is March 30 at 10:00 AM Berlin (08:00 UTC, CEST = UTC+2)
+      const now = new Date("2025-03-30T08:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      // cron-parser should handle the DST gap — either skip or resolve to 3:00
+      // The key thing is it doesn't throw
+      expect(["sent", "skipped"]).toContain(result);
+    });
+
+    it("DST fall-back — handles repeated hour (America/New_York)", async () => {
+      // On Nov 2 2025, America/New_York falls back: 2:00→1:00 AM
+      const sub = makeSub({
+        cronExpression: "30 1 * * *", // 1:30 AM
+        timezone: "America/New_York",
+      });
+      // Last send was Nov 1 at 1:31 AM ET (05:31 UTC, EDT)
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-11-01T05:31:00.000Z")
+      );
+      // Now is Nov 2 at 3:00 PM ET (20:00 UTC, EST = UTC-5)
+      const now = new Date("2025-11-02T20:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      // Should be due — a 1:30 AM match occurred on Nov 2
+      expect(result).toBe("sent");
+    });
+
+    it("invalid cron expression — returns skipped, does not throw", async () => {
+      const sub = makeSub({
+        cronExpression: "not-a-cron",
+        timezone: "UTC",
+      });
+      const now = new Date("2025-06-15T09:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      expect(result).toBe("skipped");
+    });
+
+    it("different timezones — Budapest vs UTC", async () => {
+      // 0 8 * * * in Europe/Budapest (CET = UTC+1 in winter)
+      const sub = makeSub({
+        cronExpression: "0 8 * * *",
+        timezone: "Europe/Budapest",
+      });
+      // Last send was yesterday
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-01-14T07:01:00.000Z") // yesterday 8:01 CET
+      );
+      // Now is 7:30 UTC = 8:30 CET — prev match is today 8:00 CET (07:00 UTC) > last send
+      const now = new Date("2025-01-15T07:30:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      expect(result).toBe("sent");
+    });
+
+    it("US timezone — America/Los_Angeles", async () => {
+      const sub = makeSub({
+        cronExpression: "0 8 * * *",
+        timezone: "America/Los_Angeles",
+      });
+      // Last send was yesterday 8:01 AM PST (16:01 UTC)
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
+        new Date("2025-01-14T16:01:00.000Z")
+      );
+      // Now is today 5:00 PM UTC = 9:00 AM PST — prev match is 8:00 AM PST (16:00 UTC) > last send
+      const now = new Date("2025-01-15T17:00:00.000Z");
+      const result = await service.processSubscription(sub, now, null);
+      expect(result).toBe("sent");
     });
   });
 

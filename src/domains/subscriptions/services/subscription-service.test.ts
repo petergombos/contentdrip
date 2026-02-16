@@ -177,19 +177,25 @@ describe("SubscriptionService", () => {
       expect(result.subscriptionId).toBe("existing-sub");
     });
 
-    it("throws for active duplicate subscription", async () => {
+    it("sends manage link for active duplicate subscription", async () => {
       (repo.findByEmailAndPack as ReturnType<typeof vi.fn>).mockResolvedValue(
         makeSub({ status: SubscriptionStatus.ACTIVE })
       );
+      (repo.findByEmail as ReturnType<typeof vi.fn>).mockResolvedValue([
+        makeSub({ status: SubscriptionStatus.ACTIVE }),
+      ]);
 
-      await expect(
-        service.subscribe({
-          email: "test@example.com",
-          packKey: "my-pack",
-          timezone: "UTC",
-          cronExpression: "0 8 * * *",
-        })
-      ).rejects.toThrow("Subscription already exists");
+      const result = await service.subscribe({
+        email: "test@example.com",
+        packKey: "my-pack",
+        timezone: "UTC",
+        cronExpression: "0 8 * * *",
+      });
+
+      expect(result.alreadySubscribed).toBe(true);
+      expect(repo.create).not.toHaveBeenCalled();
+      // A manage link email should have been sent
+      expect(emailService.sendEmail).toHaveBeenCalledTimes(1);
     });
   });
 
