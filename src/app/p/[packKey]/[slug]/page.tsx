@@ -78,7 +78,11 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
 
   const { markdown, pack } = result;
   const stepIndex = pack.steps.findIndex((s) => s.slug === slug);
-  const content = renderMarkdownToReact(markdown);
+  const processedMarkdown = markdown.replaceAll(
+    "{{assetUrl}}",
+    `/api/content-assets/${packKey}`,
+  );
+  const content = renderMarkdownToReact(processedMarkdown);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

@@ -83,6 +83,7 @@ function makeEmailService(overrides: Partial<Record<string, unknown>> = {}) {
     buildPauseUrl: vi.fn(() => "https://example.com/pause"),
     buildStopUrl: vi.fn(() => "https://example.com/stop"),
     buildCompanionPageUrl: vi.fn(() => "https://example.com/companion"),
+    buildAssetUrl: vi.fn(() => "https://example.com/api/content-assets/test-pack"),
     sendEmail: vi.fn(async () => ({ providerMessageId: "msg-1" })),
     ...overrides,
   } as unknown as EmailService;

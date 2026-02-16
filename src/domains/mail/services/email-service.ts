@@ -187,6 +187,13 @@ export class EmailService {
   }
 
   /**
+   * Build asset base URL for a content pack
+   */
+  buildAssetUrl(packKey: string): string {
+    return `${this.baseUrl}/api/content-assets/${packKey}`;
+  }
+
+  /**
    * Send email with unsubscribe headers
    */
   async sendEmail(options: {

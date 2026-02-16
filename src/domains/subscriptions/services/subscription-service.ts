@@ -270,6 +270,7 @@ export class SubscriptionService {
 
     // Replace placeholders BEFORE parsing markdown to HTML
     markdown = markdown.replace("{{confirmUrl}}", confirmUrl);
+    markdown = markdown.replaceAll("{{assetUrl}}", this.emailService.buildAssetUrl(packKey));
 
     const parsed = parseMarkdown(markdown);
 
@@ -346,6 +347,7 @@ export class SubscriptionService {
     markdown = markdown.replace("{{manageUrl}}", manageUrl);
     markdown = markdown.replace("{{pauseUrl}}", pauseUrl);
     markdown = markdown.replace("{{stopUrl}}", stopUrl);
+    markdown = markdown.replaceAll("{{assetUrl}}", this.emailService.buildAssetUrl(packKey));
 
     const parsed = parseMarkdown(markdown);
 

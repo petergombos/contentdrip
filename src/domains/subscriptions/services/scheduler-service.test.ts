@@ -75,6 +75,7 @@ function makeEmailService(overrides: Partial<EmailService> = {}) {
     createSignedToken: vi.fn(() => "signed-token"),
     createToken: vi.fn(async () => ({ token: "manage-tok", tokenHash: "h" })),
     buildCompanionPageUrl: vi.fn(() => "https://example.com/companion"),
+    buildAssetUrl: vi.fn(() => "https://example.com/api/content-assets/test-pack"),
     buildManageUrl: vi.fn(() => "https://example.com/manage"),
     buildPauseUrl: vi.fn(() => "https://example.com/pause"),
     buildStopUrl: vi.fn(() => "https://example.com/stop"),

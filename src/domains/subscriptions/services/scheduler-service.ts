@@ -345,6 +345,7 @@ export class SchedulerService {
     markdown = markdown.replace("{{manageUrl}}", manageUrl);
     markdown = markdown.replace("{{pauseUrl}}", pauseUrl);
     markdown = markdown.replace("{{stopUrl}}", stopUrl);
+    markdown = markdown.replaceAll("{{assetUrl}}", this.emailService.buildAssetUrl(subscription.packKey));
 
     const parsed = parseMarkdown(markdown);
 

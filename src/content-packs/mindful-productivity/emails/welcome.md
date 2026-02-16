@@ -5,7 +5,7 @@ preview: Your 5-day journey starts tomorrow morning
 
 Welcome! You've just taken the first step toward a more intentional, focused approach to work.
 
-![A peaceful morning workspace with natural light](https://picsum.photos/seed/mp-welcome/560/280)
+![Welcome]({{assetUrl}}/welcome.jpeg)
 
 Over the next five days, you'll receive one short, actionable lesson each morning. Each lesson takes about 5 minutes to read and includes a practical exercise you can apply immediately.
 
