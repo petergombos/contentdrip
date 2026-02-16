@@ -230,10 +230,8 @@ export class SchedulerService {
     now: Date
   ): Promise<boolean> {
     try {
-      // +1ms so that prev() includes the exact-match instant
-      // (cron-parser v5 treats currentDate as exclusive for prev())
       const interval = CronExpressionParser.parse(cronExpression, {
-        currentDate: new Date(now.getTime() + 1),
+        currentDate: now,
         tz: timezone,
       });
 

@@ -245,21 +245,26 @@ describe("SchedulerService", () => {
       expect(emailService.sendEmail).toHaveBeenCalledTimes(1);
     });
 
-    it("is due when now lands exactly on the cron match instant", async () => {
-      // cron-parser v5 treats currentDate as exclusive for prev(), so
-      // without the +1ms offset this would return "skipped"
+    it("catches up on the next invocation when cron fires at exact match instant", async () => {
+      // cron-parser v5 treats currentDate as exclusive for prev(), so at
+      // exactly 8:00:00.000 prev() returns yesterday's match. The retry
+      // logic means the next invocation (8:01) picks it up.
       const sub = makeSub({
         cronExpression: "0 8 * * *",
         timezone: "America/New_York",
       });
-      // 8:00:00.000 AM ET = 12:00:00.000 UTC (summer, UTC-4)
+      const lastSend = new Date("2025-06-14T12:00:00.000Z"); // yesterday
+      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(lastSend);
+
+      // At exactly 8:00:00.000 — prev() returns yesterday, which is NOT > lastSend
       const exactMatch = new Date("2025-06-15T12:00:00.000Z");
-      // Last send was yesterday — today's 8 AM match is new
-      (repo.getLastSuccessfulSendAt as ReturnType<typeof vi.fn>).mockResolvedValue(
-        new Date("2025-06-14T12:00:00.000Z")
-      );
-      const result = await service.processSubscription(sub, exactMatch, null);
-      expect(result).toBe("sent");
+      const result1 = await service.processSubscription(sub, exactMatch, null);
+      expect(result1).toBe("skipped");
+
+      // At 8:01:00 — prev() returns today's 8:00, which IS > lastSend
+      const oneMinuteLater = new Date("2025-06-15T12:01:00.000Z");
+      const result2 = await service.processSubscription(sub, oneMinuteLater, null);
+      expect(result2).toBe("sent");
     });
 
     it("is due hours after the cron match when the window was missed", async () => {
