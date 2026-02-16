@@ -134,10 +134,11 @@ export function HeroAnimation() {
         {/* Connector line */}
         <div className="relative z-10 flex justify-center">
           <div
-            className="w-px transition-all duration-500"
+            className="h-6 w-px transition-transform duration-500"
             style={{
-              height: drippedCount > 0 ? 24 : 0,
               backgroundColor: "#1a1a1a",
+              transform: `scaleY(${drippedCount > 0 ? 1 : 0})`,
+              transformOrigin: "top",
             }}
           />
         </div>
@@ -155,7 +156,7 @@ export function HeroAnimation() {
 
           <div
             ref={scrollRef}
-            className="max-h-[220px] overflow-hidden"
+            className="h-[220px] overflow-hidden"
           >
             <div>
               {Array.from({ length: drippedCount }, (_, i) => {
