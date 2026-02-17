@@ -22,8 +22,8 @@ export function SuccessState({
 
   return (
     <div className="py-3 text-center">
-      <div className="animate-scale-in mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-olive/10">
-        <Icon className="h-8 w-8 text-olive" strokeWidth={2} />
+      <div className="animate-scale-in mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+        <Icon className="h-8 w-8 text-primary" strokeWidth={2} />
       </div>
       <h2 className="animate-fade-in-up delay-1 font-serif text-xl font-semibold text-foreground">
         {title}

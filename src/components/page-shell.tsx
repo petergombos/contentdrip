@@ -1,30 +1,23 @@
 import { cn } from "@/lib/utils";
-import { DemoBanner } from "@/components/demo-banner";
-import { ExampleSiteHeader } from "@/components/example-site-header";
-import { ExampleSiteFooter } from "@/components/example-site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 export function PageShell(props: {
   title?: string;
   subtitle?: string;
   children: React.ReactNode;
   className?: string;
-  /** Render a warm gradient behind the header area */
-  warm?: boolean;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <DemoBanner />
-      <ExampleSiteHeader />
+      {props.header ?? <SiteHeader />}
 
       <main className="flex-1">
-        {/* Optional warm header band */}
+        {/* Optional header band */}
         {(props.title || props.subtitle) && (
-          <div
-            className={cn(
-              "border-b pb-10 pt-12 md:pb-14 md:pt-16",
-              props.warm ? "bg-warm-gradient" : ""
-            )}
-          >
+          <div className="border-b pb-10 pt-12 md:pb-14 md:pt-16">
             <div className="mx-auto max-w-3xl px-6">
               {props.title && (
                 <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl animate-fade-in-up">
@@ -50,7 +43,7 @@ export function PageShell(props: {
         </div>
       </main>
 
-      <ExampleSiteFooter />
+      {props.footer ?? <SiteFooter />}
     </div>
   );
 }

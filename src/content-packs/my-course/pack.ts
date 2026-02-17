@@ -1,18 +1,16 @@
 import type { ContentPack } from "@/content-packs/registry";
 import { registerPack } from "@/content-packs/registry";
-import { DeepWorkEmailShell } from "@/content-packs/deep-work/email-shell";
+import { StarterEmailShell } from "@/content-packs/my-course/email-shell";
 
 const pack: ContentPack = {
-  key: "deep-work",
-  name: "Deep Work Essentials",
-  description:
-    "A free 2-day email course on mastering deep work.",
+  key: "my-course",
+  name: "My Email Course",
+  description: "A short email course delivered straight to your inbox.",
   steps: [
     { slug: "welcome", emailFile: "welcome.md" },
     { slug: "day-1", emailFile: "day-1.md" },
-    { slug: "day-2", emailFile: "day-2.md" },
   ],
-  EmailShell: DeepWorkEmailShell,
+  EmailShell: StarterEmailShell,
 };
 
 registerPack(pack);

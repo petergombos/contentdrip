@@ -5,22 +5,22 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Manage Subscription",
-  description: "Manage your ContentDrip email course subscription preferences.",
+  description: "Manage your email course subscription preferences.",
   openGraph: {
-    title: "Manage Subscription — ContentDrip",
+    title: "Manage Subscription",
     description: "Manage your email course subscription preferences.",
     images: [
       {
-        url: "/api/og?type=default&title=Manage+Subscription&label=ContentDrip",
+        url: "/api/og?type=default&title=Manage+Subscription&label=My+Email+Course",
         width: 1200,
         height: 630,
       },
     ],
   },
   twitter: {
-    title: "Manage Subscription — ContentDrip",
+    title: "Manage Subscription",
     images: [
-      "/api/og?type=default&title=Manage+Subscription&label=ContentDrip",
+      "/api/og?type=default&title=Manage+Subscription&label=My+Email+Course",
     ],
   },
 };
@@ -30,13 +30,12 @@ export default function ManagePage() {
     <PageShell
       title="Manage Your Subscriptions"
       subtitle="Enter your email below and we'll send you a secure one-time link to manage your delivery preferences."
-      warm
     >
       <Card className="animate-fade-in-up delay-2 p-6 md:p-8">
         <ManageRequestForm />
       </Card>
 
-      <div className="animate-fade-in-up delay-3 mt-8 rounded-lg border border-border/60 bg-(--surface-warm) px-5 py-4">
+      <div className="animate-fade-in-up delay-3 mt-8 rounded-lg border border-border/60 bg-muted/30 px-5 py-4">
         <h3 className="text-sm font-semibold text-foreground">
           Why a one-time link?
         </h3>

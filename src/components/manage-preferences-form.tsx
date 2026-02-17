@@ -162,12 +162,12 @@ export function ManagePreferencesForm({
     <div className="space-y-5">
       {subscription.status === "ACTIVE" && (
         <div
-          className="rounded-lg border border-olive/20 bg-olive/5 px-4 py-4"
+          className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-4"
           data-testid="manage-active-banner"
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-olive/10">
-              <Play className="h-4 w-4 text-olive" fill="currentColor" strokeWidth={0} />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <Play className="h-4 w-4 text-primary" fill="currentColor" strokeWidth={0} />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">

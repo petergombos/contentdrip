@@ -12,14 +12,16 @@ import { SuccessState } from "@/components/success-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import "@/content-packs"; // Register all packs
+import { cn } from "@/lib/utils";
 import { getAllPacks } from "@/content-packs/registry";
 import { subscribeAction } from "@/domains/subscriptions/actions/subscription-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
+
+/* ── Schema ── */
 
 const subscribeSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -29,14 +31,43 @@ const subscribeSchema = z.object({
 });
 
 type SubscribeFormData = z.infer<typeof subscribeSchema>;
+type FieldName = keyof SubscribeFormData;
 
-interface SubscribeFormProps {
+/* ── Form Context ── */
+
+interface SubscribeFormContextValue {
+  form: UseFormReturn<SubscribeFormData>;
+  isSubmitting: boolean;
+  hasFixedCadence: boolean;
+  timezone: string;
+  packKey: string;
+  error: string | null;
+}
+
+const SubscribeFormContext = createContext<SubscribeFormContextValue | null>(null);
+
+export function useSubscribeForm() {
+  const ctx = useContext(SubscribeFormContext);
+  if (!ctx) throw new Error("SubscribeForm sub-components must be used within <SubscribeForm>");
+  return ctx;
+}
+
+/* ── Field Context ── */
+
+const FieldContext = createContext<FieldName | null>(null);
+
+function useFieldName() {
+  return useContext(FieldContext);
+}
+
+/* ── Root ── */
+
+interface SubscribeFormProps extends React.ComponentProps<"form"> {
   packKey?: string;
-  /** When set, locks the cadence — hides the interval selector. */
   cadence?: string;
 }
 
-export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
+export function SubscribeForm({ packKey, cadence, children, className, ...props }: SubscribeFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [alreadySubscribed, setAlreadySubscribed] = useState(false);
@@ -49,13 +80,7 @@ export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
   );
   const hasFixedCadence = !!cadence;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm<SubscribeFormData>({
+  const form = useForm<SubscribeFormData>({
     resolver: zodResolver(subscribeSchema),
     defaultValues: {
       sendTime: 8,
@@ -64,16 +89,14 @@ export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
     },
   });
 
-  const sendTime = watch("sendTime");
-  const timezone = watch("timezone");
+  const timezone = form.watch("timezone");
 
   useEffect(() => {
-    // Detect timezone from the browser
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (tz) {
-      setValue("timezone", tz, { shouldValidate: true });
+      form.setValue("timezone", tz, { shouldValidate: true });
     }
-  }, [setValue]);
+  }, [form]);
 
   const onSubmit = async (data: SubscribeFormData) => {
     setIsSubmitting(true);
@@ -149,89 +172,238 @@ export function SubscribeForm({ packKey, cadence }: SubscribeFormProps) {
     );
   }
 
+  const ctx: SubscribeFormContextValue = {
+    form,
+    isSubmitting,
+    hasFixedCadence,
+    timezone,
+    packKey: defaultPackKey,
+    error,
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4"
-      data-testid="subscribe-form"
-    >
-      {/* timezone is auto-detected; keep it in the form payload */}
-      <input type="hidden" {...register("timezone")} />
-
-      <div className="space-y-1.5">
-        <Label htmlFor="email" className="text-xs font-medium">
-          Email address
-        </Label>
-        <Input
-          id="email"
-          type="email"
-          {...register("email")}
-          data-testid="subscribe-email-input"
-          placeholder="you@example.com"
-          autoComplete="email"
-          className="h-10"
-        />
-        {errors.email && (
-          <p className="text-xs text-destructive">{errors.email.message}</p>
-        )}
-      </div>
-
-      {!hasFixedCadence && (
-        <div className="space-y-1.5">
-          <Label htmlFor="interval" className="text-xs font-medium">
-            Frequency
-          </Label>
-          <IntervalSelector
-            value={watch("interval") || "Daily"}
-            onValueChange={(value) => setValue("interval", value)}
-          />
-        </div>
-      )}
-
-      <div className="space-y-1.5">
-        <Label htmlFor="sendTime" className="text-xs font-medium">
-          Preferred delivery time{" "}
-          {timezone ? (
-            <>
-              <span className="font-medium text-muted-foreground">
-                ({timezone.replace(/_/g, " ")})
-              </span>
-            </>
-          ) : (
-            "Detecting your timezone…"
-          )}
-        </Label>
-        <SendTimeSelector
-          value={sendTime}
-          onValueChange={(value) => setValue("sendTime", value)}
-        />
-        {errors.timezone && (
-          <p className="text-xs text-destructive">{errors.timezone.message}</p>
-        )}
-      </div>
-
-      {error && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
-          {error}
-        </div>
-      )}
-
-      <Button
-        type="submit"
-        disabled={isSubmitting || !timezone}
-        className="w-full"
-        size="lg"
-        data-testid="subscribe-submit"
+    <SubscribeFormContext.Provider value={ctx}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("space-y-4", className)}
+        data-testid="subscribe-form"
+        {...props}
       >
-        {isSubmitting ? (
-          <span className="flex items-center gap-2">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            Subscribing…
-          </span>
-        ) : (
-          "Start My Free Course"
+        {/* timezone is auto-detected; keep it in the form payload */}
+        <input type="hidden" {...form.register("timezone")} />
+
+        {children ?? (
+          <>
+            <SubscribeFormEmailField />
+            <SubscribeFormIntervalField />
+            <SubscribeFormDeliveryTimeField />
+            <SubscribeFormError />
+            <SubscribeFormSubmit />
+          </>
         )}
-      </Button>
-    </form>
+      </form>
+    </SubscribeFormContext.Provider>
+  );
+}
+
+/* ── Generic field primitives ── */
+
+const FIELD_IDS: Record<FieldName, string> = {
+  email: "email",
+  sendTime: "sendTime",
+  timezone: "timezone",
+  interval: "interval",
+};
+
+interface SubscribeFormFieldProps extends React.ComponentProps<"div"> {
+  name: FieldName;
+}
+
+export function SubscribeFormField({ name, className, ...props }: SubscribeFormFieldProps) {
+  return (
+    <FieldContext.Provider value={name}>
+      <div className={cn("space-y-1.5", className)} {...props} />
+    </FieldContext.Provider>
+  );
+}
+
+export function SubscribeFormLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
+  const fieldName = useFieldName();
+  const htmlFor = fieldName ? FIELD_IDS[fieldName] : undefined;
+
+  return (
+    <Label htmlFor={htmlFor} className={cn("text-xs font-medium", className)} {...props} />
+  );
+}
+
+export function SubscribeFormDescription({ className, ...props }: React.ComponentProps<"p">) {
+  return (
+    <p className={cn("text-xs text-muted-foreground", className)} {...props} />
+  );
+}
+
+export function SubscribeFormFieldError({ className, ...props }: React.ComponentProps<"p">) {
+  const fieldName = useFieldName();
+  const { form } = useSubscribeForm();
+  const { errors } = form.formState;
+
+  const fieldError = fieldName ? errors[fieldName] : null;
+  if (!fieldError) return null;
+
+  return (
+    <p className={cn("text-xs text-destructive", className)} {...props}>
+      {props.children ?? fieldError.message}
+    </p>
+  );
+}
+
+/* ── Form-level error (server/submit errors) ── */
+
+export function SubscribeFormError({ className, children, ...props }: React.ComponentProps<"div">) {
+  const { error } = useSubscribeForm();
+
+  if (!error) return null;
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive",
+        className,
+      )}
+      {...props}
+    >
+      {children ?? error}
+    </div>
+  );
+}
+
+/* ── Email input ── */
+
+export function SubscribeFormEmailInput({ className, ...props }: React.ComponentProps<typeof Input>) {
+  const { form } = useSubscribeForm();
+
+  return (
+    <Input
+      id="email"
+      type="email"
+      placeholder="you@example.com"
+      autoComplete="email"
+      {...form.register("email")}
+      data-testid="subscribe-email-input"
+      className={cn("h-10", className)}
+      {...props}
+    />
+  );
+}
+
+/* ── Interval input ── */
+
+export function SubscribeFormIntervalInput({ className, ...props }: Omit<React.ComponentProps<"div">, "children">) {
+  const { form } = useSubscribeForm();
+
+  return (
+    <div className={className} {...props}>
+      <IntervalSelector
+        value={form.watch("interval") || "Daily"}
+        onValueChange={(value) => form.setValue("interval", value)}
+      />
+    </div>
+  );
+}
+
+/* ── Delivery time input ── */
+
+export function SubscribeFormDeliveryTimeInput({ className, ...props }: Omit<React.ComponentProps<"div">, "children">) {
+  const { form } = useSubscribeForm();
+  const sendTime = form.watch("sendTime");
+
+  return (
+    <div className={className} {...props}>
+      <SendTimeSelector
+        value={sendTime}
+        onValueChange={(value) => form.setValue("sendTime", value)}
+      />
+    </div>
+  );
+}
+
+/* ── Timezone display (useful inside delivery time label) ── */
+
+export function SubscribeFormTimezone({ className, ...props }: React.ComponentProps<"span">) {
+  const { timezone } = useSubscribeForm();
+
+  if (!timezone) return <span className={className} {...props}>Detecting your timezone…</span>;
+
+  return (
+    <span className={cn("font-medium text-muted-foreground", className)} {...props}>
+      {props.children ?? `(${timezone.replace(/_/g, " ")})`}
+    </span>
+  );
+}
+
+/* ── Convenience field composites (default assembled fields) ── */
+
+export function SubscribeFormEmailField({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <SubscribeFormField name="email" className={className} {...props}>
+      <SubscribeFormLabel>Email address</SubscribeFormLabel>
+      <SubscribeFormEmailInput />
+      <SubscribeFormFieldError />
+    </SubscribeFormField>
+  );
+}
+
+export function SubscribeFormIntervalField({ className, ...props }: React.ComponentProps<"div">) {
+  const { hasFixedCadence } = useSubscribeForm();
+
+  if (hasFixedCadence) return null;
+
+  return (
+    <SubscribeFormField name="interval" className={className} {...props}>
+      <SubscribeFormLabel>Frequency</SubscribeFormLabel>
+      <SubscribeFormIntervalInput />
+    </SubscribeFormField>
+  );
+}
+
+export function SubscribeFormDeliveryTimeField({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <SubscribeFormField name="sendTime" className={className} {...props}>
+      <SubscribeFormLabel>
+        Preferred delivery time <SubscribeFormTimezone />
+      </SubscribeFormLabel>
+      <SubscribeFormDeliveryTimeInput />
+      <SubscribeFormFieldError />
+    </SubscribeFormField>
+  );
+}
+
+/* ── Submit ── */
+
+export function SubscribeFormSubmit({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  const { isSubmitting, timezone } = useSubscribeForm();
+
+  return (
+    <Button
+      type="submit"
+      disabled={isSubmitting || !timezone}
+      size="lg"
+      className={cn("w-full", className)}
+      data-testid="subscribe-submit"
+      {...props}
+    >
+      {isSubmitting ? (
+        <span className="flex items-center gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Subscribing…
+        </span>
+      ) : (
+        children ?? "Start My Free Course"
+      )}
+    </Button>
   );
 }

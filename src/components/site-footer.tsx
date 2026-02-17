@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t bg-warm-subtle">
+    <footer className="border-t bg-muted/30">
       <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
         <div className="grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
           {/* Brand */}
@@ -12,9 +12,9 @@ export function SiteFooter() {
               className="group inline-flex items-center gap-2 font-serif text-lg font-semibold no-underline text-foreground"
             >
               <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-[10px] font-bold text-primary">
-                C
+                Y
               </span>
-              ContentDrip
+              Your Brand
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Thoughtful content, delivered at your pace. Subscribe to curated
@@ -34,14 +34,6 @@ export function SiteFooter() {
                   className="text-sm text-muted-foreground no-underline transition-colors hover:text-foreground"
                 >
                   Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/docs"
-                  className="text-sm text-muted-foreground no-underline transition-colors hover:text-foreground"
-                >
-                  Documentation
                 </Link>
               </li>
               <li>
@@ -79,7 +71,7 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-center gap-3 border-t pt-8 sm:flex-row sm:justify-between">
           <p className="text-xs text-muted-foreground/60">
-            &copy; {new Date().getFullYear()} ContentDrip. All rights reserved.
+            &copy; {new Date().getFullYear()} Your Brand. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground/50">
             Built with care for learners everywhere.

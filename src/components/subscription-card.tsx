@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 import type { Subscription } from "@/domains/subscriptions/model/types";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  ACTIVE: { label: "Active", color: "bg-olive/10 text-olive" },
+  ACTIVE: { label: "Active", color: "bg-primary/10 text-primary" },
   PAUSED: { label: "Paused", color: "bg-primary/10 text-primary" },
   PENDING_CONFIRM: {
     label: "Pending confirmation",
@@ -19,7 +19,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
     label: "Unsubscribed",
     color: "bg-destructive/10 text-destructive",
   },
-  COMPLETED: { label: "Completed", color: "bg-olive/10 text-olive" },
+  COMPLETED: { label: "Completed", color: "bg-primary/10 text-primary" },
 };
 
 interface SubscriptionCardProps {

@@ -19,14 +19,14 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://contentdrip.dev"),
+  metadataBase: new URL("http://localhost:3000"),
   title: {
-    default: "ContentDrip",
-    template: "%s — ContentDrip",
+    default: "My Email Course",
+    template: "%s — My Email Course",
   },
-  description: "Thoughtful content, delivered at your pace.",
+  description: "A free email course delivered straight to your inbox.",
   openGraph: {
-    siteName: "ContentDrip",
+    siteName: "My Email Course",
   },
   twitter: {
     card: "summary_large_image",

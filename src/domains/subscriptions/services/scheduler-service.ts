@@ -6,7 +6,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import React from "react";
 import { parseMarkdown } from "@/lib/markdown/renderer";
-import { ContentMarkdownEmail } from "@/emails/content-markdown-email";
+import { ContentMarkdownEmail } from "@/emails/components/content-markdown-email";
 import { renderEmail } from "@/emails/render";
 import { SubscriptionStatus } from "../model/types";
 import { TokenType } from "../model/types";

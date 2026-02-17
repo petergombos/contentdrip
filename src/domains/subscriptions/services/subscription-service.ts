@@ -2,7 +2,7 @@ import React from "react";
 import { getPackByKey } from "@/content-packs/registry";
 import { EmailService } from "@/domains/mail/services/email-service";
 import { parseMarkdown } from "@/lib/markdown/renderer";
-import { ContentMarkdownEmail } from "@/emails/content-markdown-email";
+import { ContentMarkdownEmail } from "@/emails/components/content-markdown-email";
 import { renderEmail } from "@/emails/render";
 import { readFileSync } from "fs";
 import { join } from "path";
@@ -251,26 +251,16 @@ export class SubscriptionService {
     packKey: string,
     token: string // Use the token passed in instead of creating a new one
   ): Promise<void> {
-    const pack = getPackByKey(packKey);
-    if (!pack) {
-      throw new Error(`Pack ${packKey} not found`);
-    }
-
-    // Load confirm email markdown
-    const emailPath = join(
+    const mdPath = join(
       process.cwd(),
-      "src/content-packs",
-      packKey,
-      "emails/confirm.md"
+      "src/emails/confirm.md"
     );
-    let markdown = readFileSync(emailPath, "utf-8");
+    let markdown = readFileSync(mdPath, "utf-8");
 
-    // Use the token passed in (don't create a new one)
     const confirmUrl = this.emailService.buildConfirmUrl(token);
 
     // Replace placeholders BEFORE parsing markdown to HTML
     markdown = markdown.replace("{{confirmUrl}}", confirmUrl);
-    markdown = markdown.replaceAll("{{assetUrl}}", this.emailService.buildAssetUrl(packKey));
 
     const parsed = parseMarkdown(markdown);
 
@@ -279,7 +269,6 @@ export class SubscriptionService {
         title: parsed.frontmatter.subject || "Confirm your subscription",
         preview: parsed.frontmatter.preview,
         html: parsed.html,
-        EmailShell: pack.EmailShell,
       })
     );
 
@@ -394,16 +383,26 @@ export class SubscriptionService {
     email: string,
     manageUrl: string
   ): Promise<void> {
-    const { ManageLinkEmail } = await import("@/emails/manage-link");
-    const { renderEmail } = await import("@/emails/render");
+    const mdPath = join(
+      process.cwd(),
+      "src/emails/manage-link.md"
+    );
+    let markdown = readFileSync(mdPath, "utf-8");
+    markdown = markdown.replace("{{manageUrl}}", manageUrl);
+
+    const parsed = parseMarkdown(markdown);
 
     const rendered = await renderEmail(
-      React.createElement(ManageLinkEmail, { manageUrl })
+      React.createElement(ContentMarkdownEmail, {
+        title: parsed.frontmatter.subject || "Manage your subscription",
+        preview: parsed.frontmatter.preview,
+        html: parsed.html,
+      })
     );
 
     await this.emailService.sendEmail({
       to: email,
-      subject: "Manage your subscription",
+      subject: parsed.frontmatter.subject || "Manage your subscription",
       html: rendered.html,
       text: rendered.text,
       tag: "manage-link",

@@ -10,20 +10,14 @@ export function SiteHeader() {
         >
           {/* Small decorative mark */}
           <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-xs font-bold text-primary transition-colors group-hover:bg-primary/15">
-            C
+            Y
           </span>
           <span className="font-serif text-lg font-semibold tracking-tight text-foreground">
-            ContentDrip
+            Your Brand
           </span>
         </Link>
 
         <nav className="flex items-center gap-6">
-          <Link
-            href="/docs"
-            className="text-[13px] font-medium text-muted-foreground no-underline transition-colors hover:text-foreground"
-          >
-            Docs
-          </Link>
           <Link
             href="/manage"
             className="text-[13px] font-medium text-muted-foreground no-underline transition-colors hover:text-foreground"

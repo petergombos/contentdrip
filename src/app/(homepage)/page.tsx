@@ -1,5 +1,6 @@
-import { HeroAnimation } from "@/components/hero-animation";
-import { HowItWorksSection } from "@/components/how-it-works-section";
+import "./homepage.css";
+import { HeroAnimation } from "./components/hero-animation";
+import { HowItWorksSection } from "./components/how-it-works-section";
 import {
   ArrowRight,
   CircleCheckBig,
@@ -86,7 +87,7 @@ export default function HomePage() {
               docs
             </Link>
             <Link
-              href="/mindful-productivity"
+              href="/example"
               className="font-mono text-sm text-[#666] no-underline transition-colors hover:text-[#e8e8e8]"
             >
               demo
@@ -144,7 +145,7 @@ export default function HomePage() {
               <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
-              href="/mindful-productivity"
+              href="/example"
               className="inline-flex h-9 items-center border border-[#333] px-4 font-mono text-[13px] font-bold uppercase tracking-widest text-[#777] no-underline transition-colors hover:border-[#555] hover:text-[#e8e8e8]"
             >
               See a Live Course
@@ -555,7 +556,7 @@ export default function HomePage() {
             {[
               {
                 name: "The Art of Mindful Productivity",
-                slug: "/mindful-productivity",
+                slug: "/example",
                 desc: "A free 5-day email course on building sustainable focus and productivity habits.",
                 steps: 6,
                 cadence: "daily at 8am",
@@ -678,7 +679,7 @@ export default function HomePage() {
               },
               {
                 label: "Namespaced URLs",
-                desc: "Routes are scoped per pack. /mindful-productivity and /deep-work coexist cleanly.",
+                desc: "Routes are scoped per pack. /example and /deep-work coexist cleanly.",
               },
               {
                 label: "Per-Pack Branding",
@@ -1497,7 +1498,7 @@ export default function HomePage() {
               <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
-              href="/mindful-productivity"
+              href="/example"
               className="inline-flex h-9 items-center border border-[#333] px-4 font-mono text-[13px] font-bold uppercase tracking-widest text-[#777] no-underline transition-colors hover:border-[#555] hover:text-[#e8e8e8]"
             >
               See a Live Course
@@ -1529,7 +1530,7 @@ export default function HomePage() {
                 docs
               </Link>
               <Link
-                href="/mindful-productivity"
+                href="/example"
                 className="font-mono text-[13px] text-[#444] no-underline transition-colors hover:text-[#888]"
               >
                 demo

@@ -36,14 +36,14 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
 
   if (status === "ok") {
     return (
-      <PageShell warm>
+      <PageShell>
         <div
           className="mx-auto max-w-md text-center"
           data-testid="confirm-success"
         >
           {/* Celebratory icon */}
-          <div className="animate-scale-in mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-olive/10">
-            <Check className="h-8 w-8 text-olive" strokeWidth={2} />
+          <div className="animate-scale-in mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <Check className="h-8 w-8 text-primary" strokeWidth={2} />
           </div>
 
           <h1
@@ -53,8 +53,8 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
             You&apos;re In
           </h1>
           <p className="animate-fade-in-up delay-2 mt-3 text-muted-foreground">
-            Your subscription is confirmed. Your first lesson will arrive
-            tomorrow at your chosen delivery time.
+            Your subscription is confirmed. Your first lesson is on its
+            way — check your inbox shortly.
           </p>
 
           <Card className="animate-fade-in-up delay-3 mt-8 p-6 md:p-8 text-left">
@@ -68,7 +68,7 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
                 </span>
                 <span>
                   Your <strong className="text-foreground">first lesson</strong>{" "}
-                  arrives at your chosen delivery time
+                  arrives right away
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
@@ -76,8 +76,8 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
                   2
                 </span>
                 <span>
-                  One lesson per day at{" "}
-                  <strong className="text-foreground">your own pace</strong>
+                  Following lessons deliver on{" "}
+                  <strong className="text-foreground">your chosen schedule</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2.5">

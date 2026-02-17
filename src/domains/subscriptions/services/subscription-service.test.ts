@@ -28,12 +28,8 @@ vi.mock("@/emails/render", () => ({
   ),
 }));
 
-vi.mock("@/emails/content-markdown-email", () => ({
+vi.mock("@/emails/components/content-markdown-email", () => ({
   ContentMarkdownEmail: vi.fn(),
-}));
-
-vi.mock("@/emails/manage-link", () => ({
-  ManageLinkEmail: vi.fn(),
 }));
 
 vi.mock("@/content-packs", () => ({}));

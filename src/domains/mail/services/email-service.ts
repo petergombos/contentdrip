@@ -205,7 +205,10 @@ export class EmailService {
     unsubscribeUrl?: string;
     pauseUrl?: string;
   }): Promise<{ providerMessageId?: string }> {
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = {
+      // Unique ref per email prevents clients from threading unrelated messages
+      "X-Entity-Ref-ID": `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+    };
 
     if (options.unsubscribeUrl) {
       headers["List-Unsubscribe"] = `<${options.unsubscribeUrl}>`;

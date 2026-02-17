@@ -176,26 +176,22 @@ describe("EmailService", () => {
         unsubscribeUrl: "https://example.com/unsub",
       });
 
-      expect(adapter.send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          headers: {
-            "List-Unsubscribe": "<https://example.com/unsub>",
-            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-          },
-        })
-      );
+      const call = adapter.send.mock.calls[0][0];
+      expect(call.headers["List-Unsubscribe"]).toBe("<https://example.com/unsub>");
+      expect(call.headers["List-Unsubscribe-Post"]).toBe("List-Unsubscribe=One-Click");
+      expect(call.headers["X-Entity-Ref-ID"]).toBeDefined();
     });
 
-    it("sends empty headers when no unsubscribeUrl", async () => {
+    it("always includes X-Entity-Ref-ID to prevent threading", async () => {
       await service.sendEmail({
         to: "user@test.com",
         subject: "Test",
         html: "<p>hi</p>",
       });
 
-      expect(adapter.send).toHaveBeenCalledWith(
-        expect.objectContaining({ headers: {} })
-      );
+      const call = adapter.send.mock.calls[0][0];
+      expect(call.headers["X-Entity-Ref-ID"]).toBeDefined();
+      expect(call.headers["List-Unsubscribe"]).toBeUndefined();
     });
 
     it("passes through optional tag and text fields", async () => {

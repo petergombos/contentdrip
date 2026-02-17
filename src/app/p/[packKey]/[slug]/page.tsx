@@ -1,11 +1,10 @@
-import { DemoBanner } from "@/components/demo-banner";
-import { ExampleSiteFooter } from "@/components/example-site-footer";
-import { ExampleSiteHeader } from "@/components/example-site-header";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import "@/content-packs";
 import { getPackByKey } from "@/content-packs/registry";
 import {
   extractFrontmatter,
-  renderMarkdownToReact,
+  parseMarkdown,
 } from "@/lib/markdown/renderer";
 import { readFileSync } from "fs";
 import type { Metadata } from "next";
@@ -82,15 +81,14 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
     "{{assetUrl}}",
     `/api/content-assets/${packKey}`,
   );
-  const content = renderMarkdownToReact(processedMarkdown);
+  const { html } = parseMarkdown(processedMarkdown);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <DemoBanner />
-      <ExampleSiteHeader />
+      <SiteHeader />
 
       {/* Course header band */}
-      <div className="border-b bg-warm-subtle">
+      <div className="border-b bg-muted/30">
         <div className="mx-auto max-w-3xl px-6 py-5">
           <div className="flex items-center justify-between">
             <div>
@@ -127,11 +125,14 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
           className="mx-auto max-w-3xl px-6 py-12 md:py-16"
           data-testid="companion-article"
         >
-          <div className="prose-reading animate-fade-in-up">{content}</div>
+          <div
+            className="prose prose-neutral dark:prose-invert prose-reading animate-fade-in-up max-w-none"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
         </article>
 
         {/* Sign-up CTA */}
-        <div className="border-t bg-warm-subtle">
+        <div className="border-t bg-muted/30">
           <div className="mx-auto max-w-3xl px-6 py-8 text-center">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
               Enjoying this?
@@ -142,7 +143,7 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
               the full course delivered to your inbox.
             </p>
             <Link
-              href={`/${packKey}`}
+              href="/"
               className="mt-4 inline-block rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground no-underline transition-colors hover:bg-primary/90"
             >
               Start the course &rarr;
@@ -151,7 +152,7 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
         </div>
       </main>
 
-      <ExampleSiteFooter />
+      <SiteFooter />
     </div>
   );
 }

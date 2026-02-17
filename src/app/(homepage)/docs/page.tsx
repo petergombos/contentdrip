@@ -156,7 +156,7 @@ export default function DocsPage() {
               docs
             </Link>
             <Link
-              href="/mindful-productivity"
+              href="/example"
               className="font-mono text-sm text-[#666] no-underline transition-colors hover:text-[#e8e8e8]"
             >
               demo
@@ -287,7 +287,7 @@ CRON_SECRET=generate-another-random-string
               <H3 id="qs-run">5. Start the dev server</H3>
               <CodeBlock label="terminal">{`npm run dev`}</CodeBlock>
               <P>
-                Visit <Code>http://localhost:3000/mindful-productivity</Code> to see the
+                Visit <Code>http://localhost:3000/example</Code> to see the
                 example content pack landing page. The subscribe form is fully
                 functional — try subscribing with a test email to see the full
                 flow.
@@ -713,7 +713,7 @@ one lesson each morning at the time you chose.
                 Add an import to the barrel file so ContentDrip discovers your
                 pack:
               </P>
-              <CodeBlock label="src/content-packs/index.ts">{`import "@/content-packs/mindful-productivity/pack"; // Example pack
+              <CodeBlock label="src/content-packs/index.ts">{`import "@/content-packs/example/pack"; // Example pack
 import "@/content-packs/my-course/pack";             // Your new pack`}</CodeBlock>
             </section>
 
@@ -786,7 +786,7 @@ export function MyEmailShell(props: PackEmailShellProps) {
               </P>
               <P>
                 Refer to the{" "}
-                <Code>src/content-packs/mindful-productivity/email-shell.tsx</Code> file in the
+                <Code>src/content-packs/example/email-shell.tsx</Code> file in the
                 repository for a full production example with images, branded
                 colors, and responsive layout.
               </P>
@@ -1129,7 +1129,7 @@ createdAt         integer  creation timestamp (ms)`}</CodeBlock>
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <Link
-                  href="/mindful-productivity"
+                  href="/example"
                   className="group inline-flex h-9 items-center gap-2 bg-[#c8ff00] px-4 font-mono text-[13px] font-bold uppercase tracking-widest text-[#050505] no-underline transition-colors hover:bg-[#d8ff44]"
                 >
                   See the Demo
@@ -1161,7 +1161,7 @@ createdAt         integer  creation timestamp (ms)`}</CodeBlock>
               home
             </Link>
             <Link
-              href="/mindful-productivity"
+              href="/example"
               className="font-mono text-[13px] text-[#444] no-underline transition-colors hover:text-[#888]"
             >
               demo
