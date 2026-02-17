@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteFooter() {
   return (
@@ -73,9 +74,12 @@ export function SiteFooter() {
           <p className="text-xs text-muted-foreground/60">
             &copy; {new Date().getFullYear()} Your Brand. All rights reserved.
           </p>
-          <p className="text-xs text-muted-foreground/50">
-            Built with care for learners everywhere.
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-muted-foreground/50">
+              Built with care for learners everywhere.
+            </p>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </footer>
