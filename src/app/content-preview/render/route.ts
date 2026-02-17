@@ -8,18 +8,26 @@ import { getPackByKey } from "@/content-packs/registry";
 import "@/content-packs";
 import React from "react";
 
-const MOCK_URLS: Record<string, string> = {
-  "{{confirmUrl}}": "https://preview.example.com/confirm/abc123",
-  "{{manageUrl}}": "https://preview.example.com/manage/abc123",
-  "{{pauseUrl}}": "https://preview.example.com/api/pause?token=abc&id=123",
-  "{{stopUrl}}": "https://preview.example.com/api/stop?token=abc&id=123",
-  "{{companionUrl}}": "https://preview.example.com/p/pack/step",
-  "{{assetUrl}}": "https://preview.example.com/api/content-assets/pack",
-};
-
-function replacePlaceholders(markdown: string): string {
+function replacePlaceholders(
+  markdown: string,
+  baseUrl: string,
+  packKey?: string,
+  stepSlug?: string
+): string {
+  const urls: Record<string, string> = {
+    "{{confirmUrl}}": `${baseUrl}/confirm/abc123`,
+    "{{manageUrl}}": `${baseUrl}/manage/abc123`,
+    "{{pauseUrl}}": `${baseUrl}/api/pause?token=abc&id=123`,
+    "{{stopUrl}}": `${baseUrl}/api/stop?token=abc&id=123`,
+    "{{companionUrl}}": packKey
+      ? `${baseUrl}/p/${packKey}/${stepSlug ?? "step"}`
+      : `${baseUrl}/p/pack/step`,
+    "{{assetUrl}}": packKey
+      ? `${baseUrl}/api/content-assets/${packKey}`
+      : `${baseUrl}/api/content-assets/pack`,
+  };
   let result = markdown;
-  for (const [placeholder, url] of Object.entries(MOCK_URLS)) {
+  for (const [placeholder, url] of Object.entries(urls)) {
     result = result.replaceAll(placeholder, url);
   }
   return result;
@@ -36,12 +44,14 @@ export async function GET(request: NextRequest) {
   const system = searchParams.get("system");
   const type = searchParams.get("type"); // "email" (default) or "page"
 
+  const baseUrl = `${request.nextUrl.protocol}//${request.nextUrl.host}`;
+
   if (system) {
     // System emails
     const emailPath = join(process.cwd(), "src/emails", `${system}.md`);
     try {
       const raw = readFileSync(emailPath, "utf-8");
-      const markdown = replacePlaceholders(raw);
+      const markdown = replacePlaceholders(raw, baseUrl);
       const parsed = parseMarkdown(markdown);
       const element = React.createElement(ContentMarkdownEmail, {
         title: parsed.frontmatter.subject ?? "Untitled",
@@ -119,7 +129,7 @@ export async function GET(request: NextRequest) {
   );
   try {
     const raw = readFileSync(emailPath, "utf-8");
-    const markdown = replacePlaceholders(raw);
+    const markdown = replacePlaceholders(raw, baseUrl, packKey, step);
     const parsed = parseMarkdown(markdown);
     const mockFooter = {
       unsubscribeUrl: "https://preview.example.com/api/stop?token=abc&id=123",

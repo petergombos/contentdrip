@@ -9,7 +9,7 @@ import {
 export function StarterEmailShell(props: PackEmailShellProps) {
   return (
     <EmailLayout preview={props.preview}>
-      <EmailHeader>My Email Course Name</EmailHeader>
+      <EmailHeader>The Art of Doing Absolutely Nothing</EmailHeader>
       <EmailContent>{props.children}</EmailContent>
       <EmailFooter footer={props.footer} />
     </EmailLayout>

@@ -1,232 +1,59 @@
-**Advertisement :)**
-
-- **[pica](https://nodeca.github.io/pica/demo/)** - high quality and fast image
-  resize in browser.
-- **[babelfish](https://github.com/nodeca/babelfish/)** - developer friendly
-  i18n with plurals support and easy syntax.
-
-You will like those projects!
-
+---
+title: "Welcome to The Art of Doing Absolutely Nothing"
+description: "You just enrolled in the world's laziest course. Here's what you're getting into."
 ---
 
-# h1 Heading 8-)
+# Welcome to The Art of Doing Absolutely Nothing
 
-## h2 Heading
+You're here. You subscribed. And in doing so, you've already demonstrated the most important skill this course will teach you: the ability to commit to something without overthinking it.
 
-### h3 Heading
+![A person doing absolutely nothing]({{assetUrl}}/images/sample1.jpeg)
 
-#### h4 Heading
+## Why this course exists
 
-##### h5 Heading
+The world is full of courses that teach you to do *more*. More productivity. More hustle. More 5am cold plunges followed by gratitude journaling followed by inbox zero followed by a spiritual collapse at 2pm.
 
-###### h6 Heading
+This is not one of those courses.
 
-## Horizontal Rules
+This is a course about the radical, countercultural act of **doing less**. On purpose. Without guilt. While possibly horizontal.
 
----
+## The curriculum
 
----
+Here's what we'll cover over the next three days:
 
----
+### Day 1: The Couch Curriculum
 
-## Typographic replacements
+We'll explore why sitting down is one of humanity's greatest inventions and how to elevate your sitting practice from casual to transcendent. You'll learn the three levels of sitting and discover which level you naturally gravitate toward (spoiler: you're probably better at this than you think).
 
-Enable typographer option to see result.
+### Day 2: The Guilt-Free Nap
 
-(c) (C) (r) (R) (tm) (TM) (p) (P) +-
+Napping gets a bad rap. We'll look at why that's ridiculous, review the four major nap varieties, and tackle the guilt problem head-on. By the end, you'll be napping with the confidence of a cat in a sunbeam.
 
-test.. test... test..... test?..... test!....
+### Day 3: Mastering the Blank Stare
 
-!!!!!! ???? ,, -- ---
+The final frontier. Staring at nothing is the black belt of doing nothing, and we'll walk you through (slowly, obviously) how to achieve it. This is where everything comes together.
 
-"Smartypants, double quotes" and 'single quotes'
+## How this works
 
-## Emphasis
+- You'll get **one short email per day** for the next 3 days
+- Each email has a **companion page** (like this one) with extended content for when you feel like going deeper — which, given the theme, you might not, and that's fine
+- There are no quizzes, no deadlines, and absolutely no certificates (unless you print one yourself, in which case, that sounds like a lot of effort)
 
-**This is bold text**
+## A brief history of doing nothing
 
-**This is bold text**
+Doing nothing has a long and distinguished history:
 
-_This is italic text_
+- **Ancient Greece:** Philosophers spent entire days just *thinking* in the agora. Socrates was basically a professional loiterer.
+- **The Renaissance:** Leonardo da Vinci was famously slow to finish things. The Mona Lisa took 16 years. The man understood pacing.
+- **The Industrial Revolution:** Everything went wrong. People started measuring value by output, and we've been exhausted ever since.
+- **Now:** You're here, reclaiming what the ancients knew — that sometimes the best thing to do is nothing at all.
 
-_This is italic text_
+## Your pre-course prep
 
-~~Strikethrough~~
+Before tomorrow's first lesson, we have one small request:
 
-## Blockquotes
+**Identify your favorite doing-nothing spot.** It could be a couch, a hammock, a specific patch of floor, or that one chair in your house that nobody else is allowed to sit in. This will be your base of operations for the next three days.
 
-> Blockquotes can also be nested...
->
-> > ...by using additional greater-than signs right next to each other...
-> >
-> > > ...or with spaces between arrows.
+That's it. No workbooks. No supplies. You already have everything you need: a body, a surface to put it on, and the willingness to not do anything with either of them.
 
-## Lists
-
-Unordered
-
-- Create a list by starting a line with `+`, `-`, or `*`
-- Sub-lists are made by indenting 2 spaces:
-  - Marker character change forces new list start:
-    - Ac tristique libero volutpat at
-    * Facilisis in pretium nisl aliquet
-    - Nulla volutpat aliquam velit
-- Very easy!
-
-Ordered
-
-1. Lorem ipsum dolor sit amet
-2. Consectetur adipiscing elit
-3. Integer molestie lorem at massa
-
-4. You can use sequential numbers...
-5. ...or keep all the numbers as `1.`
-
-Start numbering with offset:
-
-57. foo
-1. bar
-
-## Code
-
-Inline `code`
-
-Indented code
-
-    // Some comments
-    line 1 of code
-    line 2 of code
-    line 3 of code
-
-Block code "fences"
-
-```
-Sample text here...
-```
-
-Syntax highlighting
-
-```js
-var foo = function (bar) {
-  return bar++;
-};
-
-console.log(foo(5));
-```
-
-## Tables
-
-| Option | Description                                                               |
-| ------ | ------------------------------------------------------------------------- |
-| data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default.    |
-| ext    | extension to be used for dest files.                                      |
-
-Right aligned columns
-
-| Option |                                                               Description |
-| -----: | ------------------------------------------------------------------------: |
-|   data | path to data files to supply the data that will be passed into templates. |
-| engine |    engine to be used for processing templates. Handlebars is the default. |
-|    ext |                                      extension to be used for dest files. |
-
-## Links
-
-[link text](http://dev.nodeca.com)
-
-[link with title](http://nodeca.github.io/pica/demo/ "title text!")
-
-Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
-
-## Images
-
-![Minion](https://octodex.github.com/images/minion.png)
-![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")
-
-Like links, Images also have a footnote style syntax
-
-![Alt text][id]
-
-With a reference later in the document defining the URL location:
-
-[id]: https://octodex.github.com/images/dojocat.jpg "The Dojocat"
-
-## Plugins
-
-The killer feature of `markdown-it` is very effective support of
-[syntax plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin).
-
-### [Emojies](https://github.com/markdown-it/markdown-it-emoji)
-
-> Classic markup: :wink: :cry: :laughing: :yum:
->
-> Shortcuts (emoticons): :-) :-( 8-) ;)
-
-see [how to change output](https://github.com/markdown-it/markdown-it-emoji#change-output) with twemoji.
-
-### [Subscript](https://github.com/markdown-it/markdown-it-sub) / [Superscript](https://github.com/markdown-it/markdown-it-sup)
-
-- 19^th^
-- H~2~O
-
-### [\<ins>](https://github.com/markdown-it/markdown-it-ins)
-
-++Inserted text++
-
-### [\<mark>](https://github.com/markdown-it/markdown-it-mark)
-
-==Marked text==
-
-### [Footnotes](https://github.com/markdown-it/markdown-it-footnote)
-
-Footnote 1 link[^first].
-
-Footnote 2 link[^second].
-
-Inline footnote^[Text of inline footnote] definition.
-
-Duplicated footnote reference[^second].
-
-[^first]: Footnote **can have markup**
-
-    and multiple paragraphs.
-
-[^second]: Footnote text.
-
-### [Definition lists](https://github.com/markdown-it/markdown-it-deflist)
-
-Term 1
-
-: Definition 1
-with lazy continuation.
-
-Term 2 with _inline markup_
-
-: Definition 2
-
-        { some code, part of Definition 2 }
-
-    Third paragraph of definition 2.
-
-_Compact style:_
-
-Term 1
-~ Definition 1
-
-Term 2
-~ Definition 2a
-~ Definition 2b
-
-### [Abbreviations](https://github.com/markdown-it/markdown-it-abbr)
-
-This is HTML abbreviation example.
-
-It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
-
-\*[HTML]: Hyper Text Markup Language
-
-### [Custom containers](https://github.com/markdown-it/markdown-it-container)
-
-::: warning
-_here be dragons_
-:::
+See you tomorrow.
