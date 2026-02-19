@@ -236,8 +236,11 @@ export class SubscriptionService {
       throw new Error("Subscription not found");
     }
 
-    if (subscription.status !== SubscriptionStatus.PAUSED) {
-      throw new Error("Subscription is not paused");
+    if (
+      subscription.status !== SubscriptionStatus.PAUSED &&
+      subscription.status !== SubscriptionStatus.STOPPED
+    ) {
+      throw new Error("Subscription is not paused or stopped");
     }
 
     await this.repo.update(subscription.id, {
