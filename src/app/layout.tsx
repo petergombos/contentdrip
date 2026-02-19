@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { siteConfig } from "@/config";
 import { DM_Sans, Fraunces, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -22,12 +23,12 @@ const fontMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("http://localhost:3000"),
   title: {
-    default: "My Email Course",
-    template: "%s — My Email Course",
+    default: siteConfig.name,
+    template: `%s — ${siteConfig.name}`,
   },
-  description: "A free email course delivered straight to your inbox.",
+  description: siteConfig.description,
   openGraph: {
-    siteName: "My Email Course",
+    siteName: siteConfig.name,
   },
   twitter: {
     card: "summary_large_image",

@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -13,9 +14,9 @@ export function SiteFooter() {
               className="group inline-flex items-center gap-2 font-serif text-lg font-semibold no-underline text-foreground"
             >
               <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-[10px] font-bold text-primary">
-                Y
+                {siteConfig.name[0]}
               </span>
-              Your Brand
+              {siteConfig.name}
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Thoughtful content, delivered at your pace. Subscribe to curated
@@ -72,7 +73,7 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-center gap-3 border-t pt-8 sm:flex-row sm:justify-between">
           <p className="text-xs text-muted-foreground/60">
-            &copy; {new Date().getFullYear()} Your Brand. All rights reserved.
+            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <p className="text-xs text-muted-foreground/50">

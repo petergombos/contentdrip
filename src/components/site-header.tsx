@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config";
 import Link from "next/link";
 
 export function SiteHeader() {
@@ -10,10 +11,10 @@ export function SiteHeader() {
         >
           {/* Small decorative mark */}
           <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-xs font-bold text-primary transition-colors group-hover:bg-primary/15">
-            Y
+            {siteConfig.name[0]}
           </span>
           <span className="font-serif text-lg font-semibold tracking-tight text-foreground">
-            Your Brand
+            {siteConfig.name}
           </span>
         </Link>
 

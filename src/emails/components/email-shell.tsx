@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config";
 import {
   EmailContent,
   EmailFooter,
@@ -13,7 +14,7 @@ export function EmailShell(props: {
 }) {
   return (
     <EmailLayout preview={props.preview}>
-      <EmailHeader>My brand</EmailHeader>
+      <EmailHeader>{siteConfig.name}</EmailHeader>
       <EmailContent>{props.children}</EmailContent>
       <EmailFooter footer={props.footer} />
     </EmailLayout>

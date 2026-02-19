@@ -15,17 +15,18 @@ import {
 } from "@/components/subscribe-form";
 import { Card } from "@/components/ui/card";
 import "@/content-packs";
+import { siteConfig } from "@/config";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Email Course",
-  description: "A free email course delivered straight to your inbox.",
+  title: siteConfig.name,
+  description: siteConfig.description,
   openGraph: {
-    title: "My Email Course",
-    description: "A free email course delivered straight to your inbox.",
+    title: siteConfig.name,
+    description: siteConfig.description,
     images: [
       {
-        url: "/api/og?type=default&title=My+Email+Course&label=Free+Course",
+        url: `/api/og?type=default&title=${encodeURIComponent(siteConfig.name)}&label=Free+Course`,
         width: 1200,
         height: 630,
       },
