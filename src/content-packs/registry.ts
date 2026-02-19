@@ -24,11 +24,11 @@ export interface ContentPack {
   EmailShell?: React.ComponentType<PackEmailShellProps>;
 
   /**
-   * Optional fixed cadence (cron expression). When set, subscribers cannot
+   * Optional fixed frequency (cron expression). When set, subscribers cannot
    * change delivery frequency — only the delivery hour and timezone.
-   * When omitted, subscribers pick their own interval from a dropdown.
+   * When omitted, subscribers pick their own frequency from a dropdown.
    */
-  cadence?: string;
+  frequency?: string;
 }
 
 // Registry of all content packs

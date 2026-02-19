@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  IntervalSelector,
-  intervalToCron,
-} from "@/components/interval-selector";
+  FrequencySelector,
+  frequencyToCron,
+} from "@/components/frequency-selector";
 import {
   SendTimeSelector,
   mergeHourIntoCron,
@@ -12,9 +12,9 @@ import { SuccessState } from "@/components/success-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { getAllPacks } from "@/content-packs/registry";
 import { subscribeAction } from "@/domains/subscriptions/actions/subscription-actions";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
@@ -27,7 +27,7 @@ const subscribeSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   sendTime: z.number().min(0).max(23),
   timezone: z.string().min(1, "Missing timezone"),
-  interval: z.string().optional(),
+  frequency: z.string().optional(),
 });
 
 type SubscribeFormData = z.infer<typeof subscribeSchema>;
@@ -38,17 +38,23 @@ type FieldName = keyof SubscribeFormData;
 interface SubscribeFormContextValue {
   form: UseFormReturn<SubscribeFormData>;
   isSubmitting: boolean;
-  hasFixedCadence: boolean;
+  hasFixedFrequency: boolean;
+  frequency: string | undefined;
   timezone: string;
   packKey: string;
   error: string | null;
 }
 
-const SubscribeFormContext = createContext<SubscribeFormContextValue | null>(null);
+const SubscribeFormContext = createContext<SubscribeFormContextValue | null>(
+  null,
+);
 
 export function useSubscribeForm() {
   const ctx = useContext(SubscribeFormContext);
-  if (!ctx) throw new Error("SubscribeForm sub-components must be used within <SubscribeForm>");
+  if (!ctx)
+    throw new Error(
+      "SubscribeForm sub-components must be used within <SubscribeForm>",
+    );
   return ctx;
 }
 
@@ -64,10 +70,16 @@ function useFieldName() {
 
 interface SubscribeFormProps extends React.ComponentProps<"form"> {
   packKey?: string;
-  cadence?: string;
+  frequency?: string;
 }
 
-export function SubscribeForm({ packKey, cadence, children, className, ...props }: SubscribeFormProps) {
+export function SubscribeForm({
+  packKey,
+  frequency,
+  children,
+  className,
+  ...props
+}: SubscribeFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [alreadySubscribed, setAlreadySubscribed] = useState(false);
@@ -78,14 +90,14 @@ export function SubscribeForm({ packKey, cadence, children, className, ...props 
     () => packKey || packs[0]?.key || "",
     [packKey, packs],
   );
-  const hasFixedCadence = !!cadence;
+  const hasFixedFrequency = !!frequency;
 
   const form = useForm<SubscribeFormData>({
     resolver: zodResolver(subscribeSchema),
     defaultValues: {
       sendTime: 8,
       timezone: "",
-      interval: "Daily",
+      frequency: "Daily",
     },
   });
 
@@ -103,12 +115,10 @@ export function SubscribeForm({ packKey, cadence, children, className, ...props 
     setError(null);
 
     try {
-      const cronExpression = hasFixedCadence
-        ? mergeHourIntoCron(cadence!, data.sendTime)
-        : mergeHourIntoCron(
-            intervalToCron(data.interval || "Daily"),
-            data.sendTime,
-          );
+      const selectedFrequency = data.frequency || "Daily";
+      const cronExpression = hasFixedFrequency
+        ? mergeHourIntoCron(frequency!, data.sendTime)
+        : mergeHourIntoCron(frequencyToCron(selectedFrequency), data.sendTime);
 
       const result = await subscribeAction({
         email: data.email,
@@ -175,7 +185,8 @@ export function SubscribeForm({ packKey, cadence, children, className, ...props 
   const ctx: SubscribeFormContextValue = {
     form,
     isSubmitting,
-    hasFixedCadence,
+    hasFixedFrequency,
+    frequency,
     timezone,
     packKey: defaultPackKey,
     error,
@@ -195,7 +206,7 @@ export function SubscribeForm({ packKey, cadence, children, className, ...props 
         {children ?? (
           <>
             <SubscribeFormEmailField />
-            <SubscribeFormIntervalField />
+            <SubscribeFormFrequencyField />
             <SubscribeFormDeliveryTimeField />
             <SubscribeFormError />
             <SubscribeFormSubmit />
@@ -212,14 +223,18 @@ const FIELD_IDS: Record<FieldName, string> = {
   email: "email",
   sendTime: "sendTime",
   timezone: "timezone",
-  interval: "interval",
+  frequency: "frequency",
 };
 
 interface SubscribeFormFieldProps extends React.ComponentProps<"div"> {
   name: FieldName;
 }
 
-export function SubscribeFormField({ name, className, ...props }: SubscribeFormFieldProps) {
+export function SubscribeFormField({
+  name,
+  className,
+  ...props
+}: SubscribeFormFieldProps) {
   return (
     <FieldContext.Provider value={name}>
       <div className={cn("space-y-1.5", className)} {...props} />
@@ -227,22 +242,35 @@ export function SubscribeFormField({ name, className, ...props }: SubscribeFormF
   );
 }
 
-export function SubscribeFormLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
+export function SubscribeFormLabel({
+  className,
+  ...props
+}: React.ComponentProps<typeof Label>) {
   const fieldName = useFieldName();
   const htmlFor = fieldName ? FIELD_IDS[fieldName] : undefined;
 
   return (
-    <Label htmlFor={htmlFor} className={cn("text-xs font-medium", className)} {...props} />
+    <Label
+      htmlFor={htmlFor}
+      className={cn("text-xs font-medium", className)}
+      {...props}
+    />
   );
 }
 
-export function SubscribeFormDescription({ className, ...props }: React.ComponentProps<"p">) {
+export function SubscribeFormDescription({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
   return (
     <p className={cn("text-xs text-muted-foreground", className)} {...props} />
   );
 }
 
-export function SubscribeFormFieldError({ className, ...props }: React.ComponentProps<"p">) {
+export function SubscribeFormFieldError({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
   const fieldName = useFieldName();
   const { form } = useSubscribeForm();
   const { errors } = form.formState;
@@ -259,7 +287,11 @@ export function SubscribeFormFieldError({ className, ...props }: React.Component
 
 /* ── Form-level error (server/submit errors) ── */
 
-export function SubscribeFormError({ className, children, ...props }: React.ComponentProps<"div">) {
+export function SubscribeFormError({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
   const { error } = useSubscribeForm();
 
   if (!error) return null;
@@ -279,7 +311,10 @@ export function SubscribeFormError({ className, children, ...props }: React.Comp
 
 /* ── Email input ── */
 
-export function SubscribeFormEmailInput({ className, ...props }: React.ComponentProps<typeof Input>) {
+export function SubscribeFormEmailInput({
+  className,
+  ...props
+}: React.ComponentProps<typeof Input>) {
   const { form } = useSubscribeForm();
 
   return (
@@ -296,16 +331,19 @@ export function SubscribeFormEmailInput({ className, ...props }: React.Component
   );
 }
 
-/* ── Interval input ── */
+/* ── Frequency input ── */
 
-export function SubscribeFormIntervalInput({ className, ...props }: Omit<React.ComponentProps<"div">, "children">) {
+export function SubscribeFormFrequencyInput({
+  className,
+  ...props
+}: Omit<React.ComponentProps<"div">, "children">) {
   const { form } = useSubscribeForm();
 
   return (
     <div className={className} {...props}>
-      <IntervalSelector
-        value={form.watch("interval") || "Daily"}
-        onValueChange={(value) => form.setValue("interval", value)}
+      <FrequencySelector
+        value={form.watch("frequency") || "Daily"}
+        onValueChange={(value) => form.setValue("frequency", value)}
       />
     </div>
   );
@@ -313,7 +351,10 @@ export function SubscribeFormIntervalInput({ className, ...props }: Omit<React.C
 
 /* ── Delivery time input ── */
 
-export function SubscribeFormDeliveryTimeInput({ className, ...props }: Omit<React.ComponentProps<"div">, "children">) {
+export function SubscribeFormDeliveryTimeInput({
+  className,
+  ...props
+}: Omit<React.ComponentProps<"div">, "children">) {
   const { form } = useSubscribeForm();
   const sendTime = form.watch("sendTime");
 
@@ -329,13 +370,24 @@ export function SubscribeFormDeliveryTimeInput({ className, ...props }: Omit<Rea
 
 /* ── Timezone display (useful inside delivery time label) ── */
 
-export function SubscribeFormTimezone({ className, ...props }: React.ComponentProps<"span">) {
+export function SubscribeFormTimezone({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
   const { timezone } = useSubscribeForm();
 
-  if (!timezone) return <span className={className} {...props}>Detecting your timezone…</span>;
+  if (!timezone)
+    return (
+      <span className={className} {...props}>
+        Detecting your timezone…
+      </span>
+    );
 
   return (
-    <span className={cn("font-medium text-muted-foreground", className)} {...props}>
+    <span
+      className={cn("font-medium text-muted-foreground", className)}
+      {...props}
+    >
       {props.children ?? `(${timezone.replace(/_/g, " ")})`}
     </span>
   );
@@ -343,7 +395,10 @@ export function SubscribeFormTimezone({ className, ...props }: React.ComponentPr
 
 /* ── Convenience field composites (default assembled fields) ── */
 
-export function SubscribeFormEmailField({ className, ...props }: React.ComponentProps<"div">) {
+export function SubscribeFormEmailField({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <SubscribeFormField name="email" className={className} {...props}>
       <SubscribeFormLabel>Email address</SubscribeFormLabel>
@@ -353,20 +408,26 @@ export function SubscribeFormEmailField({ className, ...props }: React.Component
   );
 }
 
-export function SubscribeFormIntervalField({ className, ...props }: React.ComponentProps<"div">) {
-  const { hasFixedCadence } = useSubscribeForm();
+export function SubscribeFormFrequencyField({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  const { hasFixedFrequency } = useSubscribeForm();
 
-  if (hasFixedCadence) return null;
+  if (hasFixedFrequency) return null;
 
   return (
-    <SubscribeFormField name="interval" className={className} {...props}>
+    <SubscribeFormField name="frequency" className={className} {...props}>
       <SubscribeFormLabel>Frequency</SubscribeFormLabel>
-      <SubscribeFormIntervalInput />
+      <SubscribeFormFrequencyInput />
     </SubscribeFormField>
   );
 }
 
-export function SubscribeFormDeliveryTimeField({ className, ...props }: React.ComponentProps<"div">) {
+export function SubscribeFormDeliveryTimeField({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <SubscribeFormField name="sendTime" className={className} {...props}>
       <SubscribeFormLabel>
@@ -402,7 +463,7 @@ export function SubscribeFormSubmit({
           Subscribing…
         </span>
       ) : (
-        children ?? "Start My Free Course"
+        (children ?? "Start My Free Course")
       )}
     </Button>
   );

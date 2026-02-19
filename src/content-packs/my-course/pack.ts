@@ -1,6 +1,6 @@
+import { StarterEmailShell } from "@/content-packs/my-course/email-shell";
 import type { ContentPack } from "@/content-packs/registry";
 import { registerPack } from "@/content-packs/registry";
-import { StarterEmailShell } from "@/content-packs/my-course/email-shell";
 
 const pack: ContentPack = {
   key: "my-course",
@@ -14,6 +14,7 @@ const pack: ContentPack = {
     { slug: "day-3", emailFile: "day-3.md" },
   ],
   EmailShell: StarterEmailShell,
+  // frequency: "0 10 * * *",
 };
 
 registerPack(pack);

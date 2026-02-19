@@ -14,12 +14,6 @@ export function SendTimeSelector({
   value = 8,
   onValueChange,
 }: SendTimeSelectorProps) {
-  const formatHour = (hour: number): string => {
-    const period = hour >= 12 ? "PM" : "AM";
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${displayHour}:00 ${period}`;
-  };
-
   return (
     <Select
       value={value.toString()}
@@ -37,6 +31,12 @@ export function SendTimeSelector({
       </SelectContent>
     </Select>
   );
+}
+
+export function formatHour(hour: number): string {
+  const period = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  return `${displayHour}:00 ${period}`;
 }
 
 /**

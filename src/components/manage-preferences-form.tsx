@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  IntervalSelector,
-  cronToInterval,
-  intervalToCron,
-} from "@/components/interval-selector";
+  FrequencySelector,
+  cronToFrequency,
+  frequencyToCron,
+} from "@/components/frequency-selector";
 import {
   SendTimeSelector,
   mergeHourIntoCron,
@@ -29,7 +29,7 @@ import { z } from "zod";
 
 const updateSubscriptionSchema = z.object({
   timezone: z.string().min(1, "Please select a timezone"),
-  interval: z.string().min(1, "Please select an interval"),
+  frequency: z.string().min(1, "Please select a frequency"),
   sendTime: z.number().min(0).max(23),
 });
 
@@ -38,14 +38,14 @@ type UpdateSubscriptionFormData = z.infer<typeof updateSubscriptionSchema>;
 interface ManagePreferencesFormProps {
   subscription: Subscription;
   onUpdate?: () => void;
-  /** When set, locks the cadence — hides the interval selector. */
-  cadence?: string;
+  /** When set, locks the frequency — hides the frequency selector. */
+  frequency?: string;
 }
 
 export function ManagePreferencesForm({
   subscription,
   onUpdate,
-  cadence,
+  frequency,
 }: ManagePreferencesFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,9 +53,9 @@ export function ManagePreferencesForm({
   const [success, setSuccess] = useState(false);
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
-  const hasFixedCadence = !!cadence;
+  const hasFixedFrequency = !!frequency;
 
-  // Parse cron to get interval and hour
+  // Parse cron to get frequency and hour
   const cronParts = subscription.cronExpression.split(" ");
   const sendTime = parseInt(cronParts[1] || "8", 10);
 
@@ -68,7 +68,7 @@ export function ManagePreferencesForm({
     resolver: zodResolver(updateSubscriptionSchema),
     defaultValues: {
       timezone: subscription.timezone,
-      interval: cronToInterval(subscription.cronExpression),
+      frequency: cronToFrequency(subscription.cronExpression),
       sendTime,
     },
   });
@@ -78,9 +78,9 @@ export function ManagePreferencesForm({
     setError(null);
 
     try {
-      const cronExpression = hasFixedCadence
-        ? mergeHourIntoCron(cadence!, data.sendTime)
-        : mergeHourIntoCron(intervalToCron(data.interval), data.sendTime);
+      const cronExpression = hasFixedFrequency
+        ? mergeHourIntoCron(frequency!, data.sendTime)
+        : mergeHourIntoCron(frequencyToCron(data.frequency), data.sendTime);
 
       const result = await updateSubscriptionAction({
         subscriptionId: subscription.id,
@@ -370,18 +370,18 @@ export function ManagePreferencesForm({
               )}
             </div>
 
-            {!hasFixedCadence && (
+            {!hasFixedFrequency && (
               <div className="space-y-1.5">
-                <Label htmlFor="interval" className="text-xs font-medium">
+                <Label htmlFor="frequency" className="text-xs font-medium">
                   Frequency
                 </Label>
-                <IntervalSelector
-                  value={watch("interval")}
-                  onValueChange={(value) => setValue("interval", value)}
+                <FrequencySelector
+                  value={watch("frequency")}
+                  onValueChange={(value) => setValue("frequency", value)}
                 />
-                {errors.interval && (
+                {errors.frequency && (
                   <p className="text-xs text-destructive">
-                    {errors.interval.message}
+                    {errors.frequency.message}
                   </p>
                 )}
               </div>

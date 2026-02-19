@@ -123,7 +123,7 @@ export default async function ManageTokenPage({
               token={token}
               action={isTargeted ? action : undefined}
               defaultExpanded={defaultExpanded}
-              cadence={pack?.cadence}
+              frequency={pack?.frequency}
               onUnsubscribe={async (subscriptionId: string) => {
                 "use server";
                 const emailService = new EmailService(

@@ -2,20 +2,20 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import {
   SubscribeForm,
-  SubscribeFormDeliveryTimeInput,
+  SubscribeFormDeliveryTimeField,
   SubscribeFormDescription,
   SubscribeFormEmailInput,
   SubscribeFormError,
   SubscribeFormField,
   SubscribeFormFieldError,
-  SubscribeFormIntervalInput,
+  SubscribeFormFrequencyField,
   SubscribeFormLabel,
   SubscribeFormSubmit,
-  SubscribeFormTimezone,
 } from "@/components/subscribe-form";
 import { Card } from "@/components/ui/card";
-import "@/content-packs";
 import { siteConfig } from "@/config";
+import "@/content-packs";
+import { getPackByKey } from "@/content-packs/registry";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -34,7 +34,10 @@ export const metadata: Metadata = {
   },
 };
 
+const PACK_KEY = "my-course";
+
 export default function HomePage() {
+  const pack = getPackByKey(PACK_KEY);
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
@@ -63,7 +66,7 @@ export default function HomePage() {
               <p className="mb-6 text-sm text-muted-foreground">
                 Free. Delivered to your inbox at the pace you choose.
               </p>
-              <SubscribeForm packKey="my-course">
+              <SubscribeForm packKey={PACK_KEY} frequency={pack?.frequency}>
                 <SubscribeFormField name="email">
                   <SubscribeFormLabel>Email</SubscribeFormLabel>
                   <SubscribeFormEmailInput />
@@ -72,20 +75,8 @@ export default function HomePage() {
                     No spam, totally free.
                   </SubscribeFormDescription>
                 </SubscribeFormField>
-
-                <SubscribeFormField name="interval">
-                  <SubscribeFormLabel>Frequency</SubscribeFormLabel>
-                  <SubscribeFormIntervalInput />
-                </SubscribeFormField>
-
-                <SubscribeFormField name="sendTime">
-                  <SubscribeFormLabel>
-                    Delivery time <SubscribeFormTimezone />
-                  </SubscribeFormLabel>
-                  <SubscribeFormDeliveryTimeInput />
-                  <SubscribeFormFieldError />
-                </SubscribeFormField>
-
+                <SubscribeFormFrequencyField />
+                <SubscribeFormDeliveryTimeField />
                 <SubscribeFormError />
                 <SubscribeFormSubmit>Start My Free Course</SubscribeFormSubmit>
               </SubscribeForm>
