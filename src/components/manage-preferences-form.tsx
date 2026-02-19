@@ -167,18 +167,24 @@ export function ManagePreferencesForm({
       });
 
       if (result?.serverError) {
-        setError(
+        const message =
           typeof result.serverError === "string"
             ? result.serverError
-            : "An error occurred",
-        );
-        setIsSubmitting(false);
+            : "An error occurred";
+        setError(message);
+        toast.error("Failed to restart course", { description: message });
       } else {
         setShowRestartConfirm(false);
+        toast.success("Course restarted", {
+          description: "You'll start again from lesson 1.",
+        });
         router.refresh();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      const message = err instanceof Error ? err.message : "An error occurred";
+      setError(message);
+      toast.error("Failed to restart course", { description: message });
+    } finally {
       setIsSubmitting(false);
     }
   };
