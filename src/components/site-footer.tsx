@@ -1,6 +1,6 @@
+import { ThemeToggle } from "@/components/theme-toggle";
 import { siteConfig } from "@/config";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteFooter() {
   return (
@@ -73,11 +73,20 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-center gap-3 border-t pt-8 sm:flex-row sm:justify-between">
           <p className="text-xs text-muted-foreground/60">
-            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights
+            reserved.
           </p>
           <div className="flex items-center gap-4">
             <p className="text-xs text-muted-foreground/50">
-              Built with care for learners everywhere.
+              Powered by{" "}
+              <a
+                href="https://contentdrip.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-muted-foreground/80 transition-colors"
+              >
+                ContentDrip
+              </a>
             </p>
             <ThemeToggle />
           </div>
