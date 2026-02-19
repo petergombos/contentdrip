@@ -39,7 +39,7 @@ export function FrequencySelector({
       value={value || FREQUENCY_OPTIONS[0].label}
       onValueChange={onValueChange}
     >
-      <SelectTrigger className="w-full">
+      <SelectTrigger className="h-10 w-full">
         <SelectValue placeholder="Select frequency" />
       </SelectTrigger>
       <SelectContent>

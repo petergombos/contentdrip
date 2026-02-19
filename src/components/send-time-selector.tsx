@@ -19,7 +19,7 @@ export function SendTimeSelector({
       value={value.toString()}
       onValueChange={(val) => onValueChange(parseInt(val, 10))}
     >
-      <SelectTrigger className="w-full">
+      <SelectTrigger className="h-10 w-full">
         <SelectValue placeholder="Select time" />
       </SelectTrigger>
       <SelectContent>
