@@ -1,6 +1,12 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Generate hours (0-23)
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -19,7 +25,7 @@ export function SendTimeSelector({
       value={value.toString()}
       onValueChange={(val) => onValueChange(parseInt(val, 10))}
     >
-      <SelectTrigger className="h-10 w-full">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Select time" />
       </SelectTrigger>
       <SelectContent>
@@ -50,7 +56,10 @@ export function hourToCron(hour: number): string {
  * Replace the hour field in a cron expression with a new hour value.
  * e.g. mergeHourIntoCron("0 9 * * 1-5", 14) → "0 14 * * 1-5"
  */
-export function mergeHourIntoCron(cronExpression: string, hour: number): string {
+export function mergeHourIntoCron(
+  cronExpression: string,
+  hour: number,
+): string {
   const parts = cronExpression.split(" ");
   parts[1] = String(hour);
   return parts.join(" ");

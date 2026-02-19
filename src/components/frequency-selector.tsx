@@ -1,6 +1,12 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export interface FrequencyOption {
   label: string;
@@ -20,7 +26,7 @@ export function frequencyToCron(frequency: string): string {
 
 export function cronToFrequency(cronExpression: string): string {
   const option = FREQUENCY_OPTIONS.find(
-    (opt) => opt.cronExpression === cronExpression
+    (opt) => opt.cronExpression === cronExpression,
   );
   return option?.label || FREQUENCY_OPTIONS[0].label;
 }
@@ -39,7 +45,7 @@ export function FrequencySelector({
       value={value || FREQUENCY_OPTIONS[0].label}
       onValueChange={onValueChange}
     >
-      <SelectTrigger className="h-10 w-full">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Select frequency" />
       </SelectTrigger>
       <SelectContent>

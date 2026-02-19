@@ -1,15 +1,15 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { SuccessState } from "@/components/success-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SuccessState } from "@/components/success-state";
 import { requestManageLinkAction } from "@/domains/subscriptions/actions/subscription-actions";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const requestManageLinkSchema = z.object({
   email: z.email("Please enter a valid email address"),
@@ -43,7 +43,7 @@ export function ManageRequestForm() {
         setError(
           typeof result.serverError === "string"
             ? result.serverError
-            : "An error occurred"
+            : "An error occurred",
         );
       } else if (result?.data) {
         setSuccess(true);
@@ -83,7 +83,6 @@ export function ManageRequestForm() {
           {...register("email")}
           data-testid="manage-request-email-input"
           placeholder="you@example.com"
-          className="h-10"
         />
         {errors.email && (
           <p className="text-xs text-destructive">{errors.email.message}</p>

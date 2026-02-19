@@ -1,7 +1,13 @@
 "use client";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEffect, useMemo, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 /**
  * Build a human-readable label for an IANA timezone.
@@ -15,7 +21,8 @@ function formatTimezoneLabel(tz: string): string {
       timeZoneName: "shortOffset",
     });
     const parts = formatter.formatToParts(now);
-    const offsetPart = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+    const offsetPart =
+      parts.find((p) => p.type === "timeZoneName")?.value ?? "";
     const display = tz.replace(/_/g, " ");
     return `${display} (${offsetPart})`;
   } catch {
@@ -29,10 +36,22 @@ function getAllTimezones(): string[] {
   } catch {
     // Fallback for older environments
     return [
-      "America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles",
-      "America/Phoenix", "America/Anchorage", "Pacific/Honolulu", "UTC",
-      "Europe/London", "Europe/Paris", "Europe/Berlin", "Europe/Budapest",
-      "Asia/Tokyo", "Asia/Shanghai", "Asia/Dubai", "Australia/Sydney",
+      "America/New_York",
+      "America/Chicago",
+      "America/Denver",
+      "America/Los_Angeles",
+      "America/Phoenix",
+      "America/Anchorage",
+      "Pacific/Honolulu",
+      "UTC",
+      "Europe/London",
+      "Europe/Paris",
+      "Europe/Berlin",
+      "Europe/Budapest",
+      "Asia/Tokyo",
+      "Asia/Shanghai",
+      "Asia/Dubai",
+      "Australia/Sydney",
     ];
   }
 }
@@ -66,14 +85,14 @@ export function TimezoneSelector({
     const all = getAllTimezones();
     // Ensure the current value and detected timezone are always in the list
     const extras = [displayValue, detectedTimezone].filter(
-      (tz) => tz && !all.includes(tz)
+      (tz) => tz && !all.includes(tz),
     );
     return [...extras, ...all];
   }, [displayValue, detectedTimezone]);
 
   return (
     <Select value={displayValue} onValueChange={onValueChange}>
-      <SelectTrigger className="h-10 w-full">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Select timezone" />
       </SelectTrigger>
       <SelectContent className="max-h-60">

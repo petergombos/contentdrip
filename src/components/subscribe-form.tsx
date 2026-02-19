@@ -311,10 +311,9 @@ export function SubscribeFormError({
 
 /* ── Email input ── */
 
-export function SubscribeFormEmailInput({
-  className,
-  ...props
-}: React.ComponentProps<typeof Input>) {
+export function SubscribeFormEmailInput(
+  props: React.ComponentProps<typeof Input>,
+) {
   const { form } = useSubscribeForm();
 
   return (
@@ -325,7 +324,6 @@ export function SubscribeFormEmailInput({
       autoComplete="email"
       {...form.register("email")}
       data-testid="subscribe-email-input"
-      className={cn("h-10", className)}
       {...props}
     />
   );
