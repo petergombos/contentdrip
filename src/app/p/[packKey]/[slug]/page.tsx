@@ -1,7 +1,7 @@
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "@/content-packs";
-import { getPackByKey } from "@/content-packs/registry";
+import { getAllPacks, getPackByKey } from "@/content-packs/registry";
 import { extractFrontmatter, parsePageMarkdown } from "@/lib/markdown/renderer";
 import { readFileSync } from "fs";
 import type { Metadata } from "next";
@@ -34,6 +34,12 @@ function readPageMarkdown(packKey: string, slug: string) {
   } catch {
     return null;
   }
+}
+
+export function generateStaticParams() {
+  return getAllPacks().flatMap((pack) =>
+    pack.steps.map((step) => ({ packKey: pack.key, slug: step.slug })),
+  );
 }
 
 export async function generateMetadata({
