@@ -186,45 +186,51 @@ export function EmailFooter(props: {
   style?: React.CSSProperties;
 }) {
   const { footer } = props;
-  if (!footer?.manageUrl && !footer?.pauseUrl && !footer?.unsubscribeUrl) {
-    return null;
-  }
+  const hasLinks =
+    footer?.manageUrl || footer?.pauseUrl || footer?.unsubscribeUrl;
 
   return (
     <Section style={{ ...emailStyles.footerWrap, ...props.style }}>
-      <Text style={emailStyles.footerLinks}>
-        {footer.manageUrl ? (
-          <>
-            <Link href={footer.manageUrl} style={emailStyles.footerLink}>
-              Manage preferences
+      {hasLinks ? (
+        <Text style={emailStyles.footerLinks}>
+          {footer!.manageUrl ? (
+            <>
+              <Link href={footer!.manageUrl} style={emailStyles.footerLink}>
+                Manage preferences
+              </Link>
+              {footer!.pauseUrl || footer!.unsubscribeUrl ? (
+                <span style={emailStyles.footerDivider}>
+                  &ensp;&middot;&ensp;
+                </span>
+              ) : null}
+            </>
+          ) : null}
+          {footer!.pauseUrl ? (
+            <>
+              <Link href={footer!.pauseUrl} style={emailStyles.footerLink}>
+                Pause delivery
+              </Link>
+              {footer!.unsubscribeUrl ? (
+                <span style={emailStyles.footerDivider}>
+                  &ensp;&middot;&ensp;
+                </span>
+              ) : null}
+            </>
+          ) : null}
+          {footer!.unsubscribeUrl ? (
+            <Link href={footer!.unsubscribeUrl} style={emailStyles.footerLink}>
+              Unsubscribe
             </Link>
-            {footer.pauseUrl || footer.unsubscribeUrl ? (
-              <span style={emailStyles.footerDivider}>
-                &ensp;&middot;&ensp;
-              </span>
-            ) : null}
-          </>
-        ) : null}
-        {footer.pauseUrl ? (
-          <>
-            <Link href={footer.pauseUrl} style={emailStyles.footerLink}>
-              Pause delivery
-            </Link>
-            {footer.unsubscribeUrl ? (
-              <span style={emailStyles.footerDivider}>
-                &ensp;&middot;&ensp;
-              </span>
-            ) : null}
-          </>
-        ) : null}
-        {footer.unsubscribeUrl ? (
-          <Link
-            href={footer.unsubscribeUrl}
-            style={emailStyles.footerLink}
-          >
-            Unsubscribe
-          </Link>
-        ) : null}
+          ) : null}
+        </Text>
+      ) : null}
+      <Text
+        style={{
+          ...emailStyles.footerLinks,
+          marginTop: hasLinks ? 8 : 0,
+        }}
+      >
+        Powered by ContentDrip
       </Text>
     </Section>
   );
