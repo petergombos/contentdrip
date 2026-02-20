@@ -145,7 +145,7 @@ export default async function CompanionPage({ params }: CompanionPageProps) {
           data-testid="companion-article"
         >
           <div
-            className="prose prose-neutral dark:prose-invert prose-reading animate-fade-in-up max-w-none"
+            className="prose prose-neutral dark:prose-invert prose-reading prose-headings:font-serif animate-fade-in-up max-w-none"
             dangerouslySetInnerHTML={{ __html: html }}
           />
         </article>

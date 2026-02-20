@@ -8,11 +8,19 @@ export function ContentMarkdownEmail(props: {
   html: string;
   footer?: { unsubscribeUrl?: string; manageUrl?: string; pauseUrl?: string };
   EmailShell?: React.ComponentType<PackEmailShellProps>;
+  stepIndex?: number;
+  totalSteps?: number;
 }) {
   const Shell = props.EmailShell ?? DefaultEmailShell;
 
   return (
-    <Shell title={props.title} preview={props.preview} footer={props.footer}>
+    <Shell
+      title={props.title}
+      preview={props.preview}
+      footer={props.footer}
+      stepIndex={props.stepIndex}
+      totalSteps={props.totalSteps}
+    >
       <div className="eb" dangerouslySetInnerHTML={{ __html: props.html }} />
     </Shell>
   );

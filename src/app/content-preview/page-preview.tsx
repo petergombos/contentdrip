@@ -25,7 +25,7 @@ export function PagePreview({
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <div
-        className="prose prose-neutral dark:prose-invert max-w-none"
+        className="prose prose-neutral dark:prose-invert prose-headings:font-serif max-w-none"
         dangerouslySetInnerHTML={{ __html: data.html }}
       />
     </div>

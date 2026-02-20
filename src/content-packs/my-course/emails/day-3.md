@@ -1,48 +1,42 @@
 ---
 subject: "Day 3: Launch your course and get your first subscribers"
-preview: "Your course is written. Here's the honest guide to filling it."
+preview: "Sample lesson — this is demo content from the ContentDrip starter template."
 ---
 
-You've done the hard part. You have a topic, a curriculum, and at least a draft of your emails. Today we ship it.
+> **Demo content** — This is the final sample lesson. Replace it with your own in `src/content-packs/my-course/emails/day-3.md`.
 
-![Your course is live]({{assetUrl}}/images/le-vu-vSlCNmZdjHQ-unsplash%20Large.jpeg)
+You've done the hard part. You have a topic, a curriculum, and at least a draft of your emails. Today we ship it — or at least, that's what this placeholder lesson pretends.
 
-## Your landing page: the one-sentence promise
+![Sample image — replace with your own]({{assetUrl}}/images/le-vu-vSlCNmZdjHQ-unsplash%20Large.jpeg)
 
-Your landing page doesn't need to be fancy. It needs to answer one question: _What will I be able to do after taking this course?_
+## Your landing page
 
-Your headline should be the answer to that question. Not "Welcome to my email course." Not the name of the course. The outcome.
+Your landing page needs to answer one question: _What will I be able to do after taking this course?_
+
+Your headline should be the outcome — not the name of the course.
 
 - "Write a cold email you'd actually reply to — in 3 lessons"
 - "Survive your first month with a rescue dog. One email a day for 5 days."
-- "Go from zero to your first freelance client — free, via email"
 
-ContentDrip's built-in subscribe form handles signup, email confirmation, and delivery scheduling. You just need to write the headline.
+ContentDrip's subscribe form handles signup, confirmation, and delivery scheduling automatically.
 
-## Where to find your first subscribers
+## Where to find subscribers
 
-**Existing audience first.** Post about it once — Twitter/X, LinkedIn, a newsletter, a Slack community you're part of. Don't over-explain. Share the landing page with your one-sentence promise. That's it.
+**Existing audience first.** Post about it once — Twitter/X, LinkedIn, a newsletter, a Slack community you're part of.
 
-**Niche communities second.** Find 2–3 online communities (subreddits, Discord servers, Facebook groups) where your specific audience hangs out. Add genuine value first, then mention the course once when it's relevant.
+**Niche communities second.** Find 2–3 online communities where your audience hangs out.
 
-**Referrals third.** Add a line to your final email: "If this helped you, forward it to someone who'd find it useful." One sentence. No pressure. It works.
+**Referrals third.** Add a line to your final email: "If this helped you, forward it to someone who'd find it useful."
 
-## The honest truth about growth
+## That's the demo course
 
-Your first version will not be perfect. That's fine. The best email courses get better through iteration — better subject lines, tightened lessons, more useful actions. The only way to improve is to launch and learn.
+This was a sample 4-email course to show you the ContentDrip format. Here's what to do next:
 
-Start with 10 subscribers. Then 50. Then 100. Each iteration makes the course better for the next person who finds it.
+1. Edit the markdown files in `src/content-packs/my-course/emails/`
+2. Update the pack config in `src/content-packs/my-course/pack.ts`
+3. Customize the email shell in `src/content-packs/my-course/email-shell.tsx`
+4. Replace the homepage content in `src/app/page.tsx`
 
-## You're done
+[Read the companion page →]({{companionUrl}})
 
-You built something real. A course that delivers itself, on a schedule your subscribers choose, to their inbox — forever.
-
-Here's your recap:
-
-- **Day 1** — Topic validated, curriculum mapped
-- **Day 2** — Emails written with hooks, lessons, and actions
-- **Day 3** — Landing page live, first subscribers incoming
-
-[Read the full Day 3 guide with a launch checklist →]({{companionUrl}})
-
-Go launch it. Then come back and make it better.
+Go build something real.

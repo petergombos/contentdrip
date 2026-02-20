@@ -2,7 +2,10 @@ import { siteConfig } from "@/config";
 import {
   EmailContent,
   EmailFooter,
-  EmailHeader,
+  EmailHeaderBar,
+  EmailHeaderBrandName,
+  EmailHeaderMark,
+  EmailHeaderTitle,
   EmailLayout,
 } from "@/emails/components/email-primitives";
 
@@ -11,10 +14,16 @@ export function EmailShell(props: {
   title: string;
   children: React.ReactNode;
   footer?: { unsubscribeUrl?: string; manageUrl?: string; pauseUrl?: string };
+  stepIndex?: number;
+  totalSteps?: number;
 }) {
   return (
     <EmailLayout preview={props.preview}>
-      <EmailHeader>{siteConfig.name}</EmailHeader>
+      <EmailHeaderBar>
+        <EmailHeaderMark>{siteConfig.name[0]}</EmailHeaderMark>
+        <EmailHeaderBrandName>{siteConfig.name}</EmailHeaderBrandName>
+      </EmailHeaderBar>
+      <EmailHeaderTitle>{props.title}</EmailHeaderTitle>
       <EmailContent>{props.children}</EmailContent>
       <EmailFooter footer={props.footer} />
     </EmailLayout>

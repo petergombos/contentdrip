@@ -1,7 +1,7 @@
 // ✏️ Update this with your site's name and description.
 // These are used in the page <title>, meta description, and Open Graph tags.
 export const siteConfig = {
-  name: "How to Write an Email Course",
+  name: "Steady Letter",
   description:
-    "A free 3-day email course on planning, writing, and launching your first email course — delivered straight to your inbox.",
+    "Free email courses on topics that matter — delivered at your pace, one lesson at a time.",
 };

@@ -356,6 +356,8 @@ export class SchedulerService {
         html: parsed.html,
         footer: { unsubscribeUrl: stopUrl, manageUrl, pauseUrl },
         EmailShell: pack.EmailShell,
+        stepIndex: subscription.currentStepIndex,
+        totalSteps: pack.steps.length,
       })
     );
 

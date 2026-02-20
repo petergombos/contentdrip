@@ -136,12 +136,15 @@ export async function GET(request: NextRequest) {
       manageUrl: "https://preview.example.com/manage/abc123",
       pauseUrl: "https://preview.example.com/api/pause?token=abc&id=123",
     };
+    const stepIndex = pack.steps.findIndex((s) => s.slug === step);
     const element = React.createElement(ContentMarkdownEmail, {
       title: parsed.frontmatter.subject ?? "Untitled",
       preview: parsed.frontmatter.preview,
       html: parsed.html,
       footer: mockFooter,
       EmailShell: pack.EmailShell,
+      stepIndex: stepIndex >= 0 ? stepIndex : undefined,
+      totalSteps: pack.steps.length,
     });
     const rendered = await renderEmail(element);
     return NextResponse.json({

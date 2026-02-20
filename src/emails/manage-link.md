@@ -3,8 +3,6 @@ subject: Manage your subscription
 preview: Your secure management link (expires in 24 hours)
 ---
 
-# Manage Your Subscription
-
 Use the button below to update your delivery schedule, pause deliveries, or unsubscribe. This link is valid for 24 hours.
 
 [Open Preferences]({{manageUrl}}){button}

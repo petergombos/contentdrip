@@ -16,7 +16,7 @@ const pack: ContentPack = {
   key: "my-course",
   name: "How to Write an Email Course",
   description:
-    "A free 3-day course on planning, writing, and launching your first email course — delivered straight to your inbox.",
+    "A sample 3-day demo course showing the ContentDrip email format. Replace this content with your own.",
   steps: [
     { slug: "welcome", emailFile: "welcome.md" },
     { slug: "day-1", emailFile: "day-1.md" },

@@ -3,8 +3,6 @@ subject: Confirm your subscription
 preview: Click the link below to start receiving your course.
 ---
 
-# Confirm your subscription
-
 Thanks for signing up.
 
 Click the button below to confirm your email and start receiving your course:

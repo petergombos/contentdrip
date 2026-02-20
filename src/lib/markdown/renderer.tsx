@@ -3,7 +3,10 @@ import rehypeStringify from "rehype-stringify";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
-import { BUTTON_STYLE } from "@/emails/components/email-primitives";
+import {
+  BUTTON_STYLE,
+  buildInlineStyles,
+} from "@/emails/components/email-primitives";
 
 export interface MarkdownFrontmatter {
   subject?: string;
@@ -21,29 +24,9 @@ export interface ParsedMarkdown {
  * Inline styles for email HTML elements.
  * Gmail and many email clients strip <style> tags, so every element
  * needs inline styles to render correctly.
+ * Generated from CONTENT_ELEMENT_STYLES (single source of truth).
  */
-const INLINE_STYLES: Record<string, string> = {
-  p: "color:#404040;margin:16px 0;line-height:1.7143;font-size:14px",
-  h1: "color:#171717;font-size:30px;font-weight:800;line-height:1.2;margin:0 0 24px",
-  h2: "color:#171717;font-size:20px;font-weight:700;line-height:1.4;margin:32px 0 16px",
-  h3: "color:#171717;font-size:18px;font-weight:600;line-height:1.556;margin:28px 0 8px",
-  h4: "color:#171717;font-size:14px;font-weight:600;line-height:1.4286;margin:20px 0 8px",
-  a: "color:#171717;text-decoration:underline;font-weight:500",
-  strong: "color:#171717;font-weight:600",
-  blockquote: "color:#171717;font-weight:500;font-style:italic;border-left:4px solid #e5e5e5;padding-left:20px;margin:24px 0",
-  ul: "list-style-type:disc;padding-left:22px;margin:16px 0",
-  ol: "list-style-type:decimal;padding-left:22px;margin:16px 0",
-  li: "color:#404040;margin:4px 0;padding-left:6px;line-height:1.7143",
-  hr: "border:none;border-top:1px solid #e5e5e5;margin:40px 0",
-  code: "color:#171717;font-size:12px;font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace",
-  pre: "color:#e5e5e5;background-color:#262626;font-size:12px;line-height:1.667;border-radius:4px;overflow-x:auto;margin:20px 0;padding:8px 12px",
-  img: "max-width:100%;height:auto;margin:24px 0",
-  del: "text-decoration:line-through",
-  table: "width:100%;table-layout:auto;font-size:12px;line-height:1.5;margin:16px 0;border-collapse:collapse",
-  thead: "border-bottom:1px solid #d4d4d4",
-  th: "color:#171717;font-weight:600;vertical-align:bottom;padding:0 12px 8px",
-  td: "vertical-align:baseline;padding:8px 12px",
-};
+const INLINE_STYLES = buildInlineStyles();
 
 /** Add inline styles to bare HTML tags produced by the markdown pipeline. */
 function inlineStyles(html: string): string {

@@ -1,18 +1,43 @@
+import { siteConfig } from "@/config";
 import type { PackEmailShellProps } from "@/content-packs/registry";
 import {
+  EmailColumn,
   EmailContent,
   EmailFooter,
-  EmailHeader,
+  EmailHeaderBar,
+  EmailHeaderBrandName,
+  EmailHeaderCourseName,
+  EmailHeaderMark,
+  EmailHeaderProgress,
+  EmailHeaderTitle,
   EmailLayout,
+  EmailRow,
 } from "@/emails/components/email-primitives";
 
-// ✏️ Update the course name in <EmailHeader> to match your course.
-//    This appears at the top of every email your subscribers receive.
-//    You can also add a logo image here using a standard <img> tag.
+// ✏️ Update the course name below to match your course.
+//    brandName / brandInitial come from siteConfig (your site identity).
+//    You can also add a logo image inside <EmailHeaderBar> using <img>.
+const COURSE_NAME = "How to Write an Email Course";
+
 export function StarterEmailShell(props: PackEmailShellProps) {
   return (
     <EmailLayout preview={props.preview}>
-      <EmailHeader>How to Write an Email Course</EmailHeader>
+      <EmailHeaderBar>
+        <EmailRow>
+          <EmailColumn>
+            <EmailHeaderMark>{siteConfig.name[0]}</EmailHeaderMark>
+            <EmailHeaderBrandName>{siteConfig.name}</EmailHeaderBrandName>
+            <EmailHeaderCourseName>{COURSE_NAME}</EmailHeaderCourseName>
+          </EmailColumn>
+          <EmailColumn align="right">
+            <EmailHeaderProgress
+              stepIndex={props.stepIndex}
+              totalSteps={props.totalSteps}
+            />
+          </EmailColumn>
+        </EmailRow>
+      </EmailHeaderBar>
+      <EmailHeaderTitle>{props.title}</EmailHeaderTitle>
       <EmailContent>{props.children}</EmailContent>
       <EmailFooter footer={props.footer} />
     </EmailLayout>

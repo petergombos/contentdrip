@@ -9,6 +9,10 @@ export interface PackEmailShellProps {
   title: string;
   children: React.ReactNode;
   footer?: { unsubscribeUrl?: string; manageUrl?: string; pauseUrl?: string };
+  /** 0-based index of the current step */
+  stepIndex?: number;
+  /** Total number of steps in the pack */
+  totalSteps?: number;
 }
 
 export interface ContentPack {
