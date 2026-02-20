@@ -5,7 +5,12 @@ import { SendTimeSelector } from "@/components/send-time-selector";
 import { SuccessState } from "@/components/success-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { getAllPacks } from "@/content-packs/registry";
 import { subscribeAction } from "@/domains/subscriptions/actions/subscription-actions";
 import { cn } from "@/lib/utils";
@@ -208,7 +213,7 @@ export function SubscribeFormField({
 }: SubscribeFormFieldProps) {
   return (
     <FieldContext.Provider value={name}>
-      <div className={cn("space-y-1.5", className)} {...props} />
+      <Field className={className} {...props} />
     </FieldContext.Provider>
   );
 }
@@ -216,43 +221,36 @@ export function SubscribeFormField({
 export function SubscribeFormLabel({
   className,
   ...props
-}: React.ComponentProps<typeof Label>) {
+}: React.ComponentProps<typeof FieldLabel>) {
   const fieldName = useFieldName();
   const htmlFor = fieldName ? FIELD_IDS[fieldName] : undefined;
 
-  return (
-    <Label
-      htmlFor={htmlFor}
-      className={cn("text-xs font-medium", className)}
-      {...props}
-    />
-  );
+  return <FieldLabel htmlFor={htmlFor} className={className} {...props} />;
 }
 
 export function SubscribeFormDescription({
   className,
   ...props
 }: React.ComponentProps<"p">) {
-  return (
-    <p className={cn("text-xs text-muted-foreground", className)} {...props} />
-  );
+  return <FieldDescription className={className} {...props} />;
 }
 
 export function SubscribeFormFieldError({
   className,
   ...props
-}: React.ComponentProps<"p">) {
+}: React.ComponentProps<typeof FieldError>) {
   const fieldName = useFieldName();
   const { form } = useSubscribeForm();
   const { errors } = form.formState;
 
-  const fieldError = fieldName ? errors[fieldName] : null;
-  if (!fieldError) return null;
+  const fieldError = fieldName ? errors[fieldName] : undefined;
 
   return (
-    <p className={cn("text-xs text-destructive", className)} {...props}>
-      {props.children ?? fieldError.message}
-    </p>
+    <FieldError
+      errors={fieldError ? [fieldError] : undefined}
+      className={className}
+      {...props}
+    />
   );
 }
 

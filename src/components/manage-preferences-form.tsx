@@ -4,7 +4,7 @@ import { FrequencySelector } from "@/components/frequency-selector";
 import { SendTimeSelector } from "@/components/send-time-selector";
 import { TimezoneSelector } from "@/components/timezone-selector";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   pauseSubscriptionAction,
   restartSubscriptionAction,
@@ -310,47 +310,33 @@ export function ManagePreferencesForm({
             className="space-y-4 rounded-lg border border-border/50 p-4"
             data-testid="manage-preferences-form"
           >
-            <div className="space-y-1.5">
-              <Label htmlFor="timezone" className="text-xs font-medium">
-                Timezone
-              </Label>
+            <Field>
+              <FieldLabel htmlFor="timezone">Timezone</FieldLabel>
               <TimezoneSelector
                 value={form.watch("timezone")}
                 onValueChange={(value) => form.setValue("timezone", value)}
               />
-              {errors.timezone && (
-                <p className="text-xs text-destructive">
-                  {errors.timezone.message}
-                </p>
-              )}
-            </div>
+              <FieldError errors={[errors.timezone]} />
+            </Field>
 
             {!hasFixedFrequency && (
-              <div className="space-y-1.5">
-                <Label htmlFor="frequency" className="text-xs font-medium">
-                  Frequency
-                </Label>
+              <Field>
+                <FieldLabel htmlFor="frequency">Frequency</FieldLabel>
                 <FrequencySelector
                   value={form.watch("frequency")}
                   onValueChange={(value) => form.setValue("frequency", value)}
                 />
-                {errors.frequency && (
-                  <p className="text-xs text-destructive">
-                    {errors.frequency.message}
-                  </p>
-                )}
-              </div>
+                <FieldError errors={[errors.frequency]} />
+              </Field>
             )}
 
-            <div className="space-y-1.5">
-              <Label htmlFor="sendTime" className="text-xs font-medium">
-                Delivery time
-              </Label>
+            <Field>
+              <FieldLabel htmlFor="sendTime">Delivery time</FieldLabel>
               <SendTimeSelector
                 value={form.watch("sendTime")}
                 onValueChange={(value) => form.setValue("sendTime", value)}
               />
-            </div>
+            </Field>
 
             <Button
               type="submit"

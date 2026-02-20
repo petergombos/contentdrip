@@ -3,7 +3,7 @@
 import { SuccessState } from "@/components/success-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { requestManageLinkAction } from "@/domains/subscriptions/actions/subscription-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
@@ -46,10 +46,8 @@ export function ManageRequestForm() {
       className="space-y-4"
       data-testid="manage-request-form"
     >
-      <div className="space-y-1.5">
-        <Label htmlFor="email" className="text-xs font-medium">
-          Email address
-        </Label>
+      <Field>
+        <FieldLabel htmlFor="email">Email address</FieldLabel>
         <Input
           id="email"
           type="email"
@@ -57,12 +55,8 @@ export function ManageRequestForm() {
           data-testid="manage-request-email-input"
           placeholder="you@example.com"
         />
-        {form.formState.errors.email && (
-          <p className="text-xs text-destructive">
-            {form.formState.errors.email.message}
-          </p>
-        )}
-      </div>
+        <FieldError errors={[form.formState.errors.email]} />
+      </Field>
 
       <Button
         type="submit"
