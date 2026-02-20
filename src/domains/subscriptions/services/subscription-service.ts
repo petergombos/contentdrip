@@ -288,8 +288,11 @@ export class SubscriptionService {
     let markdown = readFileSync(mdPath, "utf-8");
 
     const confirmUrl = this.emailService.buildConfirmUrl(token);
+    const pack = getPackByKey(packKey);
+    const courseName = pack?.name ?? packKey;
 
     // Replace placeholders BEFORE parsing markdown to HTML
+    markdown = markdown.replace(/\{\{courseName\}\}/g, courseName);
     markdown = markdown.replace("{{confirmUrl}}", confirmUrl);
 
     const parsed = parseMarkdown(markdown);

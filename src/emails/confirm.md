@@ -1,9 +1,9 @@
 ---
-subject: Confirm your subscription
-preview: Click the link below to start receiving your course.
+subject: "Confirm your subscription to {{courseName}}"
+preview: "Click the link below to start receiving {{courseName}}."
 ---
 
-Thanks for signing up.
+Thanks for signing up for **{{courseName}}**.
 
 Click the button below to confirm your email and start receiving your course:
 
