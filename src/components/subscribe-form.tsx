@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { getAllPacks } from "@/content-packs/registry";
 import { subscribeAction } from "@/domains/subscriptions/actions/subscription-actions";
 import { cn } from "@/lib/utils";
-import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Loader2 } from "lucide-react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
@@ -258,10 +258,9 @@ export function SubscribeFormFieldError({
 
 /* ── Email input ── */
 
-export function SubscribeFormEmailInput({
-  className,
-  ...props
-}: React.ComponentProps<typeof Input>) {
+export function SubscribeFormEmailInput(
+  props: React.ComponentProps<typeof Input>,
+) {
   const { form } = useSubscribeForm();
 
   return (
@@ -272,7 +271,6 @@ export function SubscribeFormEmailInput({
       autoComplete="email"
       {...form.register("email")}
       data-testid="subscribe-email-input"
-      className={cn("h-10", className)}
       {...props}
     />
   );

@@ -1,15 +1,15 @@
 "use client";
 
-import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { SuccessState } from "@/components/success-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SuccessState } from "@/components/success-state";
 import { requestManageLinkAction } from "@/domains/subscriptions/actions/subscription-actions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { z } from "zod";
 
 const requestManageLinkSchema = z.object({
   email: z.email("Please enter a valid email address"),
@@ -56,7 +56,6 @@ export function ManageRequestForm() {
           {...form.register("email")}
           data-testid="manage-request-email-input"
           placeholder="you@example.com"
-          className="h-10"
         />
         {form.formState.errors.email && (
           <p className="text-xs text-destructive">
