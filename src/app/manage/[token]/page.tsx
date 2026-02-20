@@ -2,7 +2,7 @@ import { SubscriptionRepo } from "@/domains/subscriptions/repo/subscription-repo
 import { EmailService } from "@/domains/mail/services/email-service";
 import { createMailAdapter } from "@/domains/mail/create-adapter";
 import { createHash } from "crypto";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/page-shell";
 import { getPackByKey } from "@/content-packs/registry";
@@ -58,16 +58,19 @@ export default async function ManageTokenPage({
         subtitle="This management link has already been used or has expired. Request a new one below."
       >
         <Card
-          className="animate-fade-in-up delay-2 p-6 md:p-8"
+          size="lg"
+          className="animate-fade-in-up delay-2"
           data-testid="manage-link-expired"
         >
-          <p className="text-sm text-muted-foreground">
-            Management links are single-use for security. You can request a
-            fresh one at any time.
-          </p>
-          <Button asChild className="mt-4">
-            <a href="/manage">Request a new link</a>
-          </Button>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Management links are single-use for security. You can request a
+              fresh one at any time.
+            </p>
+            <Button asChild>
+              <a href="/manage">Request a new link</a>
+            </Button>
+          </CardContent>
         </Card>
       </PageShell>
     );

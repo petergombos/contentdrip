@@ -5,7 +5,12 @@ import { SubscriptionService } from "@/domains/subscriptions/services/subscripti
 import { createMailAdapter } from "@/domains/mail/create-adapter";
 import { EmailService } from "@/domains/mail/services/email-service";
 import { PageShell } from "@/components/page-shell";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import "@/content-packs";
@@ -57,40 +62,44 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
             way — check your inbox shortly.
           </p>
 
-          <Card className="animate-fade-in-up delay-3 mt-8 p-6 md:p-8 text-left">
-            <h2 className="text-sm font-semibold text-foreground">
-              What happens next?
-            </h2>
-            <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2.5">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/8 text-[10px] font-bold text-primary">
-                  1
-                </span>
-                <span>
-                  Your <strong className="text-foreground">first lesson</strong>{" "}
-                  arrives right away
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/8 text-[10px] font-bold text-primary">
-                  2
-                </span>
-                <span>
-                  Following lessons deliver on{" "}
-                  <strong className="text-foreground">your chosen schedule</strong>
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/8 text-[10px] font-bold text-primary">
-                  3
-                </span>
-                <span>
-                  Pause, resume, or adjust anytime via the{" "}
-                  <strong className="text-foreground">manage link</strong> in
-                  each email
-                </span>
-              </li>
-            </ul>
+          <Card size="lg" className="animate-fade-in-up delay-3 mt-8 text-left">
+            <CardHeader>
+              <CardTitle className="text-sm font-semibold">
+                What happens next?
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/8 text-[10px] font-bold text-primary">
+                    1
+                  </span>
+                  <span>
+                    Your <strong className="text-foreground">first lesson</strong>{" "}
+                    arrives right away
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/8 text-[10px] font-bold text-primary">
+                    2
+                  </span>
+                  <span>
+                    Following lessons deliver on{" "}
+                    <strong className="text-foreground">your chosen schedule</strong>
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/8 text-[10px] font-bold text-primary">
+                    3
+                  </span>
+                  <span>
+                    Pause, resume, or adjust anytime via the{" "}
+                    <strong className="text-foreground">manage link</strong> in
+                    each email
+                  </span>
+                </li>
+              </ul>
+            </CardContent>
           </Card>
 
           <div className="animate-fade-in-up delay-4 mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -111,19 +120,18 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
       title="Confirmation failed"
       subtitle="That link may have already been used, or it has expired."
     >
-      <Card
-        className="p-6 md:p-8 space-y-4 animate-fade-in-up"
-        data-testid="confirm-error"
-      >
-        <p className="text-sm text-muted-foreground">{errorMessage}</p>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Button asChild>
-            <Link href="/manage">Request a new link</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/">Back to home</Link>
-          </Button>
-        </div>
+      <Card size="lg" className="animate-fade-in-up" data-testid="confirm-error">
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">{errorMessage}</p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button asChild>
+              <Link href="/manage">Request a new link</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/">Back to home</Link>
+            </Button>
+          </div>
+        </CardContent>
       </Card>
     </PageShell>
   );

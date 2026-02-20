@@ -1,5 +1,5 @@
 import { ManageRequestForm } from "@/components/manage-request-form";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { PageShell } from "@/components/page-shell";
 import type { Metadata } from "next";
 
@@ -31,8 +31,10 @@ export default function ManagePage() {
       title="Manage Your Subscriptions"
       subtitle="Enter your email below and we'll send you a secure one-time link to manage your delivery preferences."
     >
-      <Card className="animate-fade-in-up delay-2 p-6 md:p-8">
-        <ManageRequestForm />
+      <Card size="lg" className="animate-fade-in-up delay-2">
+        <CardContent>
+          <ManageRequestForm />
+        </CardContent>
       </Card>
 
       <div className="animate-fade-in-up delay-3 mt-8 rounded-lg border border-border/60 bg-muted/30 px-5 py-4">

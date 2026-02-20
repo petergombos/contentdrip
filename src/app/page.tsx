@@ -11,7 +11,13 @@ import {
   SubscribeFormLabel,
   SubscribeFormSubmit,
 } from "@/components/subscribe-form";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { siteConfig } from "@/config";
 import "@/content-packs";
 import { getPackByKey } from "@/content-packs/registry";
@@ -62,26 +68,30 @@ export default function HomePage() {
         {/* Subscribe form */}
         <section className="py-12 md:py-16">
           <div className="mx-auto max-w-md px-6">
-            <Card className="animate-fade-in-up delay-2 p-6 md:p-8">
-              <h2 className="mb-1 text-lg font-semibold text-foreground">
-                Start the course
-              </h2>
-              <p className="mb-6 text-sm text-muted-foreground">
-                Free. Delivered to your inbox at the pace you choose.
-              </p>
-              <SubscribeForm packKey={PACK_KEY} frequency={pack?.frequency}>
-                <SubscribeFormField name="email">
-                  <SubscribeFormLabel>Email</SubscribeFormLabel>
-                  <SubscribeFormEmailInput />
-                  <SubscribeFormFieldError />
-                  <SubscribeFormDescription>
-                    No spam, totally free.
-                  </SubscribeFormDescription>
-                </SubscribeFormField>
-                <SubscribeFormFrequencyField />
-                <SubscribeFormDeliveryTimeField />
-                <SubscribeFormSubmit>Start My Free Course</SubscribeFormSubmit>
-              </SubscribeForm>
+            <Card size="lg" className="animate-fade-in-up delay-2">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">
+                  Start the course
+                </CardTitle>
+                <CardDescription>
+                  Free. Delivered to your inbox at the pace you choose.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SubscribeForm packKey={PACK_KEY} frequency={pack?.frequency}>
+                  <SubscribeFormField name="email">
+                    <SubscribeFormLabel>Email</SubscribeFormLabel>
+                    <SubscribeFormEmailInput />
+                    <SubscribeFormFieldError />
+                    <SubscribeFormDescription>
+                      No spam, totally free.
+                    </SubscribeFormDescription>
+                  </SubscribeFormField>
+                  <SubscribeFormFrequencyField />
+                  <SubscribeFormDeliveryTimeField />
+                  <SubscribeFormSubmit>Start My Free Course</SubscribeFormSubmit>
+                </SubscribeForm>
+              </CardContent>
             </Card>
           </div>
         </section>
