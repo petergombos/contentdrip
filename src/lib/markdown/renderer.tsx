@@ -105,16 +105,23 @@ export function parseMarkdown(markdown: string): ParsedMarkdown {
     "$1<code style=\"color:inherit;background:none;padding:0;border-radius:0;font-size:inherit;font-weight:inherit;line-height:inherit\">"
   );
 
-  // Unwrap standalone images from <p> tags so they sit at the block level.
-  // This lets the full-bleed CSS (negative margin) work without <p> margins
-  // adding unwanted extra vertical spacing around the image.
-  html = html.replace(/<p[^>]*>\s*(<img\s[^>]*\/?>)\s*<\/p>/g, "$1");
+  // Mark standalone images (a <p> containing only an <img>) for full-bleed
+  // treatment. The markers survive the inline-style pass and are replaced at
+  // the end to break images out of the padded .eb div.
+  html = html.replace(/<p[^>]*>\s*(<img\s[^>]*\/?>)\s*<\/p>/g, "<!--FBLEED-->$1<!--/FBLEED-->");
 
   // Strip top margin from the first block element (mirrors CSS :first-child rules)
   html = html.replace(
     /^(<(?:p|h[1-6]|ul|ol|blockquote|img|pre|hr|table)\s[^>]*?)margin:(\d+)px 0(?: (\d+)px)?/,
     (_m, before: string, top: string, bottom: string) =>
       `${before}margin:0 0 ${bottom ?? top}px`
+  );
+
+  // Break full-bleed images out of the padded .eb div so they span the full
+  // container width. Works in every client including Gmail (pure inline styles).
+  html = html.replace(
+    /<!--FBLEED-->(<img\s[^>]*\/?>)<!--\/FBLEED-->/g,
+    '</div>$1<div class="eb" style="padding:0 32px">'
   );
 
   return {

@@ -168,11 +168,6 @@ function buildEmailCss(): string {
     "  .eb hr:last-child { margin-bottom: 0; }",
     "  .eb pre code { color: inherit; background: none; padding: 0; border-radius: 0; font-size: inherit; font-weight: inherit; line-height: inherit; }",
     "  .eb tbody tr { border-bottom: 1px solid #e5e5e5; }",
-    // Full-bleed images for clients that support <style>.
-    // Padding lives on .eb div (not the <td>), so negative margins can
-    // overflow it and reach the container edge.
-    // Inline styles use safe width:100% as a Gmail fallback.
-    "  .eb img { width: calc(100% + 64px); max-width: none; margin: 24px -32px; }",
   );
 
   return "\n" + lines.join("\n") + "\n";
