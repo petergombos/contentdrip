@@ -21,7 +21,7 @@ export function ContentMarkdownEmail(props: {
       stepIndex={props.stepIndex}
       totalSteps={props.totalSteps}
     >
-      <div className="eb" dangerouslySetInnerHTML={{ __html: props.html }} />
+      <div className="eb" style={{ padding: "0 32px" }} dangerouslySetInnerHTML={{ __html: props.html }} />
     </Shell>
   );
 }

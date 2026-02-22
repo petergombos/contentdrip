@@ -105,11 +105,16 @@ export function parseMarkdown(markdown: string): ParsedMarkdown {
     "$1<code style=\"color:inherit;background:none;padding:0;border-radius:0;font-size:inherit;font-weight:inherit;line-height:inherit\">"
   );
 
+  // Unwrap standalone images from <p> tags so they sit at the block level.
+  // This lets the full-bleed CSS (negative margin) work without <p> margins
+  // adding unwanted extra vertical spacing around the image.
+  html = html.replace(/<p[^>]*>\s*(<img\s[^>]*\/?>)\s*<\/p>/g, "$1");
+
   // Strip top margin from the first block element (mirrors CSS :first-child rules)
   html = html.replace(
     /^(<(?:p|h[1-6]|ul|ol|blockquote|img|pre|hr|table)\s[^>]*?)margin:(\d+)px 0(?: (\d+)px)?/,
-    (_m, before: string, _top: string, bottom: string) =>
-      `${before}margin:0 0 ${bottom ?? "16"}px`
+    (_m, before: string, top: string, bottom: string) =>
+      `${before}margin:0 0 ${bottom ?? top}px`
   );
 
   return {

@@ -168,12 +168,11 @@ function buildEmailCss(): string {
     "  .eb hr:last-child { margin-bottom: 0; }",
     "  .eb pre code { color: inherit; background: none; padding: 0; border-radius: 0; font-size: inherit; font-weight: inherit; line-height: inherit; }",
     "  .eb tbody tr { border-bottom: 1px solid #e5e5e5; }",
-    // Full-bleed images on desktop (clients that support <style>).
-    // Inline styles use safe width:100% for Gmail mobile fallback.
+    // Full-bleed images for clients that support <style>.
+    // Padding lives on .eb div (not the <td>), so negative margins can
+    // overflow it and reach the container edge.
+    // Inline styles use safe width:100% as a Gmail fallback.
     "  .eb img { width: calc(100% + 64px); max-width: none; margin: 24px -32px; }",
-    "  @media only screen and (max-width: 620px) {",
-    "    .eb img { width: 100% !important; max-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }",
-    "  }",
   );
 
   return "\n" + lines.join("\n") + "\n";
@@ -200,7 +199,7 @@ export const emailStyles = {
 
   // ── Content ──
   main: {
-    padding: "20px 32px 28px",
+    padding: "20px 0 28px",
   },
   content: {
     fontSize: 14,
